@@ -1,4 +1,5 @@
 #include <SFML/System/Vector2.hpp>
+#include <optional>
 
 #ifndef EPITECH_WOLF3D_PROJECT_LINES_HPP
 #define EPITECH_WOLF3D_PROJECT_LINES_HPP
