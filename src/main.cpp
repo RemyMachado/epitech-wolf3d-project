@@ -1,7 +1,6 @@
 #include <iostream>
 #include "game_loop.hpp"
 #include "lines.hpp"
-#include "movement.hpp"
 #include "Grid.hpp"
 #include "file_parser.hpp"
 
@@ -14,7 +13,7 @@ int main(int argc, char **argv) {
   // cout the grid
   std::cout << grid << std::endl;
 
-  run_game();
+  run_game(grid);
 
   return EXIT_SUCCESS;
 }

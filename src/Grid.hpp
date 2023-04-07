@@ -4,6 +4,7 @@
 #include <vector>
 #include <SFML/System/Vector2.hpp>
 #include <ostream>
+#include "my_math.hpp"
 
 template<typename T>
 class Grid {
@@ -11,10 +12,16 @@ class Grid {
   const int width;
   const int height;
   const std::vector<T> values;
-  const int cube_size = 100;
+  const float cube_size = 100;
   sf::Vector2f player_pos = {0, 0};
+  float player_direction_deg = 0;
+  float render_distance; // equals the diagonal of the grid
 
-  Grid(int width, int height, std::vector<T> values) : width(width), height(height), values(values) {}
+  Grid(int width, int height, std::vector<T> values)
+      : width(width),
+        height(height),
+        values(values),
+        render_distance(magnitude({(float) width, (float) height}) * cube_size) {}
 
   const T &get(int x, int y) const {
     return values[y * width + x];

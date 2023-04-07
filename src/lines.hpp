@@ -4,6 +4,11 @@
 #ifndef EPITECH_WOLF3D_PROJECT_LINES_HPP
 #define EPITECH_WOLF3D_PROJECT_LINES_HPP
 
+struct Line {
+  sf::Vector2f start_pos;
+  sf::Vector2f end_pos;
+};
+
 std::optional<sf::Vector2f>
 get_segments_intersection(sf::Vector2f start_pos1, sf::Vector2f end_pos1, sf::Vector2f start_pos2,
                           sf::Vector2f end_pos2);
