@@ -19,6 +19,8 @@ void run_game(Grid<int> &grid) {
   float move_speed = grid.cube_size * 0.1f;
   float rotation_speed_deg = 5;
 
+  std::vector<CubeRaycastSegments> grid_raycast_segments = get_grid_raycast_segments(grid);
+
   while (window.isOpen()) {
     // print mouse coordinates
     sf::Event event;
@@ -60,8 +62,6 @@ void run_game(Grid<int> &grid) {
     window.draw(circleShape);
 
     // draw grid using `get_grid_raycast_segments`
-    std::vector<CubeRaycastSegments> grid_raycast_segments = get_grid_raycast_segments(grid);
-
     for (const CubeRaycastSegments &cube_raycast_segments : grid_raycast_segments) {
       for (Line raycast_segment : cube_raycast_segments) {
         sf::Vertex line[] = {
@@ -84,28 +84,48 @@ void run_game(Grid<int> &grid) {
     }
 
     // draw 3d view with raycast
-    int render_width = 400;
-    int render_height = 400;
+    int render_width = WINDOW_WIDTH / 2;
+    int render_height = WINDOW_HEIGHT / 2;
+    int ray_thickness = 5;
     // for each pixel in width, cast a ray and draw a vertical line
-    for (int x = 0; x < render_width; x++) {
+    for (int x = 0; x < render_width; x += ray_thickness) {
       // calculate the angle of the ray
       float rotation_step_deg = grid.fov_deg / render_width;
-      float ray_angle_deg = grid.player_direction_deg + rotation_step_deg * (float) x - grid.fov_deg / 2;
+      float ray_angle_deg = grid.player_direction_deg - grid.fov_deg / 2 + rotation_step_deg * (float) x;
       // cast the ray
       std::optional<float> intersection_distance2 = raycast(grid.player_pos, ray_angle_deg, grid);
       if (intersection_distance2.has_value()) {
         // calculate the height of the line
 //        float line_height = (render_height / intersection_distance2.value()) * 0.5f;
 
-        float line_height = render_height * (grid.cube_size / intersection_distance2.value());
+        float line_height = (float) render_height * (grid.cube_size / intersection_distance2.value());
+        sf::Vector2f line_start_pos = sf::Vector2f((float) WINDOW_WIDTH / 2 + (float) x,
+                                                   ((float) WINDOW_HEIGHT - (float) render_height) / 2
+                                                       + ((float) render_height - line_height) / 2);
+        sf::Vector2f line_end_pos =
+            sf::Vector2f((float) WINDOW_WIDTH / 2 + (float) x,
+                         ((float) WINDOW_HEIGHT - (float) render_height) / 2
+                             + (float) render_height - ((float) render_height - line_height) / 2);
 
         // draw the line
         sf::Vertex line[] = {
-            sf::Vertex(sf::Vector2f(WINDOW_WIDTH / 2 + x, ((float) render_height - line_height) / 2), sf::Color::Red),
-            sf::Vertex(sf::Vector2f(WINDOW_WIDTH / 2 + x, render_height - ((float) render_height - line_height) / 2),
-                       sf::Color::Red)
+            sf::Vertex(line_start_pos, sf::Color::Red),
+            sf::Vertex(line_end_pos, sf::Color::Red)
         };
-        window.draw(line, 2, sf::Lines);
+
+        // draw the line with thickness equal to ray_thickness
+        for (int i = 0; i < ray_thickness; i++) {
+          if (line[0].position.x + (float) i > WINDOW_WIDTH) {
+            break;
+          }
+
+          sf::Vertex thick_line[] = {
+              sf::Vertex(sf::Vector2f(line[0].position.x + (float) i, line[0].position.y), sf::Color::Red),
+              sf::Vertex(sf::Vector2f(line[1].position.x + (float) i, line[1].position.y), sf::Color::Red)
+          };
+
+          window.draw(thick_line, 2, sf::Lines);
+        }
       }
     }
 
