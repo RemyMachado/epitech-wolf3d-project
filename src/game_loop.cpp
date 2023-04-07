@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <algorithm>
 #include <cmath>
 #include "game_loop.hpp"
 #include "lines.hpp"
@@ -29,16 +30,48 @@ void run_game(Grid<int> &grid) {
   while (window.isOpen()) {
     // move the grid.player_pos with wasd keys allowing multiple keys to be pressed at once
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-      grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, grid.player_direction_deg - 90);
+      float move_direction_deg = grid.player_direction_deg - 90;
+
+      std::optional<float> distance_to_wall = raycast(grid.player_pos, move_direction_deg, grid);
+      if (distance_to_wall.has_value()) {
+        grid.player_pos =
+            polar_to_cartesian(grid.player_pos, std::min(distance_to_wall.value() - 1, move_speed), move_direction_deg);
+      } else {
+        grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, move_direction_deg);
+      }
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-      grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, grid.player_direction_deg + 90);
+      float move_direction_deg = grid.player_direction_deg + 90;
+
+      std::optional<float> distance_to_wall = raycast(grid.player_pos, move_direction_deg, grid);
+      if (distance_to_wall.has_value()) {
+        grid.player_pos =
+            polar_to_cartesian(grid.player_pos, std::min(distance_to_wall.value() - 1, move_speed), move_direction_deg);
+      } else {
+        grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, move_direction_deg);
+      }
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-      grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, grid.player_direction_deg);
+      std::optional<float> distance_to_wall = raycast(grid.player_pos, grid.player_direction_deg, grid);
+      if (distance_to_wall.has_value()) {
+        grid.player_pos =
+            polar_to_cartesian(grid.player_pos,
+                               std::min(distance_to_wall.value() - 1, move_speed),
+                               grid.player_direction_deg);
+      } else {
+        grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, grid.player_direction_deg);
+      }
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-      grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, grid.player_direction_deg + 180);
+      float move_direction_deg = grid.player_direction_deg + 180;
+
+      std::optional<float> distance_to_wall = raycast(grid.player_pos, move_direction_deg, grid);
+      if (distance_to_wall.has_value()) {
+        grid.player_pos =
+            polar_to_cartesian(grid.player_pos, std::min(distance_to_wall.value() - 1, move_speed), move_direction_deg);
+      } else {
+        grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, move_direction_deg);
+      }
     }
 
     sf::Event event;
