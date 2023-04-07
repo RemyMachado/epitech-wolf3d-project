@@ -12,10 +12,11 @@ class Grid {
   const int width;
   const int height;
   const std::vector<T> values;
-  const float cube_size = 100;
+  const float cube_size = 40;
   sf::Vector2f player_pos = {0, 0};
   float player_direction_deg = 0;
   float render_distance; // equals the diagonal of the grid
+  float fov_deg = 60;
 
   Grid(int width, int height, std::vector<T> values)
       : width(width),
