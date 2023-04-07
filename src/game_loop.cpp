@@ -115,9 +115,14 @@ void run_game(Grid<int> &grid) {
       // calculate the angle of the ray
       float rotation_step_deg = grid.fov_deg / render_width;
       float ray_angle_deg = grid.player_direction_deg - grid.fov_deg / 2 + rotation_step_deg * (float) x;
+      float ray_angle_diff_deg = ray_angle_deg - grid.player_direction_deg;
+      float fish_eye_correction = cosf(degrees_to_radians(ray_angle_diff_deg));
+
       // cast the ray
       std::optional<float> intersection_distance2 = raycast(grid.player_pos, ray_angle_deg, grid);
       if (intersection_distance2.has_value()) {
+        intersection_distance2 = intersection_distance2.value() * fish_eye_correction;
+
         // calculate the height of the line
 //        float line_height = (render_height / intersection_distance2.value()) * 0.5f;
 
