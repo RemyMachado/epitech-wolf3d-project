@@ -4,7 +4,7 @@
 #include "lines.hpp"
 
 CubeRaycastSegments get_raycast_cube_segments(sf::Vector2i pos, Grid<int> &grid) {
-  if (grid.get(pos.x, pos.y) == 0)
+  if (grid.get(pos.x, pos.y) != 1)
     return {};
 
   Line front = {

@@ -59,17 +59,16 @@ void run_game(Grid<int> &grid) {
     circleShape.setPosition(grid.player_pos.x - circleRadius, grid.player_pos.y - circleRadius);
     window.draw(circleShape);
 
-    // draw grid
-    for (int y = 0; y < grid.height; y++) {
-      for (int x = 0; x < grid.width; x++) {
-        if (grid.get(x, y) == 0) continue;
-        // draw rectangles of the grid, but don't fill them
-        sf::RectangleShape rectangle(sf::Vector2f(grid.cube_size, grid.cube_size));
-        rectangle.setFillColor(sf::Color::Transparent);
-        rectangle.setOutlineColor(sf::Color::White);
-        rectangle.setOutlineThickness(1);
-        rectangle.setPosition((x * grid.cube_size) + 1, (y * grid.cube_size) + 1);
-        window.draw(rectangle);
+    // draw grid using `get_grid_raycast_segments`
+    std::vector<CubeRaycastSegments> grid_raycast_segments = get_grid_raycast_segments(grid);
+
+    for (const CubeRaycastSegments &cube_raycast_segments : grid_raycast_segments) {
+      for (Line raycast_segment : cube_raycast_segments) {
+        sf::Vertex line[] = {
+            sf::Vertex(sf::Vector2f(raycast_segment.start_pos.x, raycast_segment.start_pos.y)),
+            sf::Vertex(sf::Vector2f(raycast_segment.end_pos.x, raycast_segment.end_pos.y))
+        };
+        window.draw(line, 2, sf::Lines);
       }
     }
 
