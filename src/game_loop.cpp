@@ -17,7 +17,12 @@ void run_game(Grid<int> &grid) {
   // hide the mouse cursor
   window.setMouseCursorVisible(false);
   float move_speed = grid.cube_size * 0.1f;
-  float rotation_speed_deg = 5;
+  bool recenter_mouse = false;
+  float mouse_rotation_speed_deg = 0.02f;
+  float keyboard_rotation_speed_deg = 5;
+
+  window.setMouseCursorGrabbed(true);
+  window.setMouseCursorVisible(false);
 
   std::vector<CubeRaycastSegments> grid_raycast_segments = get_grid_raycast_segments(grid);
 
@@ -45,13 +50,31 @@ void run_game(Grid<int> &grid) {
         }
       }
 
+      if (event.type == sf::Event::MouseMoved) {
+        if (!recenter_mouse) {
+          sf::Vector2i current_mouse_position = sf::Mouse::getPosition(window);
+          sf::Vector2i window_center(window.getSize().x / 2, window.getSize().y / 2);
+          int mouse_delta_x = current_mouse_position.x - window_center.x;
+
+          grid.player_direction_deg += mouse_delta_x * mouse_rotation_speed_deg;
+
+          // Set the mouse position to the center of the window
+          sf::Mouse::setPosition(window_center, window);
+
+          // Enable recenter_mouse to avoid updating grid.player_direction_deg while recentering
+          recenter_mouse = true;
+        } else {
+          // Reset recenter_mouse for the next mouse movement event
+          recenter_mouse = false;
+        }
+      }
       // rotate the grid.player_direction_deg with left and right arrow keys
       if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Left) {
-          grid.player_direction_deg -= rotation_speed_deg;
+          grid.player_direction_deg -= keyboard_rotation_speed_deg;
         }
         if (event.key.code == sf::Keyboard::Right) {
-          grid.player_direction_deg += rotation_speed_deg;
+          grid.player_direction_deg += keyboard_rotation_speed_deg;
         }
       }
     }
