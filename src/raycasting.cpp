@@ -39,14 +39,14 @@ std::vector<CubeRaycastSegments> get_grid_raycast_segments(Grid<int> &grid) {
   return segments;
 }
 
-std::optional<float> raycast(sf::Vector2f pos, float direction_deg, Grid<int> &grid) {
-  // get the raycast segments for each cube in the grid
-  std::vector<CubeRaycastSegments> cube_segments = get_grid_raycast_segments(grid);
-
+std::optional<float> raycast(sf::Vector2f pos,
+                             float direction_deg,
+                             Grid<int> &grid,
+                             std::vector<CubeRaycastSegments> &grid_raycast_segments) {
   // get closest intersection from pos to direction_deg with cube_segments
   std::optional<sf::Vector2f> closest_intersection;
   // iterate over each cube
-  for (CubeRaycastSegments cube_segment : cube_segments) {
+  for (CubeRaycastSegments cube_segment : grid_raycast_segments) {
     // iterate over each segment of the cube
     for (Line segment : cube_segment) {
       // get the intersection between the ray and the segment

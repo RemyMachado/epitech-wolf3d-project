@@ -15,14 +15,20 @@ class Grid {
   const float cube_size = 40;
   sf::Vector2f player_pos = {0, 0};
   float player_direction_deg = 0;
+  float player_move_speed;
   float render_distance; // equals the diagonal of the grid
   float fov_deg = 60;
+  bool recenter_mouse = false;
+  float mouse_rotation_speed_deg = 0.02f;
+  float keyboard_rotation_speed_deg = 5;
+  float player_circle_radius_minimap = 5;
 
   Grid(int width, int height, std::vector<T> values)
       : width(width),
         height(height),
         values(values),
-        render_distance(magnitude({(float) width, (float) height}) * cube_size) {
+        render_distance(magnitude({(float) width, (float) height}) * cube_size),
+        player_move_speed(cube_size * 0.1f) {
     // find the player position in the grid (number '9')
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
