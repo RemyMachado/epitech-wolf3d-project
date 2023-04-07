@@ -14,41 +14,38 @@ void run_game(Grid<int> &grid) {
   sf::CircleShape circleShape(circleRadius);
   circleShape.setFillColor(sf::Color::White);
 
-  // hide the mouse cursor
-  window.setMouseCursorVisible(false);
   float move_speed = grid.cube_size * 0.1f;
   bool recenter_mouse = false;
   float mouse_rotation_speed_deg = 0.02f;
   float keyboard_rotation_speed_deg = 5;
 
+  // set the mouse cursor to the center of the window
   window.setMouseCursorGrabbed(true);
+  // hide the mouse cursor
   window.setMouseCursorVisible(false);
 
   std::vector<CubeRaycastSegments> grid_raycast_segments = get_grid_raycast_segments(grid);
 
   while (window.isOpen()) {
-    // print mouse coordinates
+    // move the grid.player_pos with wasd keys allowing multiple keys to be pressed at once
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+      grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, grid.player_direction_deg - 90);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+      grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, grid.player_direction_deg + 90);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+      grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, grid.player_direction_deg);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+      grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, grid.player_direction_deg + 180);
+    }
+
     sf::Event event;
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed ||
           (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
         window.close();
-
-      // move the grid.player_pos with wasd keys
-      if (event.type == sf::Event::KeyPressed) {
-        if (event.key.code == sf::Keyboard::A) {
-          grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, grid.player_direction_deg - 90);
-        }
-        if (event.key.code == sf::Keyboard::D) {
-          grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, grid.player_direction_deg + 90);
-        }
-        if (event.key.code == sf::Keyboard::W) {
-          grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, grid.player_direction_deg);
-        }
-        if (event.key.code == sf::Keyboard::S) {
-          grid.player_pos = polar_to_cartesian(grid.player_pos, move_speed, grid.player_direction_deg + 180);
-        }
-      }
 
       if (event.type == sf::Event::MouseMoved) {
         if (!recenter_mouse) {
