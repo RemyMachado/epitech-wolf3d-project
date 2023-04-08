@@ -13,19 +13,23 @@ void draw_player_on_minimap(sf::RenderWindow &window, Grid<int> &grid) {
 
 void draw_minimap_grid(sf::RenderWindow &window,
                        Grid<int> &grid,
-                       std::vector<CubeRaycastSegments> &grid_raycast_segments) {
+                       std::vector<Cube> &grid_cubes) {
   // draw background
   sf::RectangleShape rectangle(sf::Vector2f(grid.width * grid.cube_size, grid.height * grid.cube_size));
   rectangle.setFillColor(sf::Color::Black);
   rectangle.setPosition(0, 0);
   window.draw(rectangle);
 
-  // draw grid
-  for (const CubeRaycastSegments &cube_raycast_segments : grid_raycast_segments) {
-    for (Line raycast_segment : cube_raycast_segments) {
+  // draw walls on the grid
+  for (const Cube &cube : grid_cubes) {
+    if (cube.value != CubeValue::WALL) {
+      continue;
+    }
+
+    for (const Line &segment : cube.segments) {
       sf::Vertex line[] = {
-          sf::Vertex(sf::Vector2f(raycast_segment.start_pos.x + 1, raycast_segment.start_pos.y + 1)),
-          sf::Vertex(sf::Vector2f(raycast_segment.end_pos.x + 1, raycast_segment.end_pos.y + 1))
+          sf::Vertex(sf::Vector2f(segment.start.x + 1, segment.start.y + 1)),
+          sf::Vertex(sf::Vector2f(segment.end.x + 1, segment.end.y + 1))
       };
       window.draw(line, 2, sf::Lines);
     }
@@ -34,35 +38,35 @@ void draw_minimap_grid(sf::RenderWindow &window,
 
 void draw_player_direction_minimap(sf::RenderWindow &window,
                                    Grid<int> &grid,
-                                   std::vector<CubeRaycastSegments> &grid_raycast_segments) {
+                                   std::vector<Cube> &grid_cubes) {
   // raycast from the player position in the player direction
   // and draw a line from the player position to the intersection point
-  std::optional<float>
-      intersection_distance = raycast(grid.player_pos, grid.player_direction_deg, grid, grid_raycast_segments);
-  if (intersection_distance.has_value()) {
+  std::optional<Raycast>
+      raycast_wall = raycast(grid.player_pos, grid.player_direction_deg, grid, grid_cubes, CubeValue::WALL);
+  if (raycast_wall.has_value()) {
     sf::Vertex line[] = {
         sf::Vertex(sf::Vector2f(grid.player_pos.x, grid.player_pos.y)),
-        sf::Vertex(polar_to_cartesian(grid.player_pos, intersection_distance.value(), grid.player_direction_deg))
+        sf::Vertex(raycast_wall.value().intersection_pos)
     };
     window.draw(line, 2, sf::Lines);
   }
 }
 
-void draw_minimap(sf::RenderWindow &window, Grid<int> &grid, std::vector<CubeRaycastSegments> &grid_raycast_segments) {
+void draw_minimap(sf::RenderWindow &window, Grid<int> &grid, std::vector<Cube> &grid_cubes) {
   // draw grid
-  draw_minimap_grid(window, grid, grid_raycast_segments);
+  draw_minimap_grid(window, grid, grid_cubes);
 
   // draw player direction
-  draw_player_direction_minimap(window, grid, grid_raycast_segments);
+  draw_player_direction_minimap(window, grid, grid_cubes);
 
   // draw player
   draw_player_on_minimap(window, grid);
 }
 
-void draw_walls_3d(sf::RenderWindow &window, Grid<int> &grid, std::vector<CubeRaycastSegments> &grid_raycast_segments) {
+void draw_walls_3d(sf::RenderWindow &window, Grid<int> &grid, std::vector<Cube> &grid_cubes) {
   int render_width = (int) window.getSize().x;
   int render_height = (int) window.getSize().y;
-  int ray_thickness = 8;
+  int ray_thickness = 5;
 
   // for each pixel in width, cast a ray and draw a vertical line
   for (int x = 0; x < render_width; x += ray_thickness) {
@@ -73,14 +77,11 @@ void draw_walls_3d(sf::RenderWindow &window, Grid<int> &grid, std::vector<CubeRa
     float fish_eye_correction = cosf(degrees_to_radians(ray_angle_diff_deg));
 
     // cast the ray
-    std::optional<float> intersection_distance2 = raycast(grid.player_pos, ray_angle_deg, grid, grid_raycast_segments);
-    if (intersection_distance2.has_value()) {
-      intersection_distance2 = intersection_distance2.value() * fish_eye_correction;
+    std::optional<Raycast> raycast_wall = raycast(grid.player_pos, ray_angle_deg, grid, grid_cubes, CubeValue::WALL);
+    if (raycast_wall.has_value()) {
+      float raycast_distance_corrected = raycast_wall.value().distance * fish_eye_correction;
 
-      // calculate the height of the line
-//        float line_height = (render_height / intersection_distance2.value()) * 0.5f;
-
-      float line_height = (float) render_height * (grid.cube_size / intersection_distance2.value());
+      float line_height = (float) render_height * (grid.cube_size / raycast_distance_corrected);
       sf::Vector2f line_start_pos = sf::Vector2f((float) x,
                                                  ((float) window.getSize().y - (float) render_height) / 2
                                                      + ((float) render_height - line_height) / 2);

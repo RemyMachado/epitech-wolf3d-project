@@ -5,7 +5,7 @@
 #include "Grid.hpp"
 #include "raycasting.hpp"
 
-void draw_minimap(sf::RenderWindow &window, Grid<int> &grid, std::vector<CubeRaycastSegments> &grid_raycast_segments);
-void draw_walls_3d(sf::RenderWindow &window, Grid<int> &grid, std::vector<CubeRaycastSegments> &grid_raycast_segments);
+void draw_minimap(sf::RenderWindow &window, Grid<int> &grid, std::vector<Cube> &grid_cubes);
+void draw_walls_3d(sf::RenderWindow &window, Grid<int> &grid, std::vector<Cube> &grid_cubes);
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_DRAW_HPP_

@@ -3,12 +3,13 @@
 
 void move_player_respect_collision(Grid<int> &grid,
                                    float direction_deg,
-                                   std::vector<CubeRaycastSegments> &grid_raycast_segments) {
-  std::optional<float> distance_to_wall = raycast(grid.player_pos, direction_deg, grid, grid_raycast_segments);
+                                   std::vector<Cube> &grid_cubes) {
+  std::optional<Raycast> raycast_wall = raycast(grid.player_pos, direction_deg, grid, grid_cubes, CubeValue::WALL);
 
-  if (distance_to_wall.has_value()) {
+  if (raycast_wall.has_value()) {
     grid.player_pos = polar_to_cartesian(grid.player_pos,
-                                         std::min(distance_to_wall.value() - 1, grid.player_move_speed),
+                                         std::min(raycast_wall.value().distance - (grid.cube_size / 100),
+                                                  grid.player_move_speed),
                                          direction_deg);
   } else {
     grid.player_pos = polar_to_cartesian(grid.player_pos,
@@ -17,25 +18,26 @@ void move_player_respect_collision(Grid<int> &grid,
   }
 }
 
-void handle_player_movement(Grid<int> &grid, std::vector<CubeRaycastSegments> &grid_raycast_segments) {
+void
+handle_player_movement(Grid<int> &grid, std::vector<Cube> &grid_cubes) {
   float move_direction_deg;
 
   // move the grid.player_pos with wasd keys allowing multiple keys to be pressed at once
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
     move_direction_deg = grid.player_direction_deg - 90;
-    move_player_respect_collision(grid, move_direction_deg, grid_raycast_segments);
+    move_player_respect_collision(grid, move_direction_deg, grid_cubes);
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
     move_direction_deg = grid.player_direction_deg + 90;
-    move_player_respect_collision(grid, move_direction_deg, grid_raycast_segments);
+    move_player_respect_collision(grid, move_direction_deg, grid_cubes);
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
     move_direction_deg = grid.player_direction_deg;
-    move_player_respect_collision(grid, move_direction_deg, grid_raycast_segments);
+    move_player_respect_collision(grid, move_direction_deg, grid_cubes);
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
     move_direction_deg = grid.player_direction_deg + 180;
-    move_player_respect_collision(grid, move_direction_deg, grid_raycast_segments);
+    move_player_respect_collision(grid, move_direction_deg, grid_cubes);
   }
 }
 

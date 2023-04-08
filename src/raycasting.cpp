@@ -3,10 +3,7 @@
 #include "raycasting.hpp"
 #include "lines.hpp"
 
-CubeRaycastSegments get_raycast_cube_segments(sf::Vector2i pos, Grid<int> &grid) {
-  if (grid.get(pos.x, pos.y) != 1)
-    return {};
-
+Cube get_cube(sf::Vector2i pos, Grid<int> &grid) {
   Line front = {
       {(float) pos.x * grid.cube_size, (float) pos.y * grid.cube_size},
       {(float) (pos.x + 1) * grid.cube_size, (float) pos.y * grid.cube_size}
@@ -24,55 +21,66 @@ CubeRaycastSegments get_raycast_cube_segments(sf::Vector2i pos, Grid<int> &grid)
       {(float) pos.x * grid.cube_size, (float) pos.y * grid.cube_size}
   };
 
-  return {front, right, back, left};
+  return {
+      (CubeValue) grid.get(pos.x, pos.y),
+      pos,
+      {front, right, back, left}
+  };
 }
 
-std::vector<CubeRaycastSegments> get_grid_raycast_segments(Grid<int> &grid) {
-  std::vector<CubeRaycastSegments> segments;
+std::vector<Cube> get_grid_cubes(Grid<int> &grid) {
+  std::vector<Cube> cubes;
 
   for (int y = 0; y < grid.height; y++) {
     for (int x = 0; x < grid.width; x++) {
-      segments.push_back(get_raycast_cube_segments({x, y}, grid));
+      cubes.push_back(get_cube({x, y}, grid));
     }
   }
 
-  return segments;
+  return cubes;
 }
 
-std::optional<float> raycast(sf::Vector2f pos,
-                             float direction_deg,
-                             Grid<int> &grid,
-                             std::vector<CubeRaycastSegments> &grid_raycast_segments) {
-  // get closest intersection from pos to direction_deg with cube_segments
-  std::optional<sf::Vector2f> closest_intersection;
+std::optional<Raycast> raycast(sf::Vector2f pos,
+                               float direction_deg,
+                               Grid<int> &grid,
+                               std::vector<Cube> &grid_cubes, CubeValue cube_target) {
+  // get closest intersection from pos to direction_deg with cube_target segments
+  std::optional<Raycast> closest_raycast = std::nullopt;
+
   // iterate over each cube
-  for (CubeRaycastSegments cube_segment : grid_raycast_segments) {
+  for (const Cube &cube : grid_cubes) {
+    if (cube.value != cube_target) {
+      continue;
+    }
+
     // iterate over each segment of the cube
-    for (Line segment : cube_segment) {
+    for (Line segment : cube.segments) {
       // get the intersection between the ray and the segment
-      sf::Vector2f ray_end_pos = polar_to_cartesian(pos, grid.render_distance, direction_deg);
+      sf::Vector2f ray_max_distance_pos = polar_to_cartesian(pos, grid.render_distance, direction_deg);
 
       std::optional<sf::Vector2f>
-          intersection = get_segments_intersection(pos, ray_end_pos, segment.start_pos, segment.end_pos);
+          intersection = get_segments_intersection({pos, ray_max_distance_pos}, segment);
 
       // if there is an intersection
       if (intersection.has_value()) {
         float distance_to_intersection = magnitude(intersection.value() - pos);
 
         // if there is no closest intersection yet, or if the current intersection is closer than the closest intersection
-        if (!closest_intersection.has_value()
-            || distance_to_intersection < magnitude(closest_intersection.value() - pos)) {
+        if (!closest_raycast.has_value()
+            || distance_to_intersection < closest_raycast.value().distance) {
           // set the closest intersection to the current intersection
-          closest_intersection = intersection;
+          closest_raycast = Raycast{
+              distance_to_intersection,
+              intersection.value(),
+              // TODO: handle faces behind, they risk to have a negative local_intersection_x
+              intersection.value().x - (float) cube.pos.x * grid.cube_size,
+              segment,
+              cube
+          };
         }
       }
     }
   }
 
-  // if there is a closest intersection, return the distance to it
-  if (closest_intersection.has_value()) {
-    return magnitude(closest_intersection.value() - pos);
-  }
-
-  return std::nullopt;
+  return closest_raycast;
 }

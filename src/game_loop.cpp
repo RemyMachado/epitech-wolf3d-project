@@ -15,18 +15,28 @@ const int WINDOW_HEIGHT = 1080;
 void run_game(Grid<int> &grid) {
   sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Epitech - Wolf3D");
 
+  // load wall texture
+  sf::Texture wall_texture;
+  if (!wall_texture.loadFromFile("./assets/visuals/wall.png")) {
+    throw std::runtime_error("Could not load wall texture file");
+  }
+
+  // assign wall texture to sprite
+  sf::Sprite wall_sprite;
+  wall_sprite.setTexture(wall_texture);
+
   // set the mouse cursor to the center of the window
   window.setMouseCursorGrabbed(true);
   // hide the mouse cursor
   window.setMouseCursorVisible(false);
 
-  std::vector<CubeRaycastSegments> grid_raycast_segments = get_grid_raycast_segments(grid);
+  std::vector<Cube> grid_cubes = get_grid_cubes(grid);
 
   while (window.isOpen()) {
     /*
      * Handle user inputs
      * */
-    handle_player_movement(grid, grid_raycast_segments);
+    handle_player_movement(grid, grid_cubes);
 
     sf::Event event;
     while (window.pollEvent(event)) {
@@ -47,10 +57,12 @@ void run_game(Grid<int> &grid) {
      * */
 
     // 3d walls
-    draw_walls_3d(window, grid, grid_raycast_segments);
-    
+    draw_walls_3d(window, grid, grid_cubes);
+
     // minimap
-    draw_minimap(window, grid, grid_raycast_segments);
+    draw_minimap(window, grid, grid_cubes);
+
+//    window.draw(wall_sprite);
 
     /*
      * Render

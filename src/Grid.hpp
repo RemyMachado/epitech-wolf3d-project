@@ -6,6 +6,12 @@
 #include <ostream>
 #include "my_math.hpp"
 
+enum CubeValue {
+  EMPTY = 0,
+  WALL = 1,
+  PLAYER = 9,
+};
+
 template<typename T>
 class Grid {
  public:

@@ -8,7 +8,7 @@
 #include "Grid.hpp"
 #include "raycasting.hpp"
 
-void handle_player_movement(Grid<int> &grid, std::vector<CubeRaycastSegments> &grid_raycast_segments);
+void handle_player_movement(Grid<int> &grid, std::vector<Cube> &grid_cubes);
 void handle_player_camera_rotation(Grid<int> &grid, sf::RenderWindow &window, sf::Event &event);
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_PLAYER_HPP_
