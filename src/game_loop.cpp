@@ -9,8 +9,6 @@
 
 const int WINDOW_WIDTH = 1920;
 const int WINDOW_HEIGHT = 1080;
-const int TEXTURE_WIDTH = 64;
-const int TEXTURE_HEIGHT = 64;
 
 void run_game(Grid<int> &grid) {
   sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Epitech - Wolf3D");

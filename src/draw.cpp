@@ -71,7 +71,7 @@ void draw_walls_3d(sf::RenderWindow &window,
                    sf::Sprite &wall_sprite) {
   int render_width = (int) window.getSize().x;
   int render_height = (int) window.getSize().y;
-  int ray_thickness = 10;
+  int ray_thickness = 4;
 
 
   // for each pixel in width, cast a ray and draw a vertical line
@@ -104,7 +104,7 @@ void draw_walls_3d(sf::RenderWindow &window,
       }
 
       // for each pixel in height, draw the corresponding pixel of the texture
-      for (int y = 0; y < column_height; y++) {
+      for (int y = 0; y < column_height; y += ray_thickness) {
         // calculate the position of the y pixel in the texture
         float texture_pixel_y = (float) y / column_height * wall_texture.getSize().y;
 
