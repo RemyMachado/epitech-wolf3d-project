@@ -6,6 +6,13 @@
 #include <ostream>
 #include "my_math.hpp"
 
+enum CubeSide {
+  NORTH = 0,
+  EAST = 1,
+  SOUTH = 2,
+  WEST = 3,
+};
+
 enum CubeValue {
   EMPTY = 0,
   WALL = 1,
@@ -33,7 +40,7 @@ class Grid {
       : width(width),
         height(height),
         values(values),
-        render_distance(magnitude({(float) width, (float) height}) * cube_size),
+        render_distance(get_magnitude({(float) width, (float) height}) * cube_size),
         player_move_speed(cube_size * 0.1f) {
     // find the player position in the grid (number '9')
     for (int y = 0; y < height; y++) {

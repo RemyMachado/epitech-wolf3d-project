@@ -2,39 +2,6 @@
 #include <optional>
 #include "lines.hpp"
 
-float compute_slope(sf::Vector2f start_pos, sf::Vector2f end_pos) {
-  if (start_pos.x == end_pos.x) {
-    throw std::invalid_argument("Vertical segment has no slope");
-  }
-
-  return (end_pos.y - start_pos.y) / (end_pos.x - start_pos.x);
-}
-
-float compute_y_intercept(sf::Vector2f start_pos, sf::Vector2f end_pos) {
-  float slope = compute_slope(start_pos, end_pos);
-
-  return start_pos.y - slope * start_pos.x;
-}
-
-bool is_vertical_segment(sf::Vector2f start_pos, sf::Vector2f end_pos) {
-  return start_pos.x == end_pos.x;
-}
-
-bool
-is_parallel_segments(sf::Vector2f start_pos1, sf::Vector2f end_pos1, sf::Vector2f start_pos2, sf::Vector2f end_pos2) {
-  if (is_vertical_segment(start_pos1, end_pos1) && is_vertical_segment(start_pos2, end_pos2)) {
-    return true;
-  }
-  if (is_vertical_segment(start_pos1, end_pos1) || is_vertical_segment(start_pos2, end_pos2)) {
-    return false;
-  }
-
-  float slope1 = compute_slope(start_pos1, end_pos1);
-  float slope2 = compute_slope(start_pos2, end_pos2);
-
-  return slope1 == slope2;
-}
-
 /*
  * Using the cross product 'x', we must find an intersection point such that:
  *

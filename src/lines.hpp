@@ -9,6 +9,7 @@ struct Line {
   sf::Vector2f end;
 };
 
+float dot_product(const sf::Vector2f &a, const sf::Vector2f &b);
 std::optional<sf::Vector2f>
 get_segments_intersection(Line line1, Line line2);
 

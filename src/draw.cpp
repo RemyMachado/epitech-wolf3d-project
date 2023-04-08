@@ -1,3 +1,4 @@
+#include <iostream>
 #include "draw.hpp"
 #include "raycasting.hpp"
 #include "Grid.hpp"
@@ -63,16 +64,21 @@ void draw_minimap(sf::RenderWindow &window, Grid<int> &grid, std::vector<Cube> &
   draw_player_on_minimap(window, grid);
 }
 
-void draw_walls_3d(sf::RenderWindow &window, Grid<int> &grid, std::vector<Cube> &grid_cubes) {
+void draw_walls_3d(sf::RenderWindow &window,
+                   Grid<int> &grid,
+                   std::vector<Cube> &grid_cubes,
+                   sf::Texture &wall_texture,
+                   sf::Sprite &wall_sprite) {
   int render_width = (int) window.getSize().x;
   int render_height = (int) window.getSize().y;
-  int ray_thickness = 5;
+  int ray_thickness = 10;
+
 
   // for each pixel in width, cast a ray and draw a vertical line
-  for (int x = 0; x < render_width; x += ray_thickness) {
+  for (int window_x = 0; window_x < render_width; window_x += ray_thickness) {
     // calculate the angle of the ray
     float rotation_step_deg = grid.fov_deg / render_width;
-    float ray_angle_deg = grid.player_direction_deg - grid.fov_deg / 2 + rotation_step_deg * (float) x;
+    float ray_angle_deg = grid.player_direction_deg - grid.fov_deg / 2 + rotation_step_deg * (float) window_x;
     float ray_angle_diff_deg = ray_angle_deg - grid.player_direction_deg;
     float fish_eye_correction = cosf(degrees_to_radians(ray_angle_diff_deg));
 
@@ -81,33 +87,34 @@ void draw_walls_3d(sf::RenderWindow &window, Grid<int> &grid, std::vector<Cube> 
     if (raycast_wall.has_value()) {
       float raycast_distance_corrected = raycast_wall.value().distance * fish_eye_correction;
 
-      float line_height = (float) render_height * (grid.cube_size / raycast_distance_corrected);
-      sf::Vector2f line_start_pos = sf::Vector2f((float) x,
-                                                 ((float) window.getSize().y - (float) render_height) / 2
-                                                     + ((float) render_height - line_height) / 2);
-      sf::Vector2f line_end_pos =
-          sf::Vector2f((float) x,
-                       ((float) window.getSize().y - (float) render_height) / 2
-                           + (float) render_height - ((float) render_height - line_height) / 2);
+      // the height to draw
+      float column_height = (float) render_height * (grid.cube_size / raycast_distance_corrected);
 
-      // draw the line
-      sf::Vertex line[] = {
-          sf::Vertex(line_start_pos, sf::Color::Red),
-          sf::Vertex(line_end_pos, sf::Color::Red)
-      };
+      // calculate the position of the window_x pixel in the texture using hit side
+      float texture_pixel_x = 0;
 
-      // draw the line with thickness equal to ray_thickness
-      for (int i = 0; i < ray_thickness; i++) {
-        if (line[0].position.x + (float) i > window.getSize().x) {
-          break;
-        }
+      if (raycast_wall.value().hit_side == CubeSide::SOUTH) {
+        texture_pixel_x = raycast_wall.value().local_intersection.x / grid.cube_size * wall_texture.getSize().x;
+      } else if (raycast_wall.value().hit_side == CubeSide::NORTH) {
+        texture_pixel_x = (1 - raycast_wall.value().local_intersection.x / grid.cube_size) * wall_texture.getSize().x;
+      } else if (raycast_wall.value().hit_side == CubeSide::WEST) {
+        texture_pixel_x = raycast_wall.value().local_intersection.y / grid.cube_size * wall_texture.getSize().x;
+      } else if (raycast_wall.value().hit_side == CubeSide::EAST) {
+        texture_pixel_x = (1 - raycast_wall.value().local_intersection.y / grid.cube_size) * wall_texture.getSize().x;
+      }
 
-        sf::Vertex thick_line[] = {
-            sf::Vertex(sf::Vector2f(line[0].position.x + (float) i, line[0].position.y), sf::Color::Red),
-            sf::Vertex(sf::Vector2f(line[1].position.x + (float) i, line[1].position.y), sf::Color::Red)
-        };
+      // for each pixel in height, draw the corresponding pixel of the texture
+      for (int y = 0; y < column_height; y++) {
+        // calculate the position of the y pixel in the texture
+        float texture_pixel_y = (float) y / column_height * wall_texture.getSize().y;
 
-        window.draw(thick_line, 2, sf::Lines);
+        // calculate the position of the pixel in the window
+        float window_y = ((float) render_height - column_height) / 2 + (float) y;
+
+        // draw the pixel
+        wall_sprite.setPosition((float) window_x, window_y);
+        wall_sprite.setTextureRect(sf::IntRect(texture_pixel_x, (int) texture_pixel_y, ray_thickness, ray_thickness));
+        window.draw(wall_sprite);
       }
     }
   }

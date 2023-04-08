@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.23)
 project(epitech_wolf3d_project)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 add_executable(epitech_wolf3d_project src/main.cpp src/game_loop.cpp src/game_loop.hpp src/lines.cpp src/lines.hpp src/my_math.cpp src/my_math.hpp src/raycasting.cpp src/raycasting.hpp src/file_parser.cpp src/file_parser.hpp src/Grid.hpp src/player.cpp src/player.hpp src/draw.cpp src/draw.hpp)
 

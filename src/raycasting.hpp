@@ -7,14 +7,16 @@
 
 struct Cube {
   CubeValue value;
-  sf::Vector2i pos;
+  sf::Vector2i indices;
+  sf::Vector2f pos;
   std::vector<Line> segments;
 };
 
 struct Raycast {
   float distance;
   sf::Vector2f intersection_pos;
-  float local_intersection_x;
+  sf::Vector2f local_intersection;
+  CubeSide hit_side;
   Line intersected_segment;
   Cube cube;
 };
@@ -24,5 +26,6 @@ std::optional<Raycast> raycast(sf::Vector2f pos,
                                float direction_deg,
                                Grid<int> &grid,
                                std::vector<Cube> &grid_cubes, CubeValue cube_target);
+CubeSide determine_hit_side(Line raycast_line);
 
 #endif //EPITECH_WOLF3D_PROJECT_RAYCASTING_HPP
