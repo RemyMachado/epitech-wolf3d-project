@@ -10,6 +10,8 @@
 const int WINDOW_WIDTH = 1920;
 const int WINDOW_HEIGHT = 1080;
 
+// TODO: draw minimap at right scale over the 3d view
+// TODO: pacman 3d
 void run_game(Grid<int> &grid) {
   sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Epitech - Wolf3D");
 
@@ -44,11 +46,11 @@ void run_game(Grid<int> &grid) {
      * Draw
      * */
 
-    // minimap
-    draw_minimap(window, grid, grid_raycast_segments);
-
     // 3d walls
     draw_walls_3d(window, grid, grid_raycast_segments);
+    
+    // minimap
+    draw_minimap(window, grid, grid_raycast_segments);
 
     /*
      * Render

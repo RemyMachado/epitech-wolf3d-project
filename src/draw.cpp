@@ -14,6 +14,12 @@ void draw_player_on_minimap(sf::RenderWindow &window, Grid<int> &grid) {
 void draw_minimap_grid(sf::RenderWindow &window,
                        Grid<int> &grid,
                        std::vector<CubeRaycastSegments> &grid_raycast_segments) {
+  // draw background
+  sf::RectangleShape rectangle(sf::Vector2f(grid.width * grid.cube_size, grid.height * grid.cube_size));
+  rectangle.setFillColor(sf::Color::Black);
+  rectangle.setPosition(0, 0);
+  window.draw(rectangle);
+
   // draw grid
   for (const CubeRaycastSegments &cube_raycast_segments : grid_raycast_segments) {
     for (Line raycast_segment : cube_raycast_segments) {
@@ -54,9 +60,10 @@ void draw_minimap(sf::RenderWindow &window, Grid<int> &grid, std::vector<CubeRay
 }
 
 void draw_walls_3d(sf::RenderWindow &window, Grid<int> &grid, std::vector<CubeRaycastSegments> &grid_raycast_segments) {
-  int render_width = (int) window.getSize().x / 2;
-  int render_height = (int) window.getSize().y / 2;
-  int ray_thickness = 5;
+  int render_width = (int) window.getSize().x;
+  int render_height = (int) window.getSize().y;
+  int ray_thickness = 8;
+
   // for each pixel in width, cast a ray and draw a vertical line
   for (int x = 0; x < render_width; x += ray_thickness) {
     // calculate the angle of the ray
@@ -74,11 +81,11 @@ void draw_walls_3d(sf::RenderWindow &window, Grid<int> &grid, std::vector<CubeRa
 //        float line_height = (render_height / intersection_distance2.value()) * 0.5f;
 
       float line_height = (float) render_height * (grid.cube_size / intersection_distance2.value());
-      sf::Vector2f line_start_pos = sf::Vector2f((float) window.getSize().x / 2 + (float) x,
+      sf::Vector2f line_start_pos = sf::Vector2f((float) x,
                                                  ((float) window.getSize().y - (float) render_height) / 2
                                                      + ((float) render_height - line_height) / 2);
       sf::Vector2f line_end_pos =
-          sf::Vector2f((float) window.getSize().x / 2 + (float) x,
+          sf::Vector2f((float) x,
                        ((float) window.getSize().y - (float) render_height) / 2
                            + (float) render_height - ((float) render_height - line_height) / 2);
 
