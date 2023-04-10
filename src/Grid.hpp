@@ -26,11 +26,13 @@ class Grid {
   const int height;
   const std::vector<T> values;
   const float cube_size = 10;
+  float camera_height = cube_size / 2;
   sf::Vector2f player_pos = {0, 0};
   float player_direction_deg = 0;
   float player_move_speed;
   float render_distance; // equals the diagonal of the grid
-  float fov_deg = 60;
+  float fov_horizontal_deg = 60;
+  float fov_vertical_deg = 60;
   bool recenter_mouse = false;
   float mouse_rotation_speed_deg = 0.02f;
   float keyboard_rotation_speed_deg = 5;
