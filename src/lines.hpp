@@ -1,15 +1,14 @@
-#include <SFML/System/Vector2.hpp>
-#include <optional>
-
 #ifndef EPITECH_WOLF3D_PROJECT_LINES_HPP
 #define EPITECH_WOLF3D_PROJECT_LINES_HPP
+
+#include <SFML/System/Vector2.hpp>
+#include <optional>
 
 struct Line {
   sf::Vector2f start;
   sf::Vector2f end;
 };
 
-float dot_product(const sf::Vector2f &a, const sf::Vector2f &b);
 std::optional<sf::Vector2f>
 get_segments_intersection(Line line1, Line line2);
 

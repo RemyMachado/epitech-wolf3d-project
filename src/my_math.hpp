@@ -1,9 +1,10 @@
-#include <cmath>
-#include <SFML/System/Vector2.hpp>
-#include "lines.hpp"
-
 #ifndef EPITECH_WOLF3D_PROJECT_MY_MATH_HPP
 #define EPITECH_WOLF3D_PROJECT_MY_MATH_HPP
+
+#include <cmath>
+#include <SFML/System/Vector2.hpp>
+
+class Line;
 
 float degrees_to_radians(float degrees);
 float get_magnitude(sf::Vector2f vec);

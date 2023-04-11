@@ -1,26 +1,11 @@
 #include <iostream>
 #include <chrono>
 #include <SFML/Graphics.hpp>
-#include <algorithm>
 #include "game_loop.hpp"
-#include "lines.hpp"
-#include "raycasting.hpp"
-#include "player.hpp"
 #include "draw.hpp"
+#include "GameManager.hpp"
 
-const int WINDOW_WIDTH = 1024;
-const int WINDOW_HEIGHT = 1024;
-
-void run_game(Grid<int> &grid) {
-  sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Epitech - Wolf3D");
-
-  // set the mouse cursor to the center of the window
-  window.setMouseCursorGrabbed(true);
-  // hide the mouse cursor
-  window.setMouseCursorVisible(false);
-
-  std::vector<Cube> grid_cubes = get_grid_cubes(grid);
-
+void run_game(GameManager &game_manager) {
   // load textures (wall, floor)
   sf::Texture wall_texture;
   sf::Texture floor_texture;
@@ -45,26 +30,28 @@ void run_game(Grid<int> &grid) {
   floor_sprite.setTexture(floor_texture);
   ceiling_sprite.setTexture(ceiling_texture);
 
-  while (window.isOpen()) {
+  while (game_manager.window.isOpen()) {
     auto start_loop = std::chrono::high_resolution_clock::now();
-    /*
-     * Handle user inputs
-     * */
-    handle_player_movement(grid, grid_cubes);
 
+    /*
+    * Handle user inputs
+    * */
+    game_manager.mouse_and_keyboard.handle_user_inputs(game_manager.player);
+    
     sf::Event event;
-    while (window.pollEvent(event)) {
+    while (game_manager.window.pollEvent(event)) {
       if (event.type == sf::Event::Closed ||
           (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)) {
-        window.close();
+        game_manager.window.close();
       }
-      handle_player_camera_rotation(grid, window, event);
+
+      game_manager.mouse_and_keyboard.handle_user_inputs_event_based(game_manager.player, game_manager.window, event);
     }
 
     /*
      * Clear the window for drawing
      * */
-    window.clear();
+    game_manager.window.clear();
 
     /*
      * Draw
@@ -72,7 +59,11 @@ void run_game(Grid<int> &grid) {
 
     // 3d floor
     auto start_floor = std::chrono::high_resolution_clock::now();
-    draw_floor_and_ceiling_3d(window, grid, grid_cubes, floor_texture, floor_sprite, ceiling_texture, ceiling_sprite);
+    draw_floor_and_ceiling_3d(game_manager,
+                              floor_texture,
+                              floor_sprite,
+                              ceiling_texture,
+                              ceiling_sprite);
     // Stop the timer
     auto end_floor = std::chrono::high_resolution_clock::now();
 
@@ -83,11 +74,7 @@ void run_game(Grid<int> &grid) {
 
     // 3d walls
     auto start_walls = std::chrono::high_resolution_clock::now();
-    draw_walls_3d(window,
-                  grid,
-                  grid_cubes,
-                  wall_texture,
-                  wall_sprite);
+    draw_walls_3d(game_manager, wall_texture, wall_sprite);
     // Stop the timer
     auto end_walls = std::chrono::high_resolution_clock::now();
 
@@ -97,7 +84,7 @@ void run_game(Grid<int> &grid) {
 
     // minimap
     auto start_minimap = std::chrono::high_resolution_clock::now();
-    draw_minimap(window, grid, grid_cubes);
+    draw_minimap(game_manager);
     // Stop the timer
     auto end_minimap = std::chrono::high_resolution_clock::now();
 
@@ -112,7 +99,7 @@ void run_game(Grid<int> &grid) {
      * Render
      * */
     auto start_display = std::chrono::high_resolution_clock::now();
-    window.display();
+    game_manager.window.display();
     auto end_display = std::chrono::high_resolution_clock::now();
 
     // Calculate the duration

@@ -1,4 +1,3 @@
-#include <stdexcept>
 #include <optional>
 #include "lines.hpp"
 
@@ -32,7 +31,7 @@ get_segments_intersection(Line line1, Line line2) {
    * (P + tR) x S = Q x S + 0
    *
    * At this point, we have eliminated the variable "u" from the equation.
-   * In the next steps, we rearrange the equation to isolate "t" and find its value.
+   * In the next steps, we rearrange the equation to isolate "t" and find its symbol.
    *
    * Rewriting left side of the equation:
    *
@@ -48,7 +47,7 @@ get_segments_intersection(Line line1, Line line2) {
    *
    * (t * (R x S)) = (Q - P) x S
    *
-   * Now, we have an equation that relates the variable t to the given line segments through the cross product.
+   * Now, we have an equation that relates the variable t to the given line horizontal_segments through the cross product.
    * To solve for t, we divide both sides of the equation by the term (R x S):
    *
    * t = ((Q - P) x S) / (R x S)
@@ -67,7 +66,7 @@ get_segments_intersection(Line line1, Line line2) {
    * (P x R) + 0 = (Q + uS) x R
    *
    * At this point, we have eliminated the variable "t" from the equation.
-   * In the next steps, we rearrange the equation to isolate "u" and find its value.
+   * In the next steps, we rearrange the equation to isolate "u" and find its symbol.
    *
    * Rewriting right side of the equation:
    * (P x R) = (Q x R) + u(S x R)
@@ -82,7 +81,7 @@ get_segments_intersection(Line line1, Line line2) {
    *
    * (P - Q) x R = u(S x R)
    *
-   * Now, we have an equation that relates the variable u to the given line segments through the cross product.
+   * Now, we have an equation that relates the variable u to the given line horizontal_segments through the cross product.
    * To solve for u, we divide both sides of the equation by the term (S x R):
    *
    * u = ((P - Q) x R) / (S x R)

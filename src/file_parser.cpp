@@ -2,19 +2,20 @@
 #include <string>
 #include <iostream>
 #include "file_parser.hpp"
+#include "Tile.hpp"
 
 /*
- * A function parsing a file and returning a Grid<int> object
+ * A function parsing a file and returning a Grid<char> object
  * A file like the following (rectangular grid)
  *
- * 111111
- * 101001
- * 100011
- * 110101
- * 100001
- * 111111
+ * ######
+ * # #  #
+ * #   ##
+ * ## # #
+ * #  P #
+ * ######
  * */
-Grid<int> parse_file(char *&filename) {
+FileData parse_file(char *filename, float tile_size) {
   // check if filename is not null
   if (filename == nullptr) {
     std::cerr << "Error: filename is null" << std::endl;
@@ -23,7 +24,7 @@ Grid<int> parse_file(char *&filename) {
 
   std::ifstream file(filename);
   std::string line;
-  std::vector<int> values;
+  std::vector<Tile> values;
   int width = 0;
   int height = 0;
 
@@ -34,9 +35,15 @@ Grid<int> parse_file(char *&filename) {
   }
 
   while (std::getline(file, line)) {
-    width = line.size();
+    width = (int) line.size();
+    int x = 0;
     for (char c : line) {
-      values.push_back(c - '0');
+      if (!Tile::is_valid_symbol(c)) {
+        std::cerr << "Error: invalid symbol \"" << c << "\" in file \"" << filename << "\"" << std::endl;
+        exit(EXIT_FAILURE);
+      }
+      values.push_back(Tile((Tile::Symbol) c, {x, height}, tile_size));
+      x++;
     }
     height++;
   }
