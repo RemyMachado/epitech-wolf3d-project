@@ -37,6 +37,7 @@ class Grid {
   float mouse_rotation_speed_deg = 0.02f;
   float keyboard_rotation_speed_deg = 5;
   float player_circle_radius_minimap = 5;
+  int hud_height = 200;
 
   Grid(int width, int height, std::vector<T> values)
       : width(width),

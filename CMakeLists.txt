@@ -9,6 +9,7 @@ add_executable(epitech_wolf3d_project src/main.cpp src/game_loop.cpp src/game_lo
 #directory where the cmake files for SFML are. You will want to change this to wherever your SFML installation is
 set(SFML_DIR "/usr/lib/x86_64-linux-gnu/cmake/SFML")
 find_package(SFML 2.5.1 COMPONENTS system graphics window REQUIRED)
+find_package(Threads REQUIRED)
 
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
@@ -16,5 +17,7 @@ target_link_libraries(${PROJECT_NAME}
         sfml-system
         sfml-graphics
         sfml-window
+
+        Threads::Threads
         )
 

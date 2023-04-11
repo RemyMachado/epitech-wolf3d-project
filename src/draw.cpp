@@ -72,7 +72,7 @@ void draw_floor_and_ceiling_3d(sf::RenderWindow &window,
                                sf::Texture &ceiling_texture,
                                sf::Sprite &ceiling_sprite) {
   int render_width = (int) window.getSize().x;
-  int render_height = (int) window.getSize().y;
+  int render_height = (int) window.getSize().y - grid.hud_height;
   float half_render_height = (float) render_height / 2;
   int ray_thickness = 4;
 
@@ -149,11 +149,9 @@ void draw_walls_3d(sf::RenderWindow &window,
                    Grid<int> &grid,
                    std::vector<Cube> &grid_cubes,
                    sf::Texture &wall_texture,
-                   sf::Sprite &wall_sprite, sf::Texture &floor_texture,
-                   sf::Sprite &floor_sprite, sf::Texture &ceiling_texture,
-                   sf::Sprite &ceiling_sprite) {
+                   sf::Sprite &wall_sprite) {
   int render_width = (int) window.getSize().x;
-  int render_height = (int) window.getSize().y;
+  int render_height = (int) window.getSize().y - grid.hud_height;
   int ray_thickness = 6;
 
   // for each pixel in width, cast a ray and draw a vertical line
@@ -194,6 +192,10 @@ void draw_walls_3d(sf::RenderWindow &window,
         // calculate the position of the pixel in the window
         float window_y = ((float) render_height - column_height) / 2 + (float) y;
 
+        if (window_y > render_height) {
+          break;
+        }
+
         // draw the pixel
         wall_sprite.setPosition((float) window_x, window_y);
         wall_sprite.setTextureRect(sf::IntRect(texture_pixel_x, (int) texture_pixel_y, ray_thickness, ray_thickness));
@@ -201,4 +203,15 @@ void draw_walls_3d(sf::RenderWindow &window,
       }
     }
   }
+}
+
+void draw_hud(sf::RenderWindow &window,
+              Grid<int> &grid) {
+  int render_width = (int) window.getSize().x;
+
+  // draw the background
+  sf::RectangleShape background(sf::Vector2f(render_width, grid.hud_height));
+  background.setFillColor(sf::Color::Blue);
+  background.setPosition(0, window.getSize().y - grid.hud_height);
+  window.draw(background);
 }
