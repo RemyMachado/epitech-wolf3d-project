@@ -3,11 +3,12 @@
 #include "raycasting.hpp"
 
 void draw_player_on_minimap(GameManager &game_manager) {
-  sf::CircleShape circleShape(game_manager.hud.minimap_player_radius);
+  int circle_radius = game_manager.grid.tile_size / 2;
+  sf::CircleShape circleShape(circle_radius);
   circleShape.setFillColor(sf::Color::Red);
 
-  circleShape.setPosition(game_manager.player.pos.x - game_manager.hud.minimap_player_radius,
-                          game_manager.player.pos.y - game_manager.hud.minimap_player_radius);
+  circleShape.setPosition(game_manager.player.pos.x - circle_radius,
+                          game_manager.player.pos.y - circle_radius);
   game_manager.window.draw(circleShape);
 }
 
@@ -303,12 +304,13 @@ void draw_raycast_map(std::vector<ComputedDrawHit> &raycast_map, sf::RenderWindo
   }
 }
 
-void draw_hud(GameManager &game_manager) {
-  int render_width = (int) game_manager.window.getSize().x;
+void draw_hud(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprite &hud_sprite) {
+  float width_to_height_ratio = (float) hud_texture.getSize().x / (float) hud_texture.getSize().y;
+  int render_width = game_manager.hud.height * width_to_height_ratio;
 
-  // draw the background
-  sf::RectangleShape background(sf::Vector2f(render_width, game_manager.hud.height));
-  background.setFillColor(sf::Color::Blue);
-  background.setPosition(0, game_manager.window.getSize().y - game_manager.hud.height);
-  game_manager.window.draw(background);
+  // draw the hud
+  hud_sprite.setPosition(0, game_manager.window.getSize().y - game_manager.hud.height);
+  hud_sprite.setScale((float) render_width / (float) hud_texture.getSize().x,
+					  (float) game_manager.hud.height / (float) hud_texture.getSize().y);
+  game_manager.window.draw(hud_sprite);
 }

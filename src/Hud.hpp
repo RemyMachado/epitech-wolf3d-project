@@ -3,11 +3,10 @@
 
 class Hud {
  public:
-  int height;
-  float minimap_player_radius;
+  int height; // computed by the HUD texture ratio width/height
 
-  explicit Hud(int height = 200, float minimap_player_radius = 5)
-      : height(height), minimap_player_radius(minimap_player_radius) {}
+  explicit Hud()
+	  : height(0) {}
 };
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_HUD_HPP_

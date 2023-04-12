@@ -37,6 +37,6 @@ void draw_raycast_map(std::vector<ComputedDrawHit> &raycast_map,
 					  sf::Sprite &floor_sprite,
 					  sf::Texture &ceiling_texture,
 					  sf::Sprite &ceiling_sprite);
-void draw_hud(GameManager &game_manager);
+void draw_hud(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprite &hud_sprite);
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_DRAW_HPP_

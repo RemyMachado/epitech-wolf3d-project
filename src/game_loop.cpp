@@ -10,6 +10,7 @@ void run_game(GameManager &game_manager) {
   sf::Texture wall_texture;
   sf::Texture floor_texture;
   sf::Texture ceiling_texture;
+  sf::Texture hud_texture;
   if (!wall_texture.loadFromFile("./assets/visuals/walls/redbrick.png")) {
 	throw std::runtime_error("Could not load wall texture file");
   }
@@ -19,16 +20,22 @@ void run_game(GameManager &game_manager) {
   if (!ceiling_texture.loadFromFile("./assets/visuals/ceiling/greystone.png")) {
 	throw std::runtime_error("Could not load ceiling texture file");
   }
+  if (!hud_texture.loadFromFile("./assets/visuals/hud/empty-hud.png")) {
+	throw std::runtime_error("Could not load hud texture file");
+  }
 
+  game_manager.hud.height = hud_texture.getSize().y * game_manager.window.getSize().x / hud_texture.getSize().x;
 
 
   // assign textures to sprites
   sf::Sprite wall_sprite;
   sf::Sprite floor_sprite;
   sf::Sprite ceiling_sprite;
+  sf::Sprite hud_sprite;
   wall_sprite.setTexture(wall_texture);
   floor_sprite.setTexture(floor_texture);
   ceiling_sprite.setTexture(ceiling_texture);
+  hud_sprite.setTexture(hud_texture);
 
   while (game_manager.window.isOpen()) {
 	auto start_loop = std::chrono::high_resolution_clock::now();
@@ -95,7 +102,7 @@ void run_game(GameManager &game_manager) {
 	std::cout << "Draw minimap execution time: " << duration << " ms" << std::endl;
 
 	// draw hud
-//    draw_hud(window, grid);
+	draw_hud(game_manager, hud_texture, hud_sprite);
 
 	/*
 	 * Render
