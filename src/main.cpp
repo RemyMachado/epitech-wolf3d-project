@@ -6,7 +6,7 @@
 int main(int argc, char **argv) {
   std::cout << "Hello, World!!!" << std::endl;
 
-  GameManager game_manager = GameManager(argv[1], 10, {1024, 1024});
+  GameManager game_manager = GameManager(argv[1], 5, {800, 800});
 
   // cout the grid
   std::cout << game_manager.grid << std::endl;

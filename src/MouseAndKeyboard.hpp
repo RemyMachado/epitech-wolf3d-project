@@ -16,14 +16,14 @@ class MouseAndKeyboard {
 
   MouseAndKeyboard() = default;
 
-  void handle_user_inputs(Player &player);
+  static void handle_user_inputs(sf::RenderWindow &window, Player &player);
   void handle_user_inputs_event_based(Player &player, sf::RenderWindow &window, sf::Event &event);
 
  private:
   static void handle_player_movement(Player &player);
   void handle_player_rotation(Player &player,
-                              sf::RenderWindow &window,
-                              sf::Event &event);
+							  sf::RenderWindow &window,
+							  sf::Event &event);
 };
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_MOUSEANDKEYBOARD_HPP_

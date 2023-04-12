@@ -37,7 +37,7 @@ void run_game(GameManager &game_manager) {
 	/*
 	* Handle user inputs
 	* */
-	game_manager.mouse_and_keyboard.handle_user_inputs(game_manager.player);
+	game_manager.mouse_and_keyboard.handle_user_inputs(game_manager.window, game_manager.player);
 
 	sf::Event event;
 	while (game_manager.window.pollEvent(event)) {

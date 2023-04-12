@@ -73,7 +73,7 @@ void draw_floor_and_ceiling_3d(GameManager &game_manager,
   int render_width = (int) game_manager.window.getSize().x;
   int render_height = (int) game_manager.window.getSize().y - game_manager.hud.height;
   int half_render_height = render_height / 2;
-  int ray_thickness = 6;
+  int ray_thickness = 4;
 
   // for each pixel in height, cast a ray and draw a horizontal line
   for (int window_y = half_render_height; window_y < render_height; window_y += ray_thickness) {
