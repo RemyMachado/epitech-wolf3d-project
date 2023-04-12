@@ -15,7 +15,7 @@ class Tile {
   std::vector<Line> horizontal_segments;
 
   enum Symbol : char {
-    EMPTY = ' ',
+    FLOOR = ' ',
     WALL = '1',
     PLAYER = 'P',
   };
@@ -53,7 +53,7 @@ class Tile {
 
   static const std::unordered_set<char> &get_valid_symbols() {
     static const std::unordered_set<char> valid_symbols = {
-        Symbol::EMPTY, Symbol::WALL, Symbol::PLAYER,
+        Symbol::FLOOR, Symbol::WALL, Symbol::PLAYER,
     };
     return valid_symbols;
   }

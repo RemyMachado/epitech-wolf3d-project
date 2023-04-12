@@ -40,7 +40,11 @@ void draw_player_direction_minimap(GameManager &game_manager) {
   // and draw a line from the player position to the intersection point
   std::optional<Raycast>
       raycast_wall =
-      raycast(game_manager.player.pos, game_manager.player.dir_deg, game_manager.camera.render_distance, game_manager.grid, Tile::Symbol::WALL);
+      raycast(game_manager.player.pos,
+              game_manager.player.dir_deg,
+              game_manager.camera.render_distance,
+              game_manager.grid,
+              Tile::Symbol::WALL);
   if (raycast_wall.has_value()) {
     sf::Vertex line[] = {
         sf::Vertex(sf::Vector2f(game_manager.player.pos.x, game_manager.player.pos.y)),
@@ -108,18 +112,22 @@ void draw_floor_and_ceiling_3d(GameManager &game_manager,
                                                                distance_to_point_above_floor,
                                                                horizontal_ray_angle_deg);
 
-      if (floor_intersection_pos.x < 0 || floor_intersection_pos.x > (float) game_manager.grid.width * game_manager.grid.tile_size ||
-          floor_intersection_pos.y < 0 || floor_intersection_pos.y > (float) game_manager.grid.height * game_manager.grid.tile_size) {
+      if (floor_intersection_pos.x<0 || floor_intersection_pos.x>(float)
+        game_manager.grid.width * game_manager.grid.tile_size ||
+            floor_intersection_pos.y<0 || floor_intersection_pos.y>(float)
+      game_manager.grid.height * game_manager.grid.tile_size) {
         continue;
       }
 
       // find the texture coordinates
       sf::Vector2f local_intersection =
-          floor_intersection_pos - sf::Vector2f(floor(floor_intersection_pos.x / game_manager.grid.tile_size) * game_manager.grid.tile_size,
-                                                floor(floor_intersection_pos.y / game_manager.grid.tile_size) * game_manager.grid.tile_size);
-      sf::Vector2f texture_coordinates = sf::Vector2f(local_intersection.x / game_manager.grid.tile_size * floor_texture.getSize().x,
-                                                      local_intersection.y / game_manager.grid.tile_size
-                                                          * floor_texture.getSize().y);
+          floor_intersection_pos - sf::Vector2f(
+              floor(floor_intersection_pos.x / game_manager.grid.tile_size) * game_manager.grid.tile_size,
+              floor(floor_intersection_pos.y / game_manager.grid.tile_size) * game_manager.grid.tile_size);
+      sf::Vector2f texture_coordinates =
+          sf::Vector2f(local_intersection.x / game_manager.grid.tile_size * floor_texture.getSize().x,
+                       local_intersection.y / game_manager.grid.tile_size
+                           * floor_texture.getSize().y);
 
       // draw the floor
       floor_sprite.setPosition((float) window_x, (float) window_y);
@@ -152,13 +160,18 @@ void draw_walls_3d(GameManager &game_manager,
     // calculate the angle of the ray
     float rotation_step_deg = game_manager.camera.fov_horizontal_deg / render_width;
     float
-        ray_angle_deg = game_manager.player.dir_deg - game_manager.camera.fov_horizontal_deg / 2 + rotation_step_deg * (float) window_x;
+        ray_angle_deg =
+        game_manager.player.dir_deg - game_manager.camera.fov_horizontal_deg / 2 + rotation_step_deg * (float) window_x;
     float ray_angle_diff_deg = ray_angle_deg - game_manager.player.dir_deg;
     float fish_eye_correction = cosf(degrees_to_radians(ray_angle_diff_deg));
 
     // cast the ray
     std::optional<Raycast>
-        raycast_wall = raycast(game_manager.player.pos, ray_angle_deg, game_manager.camera.render_distance, game_manager.grid, Tile::Symbol::WALL);
+        raycast_wall = raycast(game_manager.player.pos,
+                               ray_angle_deg,
+                               game_manager.camera.render_distance,
+                               game_manager.grid,
+                               Tile::Symbol::WALL);
     if (raycast_wall.has_value()) {
       float raycast_distance_corrected = raycast_wall.value().distance * fish_eye_correction;
 
@@ -169,13 +182,17 @@ void draw_walls_3d(GameManager &game_manager,
       float texture_pixel_x = 0;
 
       if (raycast_wall.value().hit_side == Tile::Side::SOUTH) {
-        texture_pixel_x = raycast_wall.value().local_intersection.x / game_manager.grid.tile_size * wall_texture.getSize().x;
+        texture_pixel_x =
+            raycast_wall.value().local_intersection.x / game_manager.grid.tile_size * wall_texture.getSize().x;
       } else if (raycast_wall.value().hit_side == Tile::Side::NORTH) {
-        texture_pixel_x = (1 - raycast_wall.value().local_intersection.x / game_manager.grid.tile_size) * wall_texture.getSize().x;
+        texture_pixel_x =
+            (1 - raycast_wall.value().local_intersection.x / game_manager.grid.tile_size) * wall_texture.getSize().x;
       } else if (raycast_wall.value().hit_side == Tile::Side::WEST) {
-        texture_pixel_x = raycast_wall.value().local_intersection.y / game_manager.grid.tile_size * wall_texture.getSize().x;
+        texture_pixel_x =
+            raycast_wall.value().local_intersection.y / game_manager.grid.tile_size * wall_texture.getSize().x;
       } else if (raycast_wall.value().hit_side == Tile::Side::EAST) {
-        texture_pixel_x = (1 - raycast_wall.value().local_intersection.y / game_manager.grid.tile_size) * wall_texture.getSize().x;
+        texture_pixel_x =
+            (1 - raycast_wall.value().local_intersection.y / game_manager.grid.tile_size) * wall_texture.getSize().x;
       }
 
       // for each pixel in height, draw the corresponding pixel of the texture
@@ -195,6 +212,45 @@ void draw_walls_3d(GameManager &game_manager,
         wall_sprite.setTextureRect(sf::IntRect(texture_pixel_x, (int) texture_pixel_y, ray_thickness, ray_thickness));
         game_manager.window.draw(wall_sprite);
       }
+    }
+  }
+}
+
+void draw_raycast_map(std::vector<ComputedDrawHit> &raycast_map, sf::RenderWindow &window, int raycast_thickness, sf::Texture &wall_texture,
+                      sf::Sprite &wall_sprite, sf::Texture &floor_texture,
+                      sf::Sprite &floor_sprite,
+                      sf::Texture &ceiling_texture,
+                      sf::Sprite &ceiling_sprite) {
+  int half_field_height = window.getSize().y / 2;
+
+  // Range-based for loop
+  for (const auto &computed_draw_hit : raycast_map) {
+    if (computed_draw_hit.tile_symbol == Tile::Symbol::WALL) {
+      wall_sprite.setPosition((float) computed_draw_hit.pixel_pos.x, (float) computed_draw_hit.pixel_pos.y);
+      wall_sprite.setTextureRect(sf::IntRect(computed_draw_hit.texture_percentage_coords.x * wall_texture.getSize().x,
+                                             computed_draw_hit.texture_percentage_coords.y * wall_texture.getSize().y,
+                                             raycast_thickness,
+                                             raycast_thickness));
+      window.draw(wall_sprite);
+    } else if (computed_draw_hit.tile_symbol == Tile::Symbol::FLOOR) {
+      // draw floor
+      floor_sprite.setPosition((float) computed_draw_hit.pixel_pos.x, (float) computed_draw_hit.pixel_pos.y);
+      floor_sprite.setTextureRect(sf::IntRect(computed_draw_hit.texture_percentage_coords.x * floor_texture.getSize().x,
+                                              computed_draw_hit.texture_percentage_coords.y * floor_texture.getSize().y,
+                                              raycast_thickness,
+                                              raycast_thickness));
+      window.draw(floor_sprite);
+
+      // draw ceiling
+      int ceiling_y = half_field_height - (computed_draw_hit.pixel_pos.y - half_field_height);
+
+      ceiling_sprite.setPosition((float) computed_draw_hit.pixel_pos.x, (float) ceiling_y);
+      ceiling_sprite.setTextureRect(sf::IntRect(
+          computed_draw_hit.texture_percentage_coords.x * ceiling_texture.getSize().x,
+          computed_draw_hit.texture_percentage_coords.y * ceiling_texture.getSize().y,
+          raycast_thickness,
+          raycast_thickness));
+      window.draw(ceiling_sprite);
     }
   }
 }
