@@ -74,9 +74,22 @@ void move_window_position(sf::RenderWindow &window, int moveSpeed) {
   window.setPosition(currentPosition);
 }
 
+// Move the window to the center of the screen when key is pressed
+void center_window_position(sf::RenderWindow &window) {
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
+
+	sf::Vector2i windowCenter((int)window.getSize().x / 2, (int)window.getSize().y / 2);
+	sf::Vector2i screenCenter = sf::Vector2i(sf::VideoMode::getDesktopMode().width / 2,
+											 sf::VideoMode::getDesktopMode().height / 2);
+	sf::Vector2i windowPosition = screenCenter - windowCenter;
+	window.setPosition(windowPosition);
+  }
+}
+
 void MouseAndKeyboard::handle_user_inputs(sf::RenderWindow &window, Player &player) {
   handle_player_movement(player);
   move_window_position(window, 50);
+  center_window_position(window);
 }
 
 void MouseAndKeyboard::handle_user_inputs_event_based(Player &player, sf::RenderWindow &window, sf::Event &event) {
