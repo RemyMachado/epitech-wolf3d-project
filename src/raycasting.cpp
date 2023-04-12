@@ -84,6 +84,166 @@ std::optional<Raycast> raycast(sf::Vector2f origin,
   return closest_raycast;
 }
 
+std::vector<ComputedDrawHit> compute_partial_walls_raycast_vec(
+														GameManager &game_manager,
+														int start_x,
+														int end_x,
+														int ray_thickness) {
+  std::vector<ComputedDrawHit> computed_draw_hit_vec;
+  // only need to change the texture_percentage_coords for each raycast
+  ComputedDrawHit
+	  computed_draw_hit = ComputedDrawHit(Tile::Symbol::WALL, {0, 0});
+
+  int field_height = game_manager.window.getSize().y - game_manager.hud.height;
+
+  // for each pixel in width, cast a ray and draw a vertical line
+  for (int screen_x = start_x; screen_x < end_x; screen_x += ray_thickness) {
+	// calculate the angle of the ray
+	float rotation_step_deg = game_manager.camera.fov_horizontal_deg / (float)game_manager.window.getSize().x;
+	float
+		ray_angle_deg =
+		game_manager.player.dir_deg - game_manager.camera.fov_horizontal_deg / 2 + rotation_step_deg * (float)screen_x;
+	float ray_angle_diff_deg = ray_angle_deg - game_manager.player.dir_deg;
+	float fish_eye_correction = cosf(degrees_to_radians(ray_angle_diff_deg));
+
+	// cast the ray
+	std::optional<Raycast>
+		raycast_wall = raycast(game_manager.player.pos,
+							   ray_angle_deg,
+							   game_manager.camera.render_distance,
+							   game_manager.grid,
+							   Tile::Symbol::WALL);
+	if (raycast_wall.has_value()) {
+	  float raycast_distance_corrected = raycast_wall.value().distance * fish_eye_correction;
+
+	  // the height to draw
+	  int column_height = (int)((float)field_height * (game_manager.grid.tile_size / raycast_distance_corrected));
+
+	  // calculate the 'x' of texture_percentage_coords
+	  if (raycast_wall.value().hit_side == Tile::Side::SOUTH) {
+		computed_draw_hit.texture_percentage_coords.x =
+			raycast_wall.value().local_intersection.x / game_manager.grid.tile_size;
+	  } else if (raycast_wall.value().hit_side == Tile::Side::NORTH) {
+		computed_draw_hit.texture_percentage_coords.x =
+			(1 - raycast_wall.value().local_intersection.x / game_manager.grid.tile_size);
+	  } else if (raycast_wall.value().hit_side == Tile::Side::WEST) {
+		computed_draw_hit.texture_percentage_coords.x =
+			raycast_wall.value().local_intersection.y / game_manager.grid.tile_size;
+	  } else if (raycast_wall.value().hit_side == Tile::Side::EAST) {
+		computed_draw_hit.texture_percentage_coords.x =
+			(1 - raycast_wall.value().local_intersection.y / game_manager.grid.tile_size);
+	  }
+
+	  // for each pixel in height, draw the corresponding pixel of the texture
+	  for (int column_y = 0; column_y < column_height; column_y += ray_thickness) {
+		// calculate the 'y' of texture_percentage_coords
+		computed_draw_hit.texture_percentage_coords.y = (float)column_y / (float)column_height;
+
+		// calculate the position of the pixel in the field
+		int field_y = (field_height - column_height) / 2 + column_y;
+
+		computed_draw_hit.pixel_pos = {screen_x, field_y};
+
+		if (field_y > field_height) {
+		  break;
+		}
+
+		// store the computed raycast for the given pixel
+		computed_draw_hit_vec.emplace_back(computed_draw_hit);
+	  }
+	}
+  }
+
+  return computed_draw_hit_vec;
+}
+
+std::vector<ComputedDrawHit> compute_partial_floor_raycast_vec(GameManager &game_manager,
+														int start_y,
+														int end_y,
+														int ray_thickness) {
+  std::vector<ComputedDrawHit> computed_draw_hit_vec;
+
+  // need to change the texture_percentage_coords for each raycast
+  ComputedDrawHit
+	  computed_draw_hit = ComputedDrawHit(Tile::Symbol::FLOOR, {0, 0});
+
+  int field_width = game_manager.window.getSize().x;
+  int field_height = game_manager.window.getSize().y - game_manager.hud.height;
+  int half_field_height = field_height / 2;
+
+  // for each pixel in height, cast a ray and draw a horizontal line
+  for (int screen_y = start_y; screen_y < end_y; screen_y += ray_thickness) {
+	// calculate the angle of the ray
+	float vertical_camera_rotation_step_deg = game_manager.camera.fov_vertical_deg / (float)field_height;
+	float vertical_ray_angle_deg =
+		vertical_camera_rotation_step_deg * (float)screen_y - game_manager.camera.fov_vertical_deg / 2;
+
+	// for each pixel of the horizontal line cast an imaginary ray using trigonometry
+	for (int field_x = 0; field_x < field_width; field_x += ray_thickness) {
+	  computed_draw_hit.pixel_pos = {field_x, screen_y};
+
+	  // TODO: fix optimization (not working because walls are scanned left to right and floor is scanned top to bottom)
+	  // skip if the pixel has already been computed (by the walls raycast)
+//	  if (raycast_vec.find(std::make_pair(field_x, screen_y)) != raycast_vec.end()) {
+//		continue;
+//	  }
+
+	  // calculate the angle of the ray
+	  float horizontal_camera_rotation_step_deg = game_manager.camera.fov_horizontal_deg / (float)field_width;
+	  float
+		  horizontal_ray_angle_deg = game_manager.player.dir_deg - game_manager.camera.fov_horizontal_deg / 2
+		  + horizontal_camera_rotation_step_deg * (float)field_x;
+
+	  // compute distance to the point above the floor intersection
+	  // <!> this is not the distance to the floor intersection
+	  // <!> care for division by zero (tangent)
+	  // tangent(theta) = opposite / adjacent
+	  // adjacent is distance_to_point_above_floor
+	  // opposite is the camera height
+	  // camera_height / tangent(theta) = distance_to_point_above_floor
+	  // if tangent is equal to zero, then the distance is infinite, replace it with maximum render distance
+	  float distance_to_point_above_floor;
+	  float tangent_vertical_ray = tanf(degrees_to_radians(vertical_ray_angle_deg));
+
+	  if (tangent_vertical_ray == 0) {
+		distance_to_point_above_floor = game_manager.camera.render_distance;
+	  } else {
+		distance_to_point_above_floor = game_manager.camera.height / tangent_vertical_ray;
+	  }
+
+	  // find floor coordinates by going in horizontal direction for the found distance
+	  sf::Vector2f floor_intersection_pos = polar_to_cartesian(game_manager.player.pos,
+															   distance_to_point_above_floor,
+															   horizontal_ray_angle_deg);
+
+	  if (floor_intersection_pos.x<0 || floor_intersection_pos.x>(float)
+		game_manager.grid.width * game_manager.grid.tile_size ||
+			floor_intersection_pos.y<0 || floor_intersection_pos.y>(float)
+	  game_manager.grid.height * game_manager.grid.tile_size) {
+		continue;
+	  }
+
+	  // find the texture coordinates
+	  sf::Vector2f local_intersection =
+		  floor_intersection_pos - sf::Vector2f(
+			  floor(floor_intersection_pos.x / game_manager.grid.tile_size) * game_manager.grid.tile_size,
+			  floor(floor_intersection_pos.y / game_manager.grid.tile_size) * game_manager.grid.tile_size);
+
+	  // calculate the 'x' & 'y' of texture_percentage_coords
+	  computed_draw_hit.texture_percentage_coords.x =
+		  local_intersection.x / game_manager.grid.tile_size;
+	  computed_draw_hit.texture_percentage_coords.y =
+		  local_intersection.y / game_manager.grid.tile_size;
+
+
+	  // store the computed raycast for the given FLOOR pixel
+	  computed_draw_hit_vec.emplace_back(computed_draw_hit);
+	}
+  }
+
+  return computed_draw_hit_vec;
+}
+
 std::vector<ComputedDrawHit> &compute_walls_raycast_vec(std::vector<ComputedDrawHit> &raycast_vec,
 														GameManager &game_manager,
 														int field_width,

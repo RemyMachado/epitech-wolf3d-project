@@ -1,4 +1,3 @@
-#include "raycasting.hpp"
 #include <iostream>
 #include <chrono>
 #include <SFML/Graphics.hpp>
@@ -7,19 +6,17 @@
 #include "GameManager.hpp"
 
 void run_game(GameManager &game_manager) {
-  int raycast_thickness = 6;
-
   // load textures (wall, floor)
   sf::Texture wall_texture;
   sf::Texture floor_texture;
   sf::Texture ceiling_texture;
-  if (!wall_texture.loadFromFile("./assets/visuals/wall_512.png")) {
+  if (!wall_texture.loadFromFile("./assets/visuals/walls/redbrick.png")) {
 	throw std::runtime_error("Could not load wall texture file");
   }
-  if (!floor_texture.loadFromFile("./assets/visuals/ground_512.png")) {
+  if (!floor_texture.loadFromFile("./assets/visuals/floor/colorstone.png")) {
 	throw std::runtime_error("Could not load floor texture file");
   }
-  if (!ceiling_texture.loadFromFile("./assets/visuals/ground_512.png")) {
+  if (!ceiling_texture.loadFromFile("./assets/visuals/ceiling/greystone.png")) {
 	throw std::runtime_error("Could not load ceiling texture file");
   }
 
@@ -35,26 +32,7 @@ void run_game(GameManager &game_manager) {
 
   while (game_manager.window.isOpen()) {
 	auto start_loop = std::chrono::high_resolution_clock::now();
-	std::vector<ComputedDrawHit> raycast_vec;
 
-	raycast_vec = compute_floor_raycast_vec(raycast_vec,
-											game_manager,
-											game_manager.window.getSize().x,
-											game_manager.window.getSize().y,
-											raycast_thickness);
-
-	int raycast_floor_size = raycast_vec.size();
-	raycast_vec = compute_walls_raycast_vec(raycast_vec,
-											game_manager,
-											game_manager.window.getSize().x,
-											game_manager.window.getSize().y,
-											raycast_thickness);
-	int raycast_wall_size = raycast_vec.size() - raycast_floor_size;
-
-	// cout the sizes
-	std::cout << "raycast_floor_size: " << raycast_floor_size << std::endl;
-	std::cout << "raycast_wall_size: " << raycast_wall_size << std::endl;
-	std::cout << "total size: " << raycast_vec.size() << std::endl;
 
 	/*
 	* Handle user inputs
@@ -82,22 +60,12 @@ void run_game(GameManager &game_manager) {
 
 	// 3d floor
 	auto start_floor = std::chrono::high_resolution_clock::now();
-	draw_raycast_map(raycast_vec,
-					 game_manager.window,
-					 raycast_thickness,
-					 wall_texture,
-					 wall_sprite,
-					 floor_texture,
-					 floor_sprite,
-					 ceiling_texture,
-					 ceiling_sprite);
-/*
-    draw_floor_and_ceiling_3d(game_manager,
-                              floor_texture,
-                              floor_sprite,
-                              ceiling_texture,
-                              ceiling_sprite);
-*/
+
+	draw_floor_and_ceiling_3d(game_manager,
+							  floor_texture,
+							  floor_sprite,
+							  ceiling_texture,
+							  ceiling_sprite);
 	// Stop the timer
 	auto end_floor = std::chrono::high_resolution_clock::now();
 
@@ -108,9 +76,7 @@ void run_game(GameManager &game_manager) {
 
 	// 3d walls
 	auto start_walls = std::chrono::high_resolution_clock::now();
-/*
-    draw_walls_3d(game_manager, wall_texture, wall_sprite);
-*/
+	draw_walls_3d(game_manager, wall_texture, wall_sprite);
 	// Stop the timer
 	auto end_walls = std::chrono::high_resolution_clock::now();
 

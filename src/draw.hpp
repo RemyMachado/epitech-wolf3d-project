@@ -11,6 +11,15 @@ struct ComputedDrawHit;
 struct PairHash;
 
 void draw_minimap(GameManager &game_manager);
+void draw_chunked_raycast_hits(std::vector<std::vector<ComputedDrawHit>>
+							   &chunked_raycast_hits, GameManager &game_manager,
+							   int raycast_thickness,
+							   sf::Texture &wall_texture,
+							   sf::Sprite &wall_sprite,
+							   sf::Texture &floor_texture,
+							   sf::Sprite &floor_sprite,
+							   sf::Texture &ceiling_texture,
+							   sf::Sprite &ceiling_sprite);
 void draw_floor_and_ceiling_3d(GameManager &game_manager,
 							   sf::Texture &floor_texture,
 							   sf::Sprite &floor_sprite,

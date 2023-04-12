@@ -47,6 +47,15 @@ std::optional<Raycast> raycast(sf::Vector2f origin,
 							   float render_distance,
 							   Grid &grid,
 							   Tile::Symbol symbol_target);
+std::vector<ComputedDrawHit> compute_partial_walls_raycast_vec(
+	GameManager &game_manager,
+	int start_x,
+	int end_x,
+	int ray_thickness);
+std::vector<ComputedDrawHit> compute_partial_floor_raycast_vec(GameManager &game_manager,
+															   int start_y,
+															   int end_y,
+															   int ray_thickness);
 std::vector<ComputedDrawHit> &compute_walls_raycast_vec(std::vector<ComputedDrawHit> &raycast_vec,
 														GameManager &game_manager,
 														int field_width,

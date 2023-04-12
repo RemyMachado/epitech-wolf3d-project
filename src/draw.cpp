@@ -73,7 +73,7 @@ void draw_floor_and_ceiling_3d(GameManager &game_manager,
   int render_width = (int) game_manager.window.getSize().x;
   int render_height = (int) game_manager.window.getSize().y - game_manager.hud.height;
   int half_render_height = render_height / 2;
-  int ray_thickness = 4;
+  int ray_thickness = 6;
 
   // for each pixel in height, cast a ray and draw a horizontal line
   for (int window_y = half_render_height; window_y < render_height; window_y += ray_thickness) {
@@ -213,6 +213,54 @@ void draw_walls_3d(GameManager &game_manager,
         game_manager.window.draw(wall_sprite);
       }
     }
+  }
+}
+
+void draw_chunked_raycast_hits(std::vector<std::vector<ComputedDrawHit>>
+							   &chunked_raycast_hits, GameManager &game_manager,
+							   int raycast_thickness,
+							   sf::Texture &wall_texture,
+							   sf::Sprite &wall_sprite,
+							   sf::Texture &floor_texture,
+							   sf::Sprite &floor_sprite,
+							   sf::Texture &ceiling_texture,
+							   sf::Sprite &ceiling_sprite) {
+  int field_height = (int) game_manager.window.getSize().y - game_manager.hud.height;
+  int half_field_height = field_height / 2;
+
+  // Range-based for loop
+  for (const auto &chunk : chunked_raycast_hits) {
+	for (const auto &computed_draw_hit : chunk) {
+	  if (computed_draw_hit.tile_symbol == Tile::Symbol::WALL) {
+		wall_sprite.setPosition((float) computed_draw_hit.pixel_pos.x, (float) computed_draw_hit.pixel_pos.y);
+		wall_sprite.setTextureRect(sf::IntRect(computed_draw_hit.texture_percentage_coords.x * wall_texture.getSize().x,
+											   computed_draw_hit.texture_percentage_coords.y * wall_texture.getSize().y,
+											   raycast_thickness,
+											   raycast_thickness));
+		game_manager.window.draw(wall_sprite);
+	  } else if (computed_draw_hit.tile_symbol == Tile::Symbol::FLOOR) {
+		// floor
+
+		floor_sprite.setPosition((float) computed_draw_hit.pixel_pos.x, (float) computed_draw_hit.pixel_pos.y);
+		floor_sprite.setTextureRect(sf::IntRect(computed_draw_hit.texture_percentage_coords.x * floor_texture.getSize().x,
+												computed_draw_hit.texture_percentage_coords.y * floor_texture.getSize().y,
+												raycast_thickness,
+												raycast_thickness));
+		game_manager.window.draw(floor_sprite);
+
+		// ceiling
+		int ceiling_y = half_field_height - (computed_draw_hit.pixel_pos.y - half_field_height);
+
+		ceiling_sprite.setPosition((float) computed_draw_hit.pixel_pos.x, (float) ceiling_y);
+		ceiling_sprite.setTextureRect(sf::IntRect(
+			computed_draw_hit.texture_percentage_coords.x * ceiling_texture.getSize().x,
+			computed_draw_hit.texture_percentage_coords.y * ceiling_texture.getSize().y,
+			raycast_thickness,
+			raycast_thickness));
+
+		game_manager.window.draw(ceiling_sprite);
+	  }
+	}
   }
 }
 
