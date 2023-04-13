@@ -47,7 +47,7 @@ void Player::try_attack() const {
 }
 
 std::unique_ptr<Weapon> Player::create_knife() {
-  float knife_attack_rate = 0.2f;
+  float knife_attack_rate = 0.4f;
   SpriteSetting knife_attack_sprite_setting = SPRITE_SETTINGS.at(SpriteId::KNIFE_ATTACK);
   AnimationParams knife_attack_animation_params = AnimationParams(
 	  {
@@ -65,7 +65,8 @@ std::unique_ptr<Weapon> Player::create_knife() {
 		  knife_attack_animation_params,
 		  SpriteId::KNIFE_HUD,
 		  SpriteId::KNIFE_IDLE,
-		  knife_attack_rate
+		  knife_attack_rate,
+		  SoundId::KNIFE_ATTACK
 	  });
   return std::make_unique<Weapon>(knife_params);
 }
@@ -89,7 +90,8 @@ std::unique_ptr<Weapon> Player::create_pistol() {
 		  pistol_attack_animation_params,
 		  SpriteId::PISTOL_HUD,
 		  SpriteId::PISTOL_IDLE,
-		  pistol_attack_rate
+		  pistol_attack_rate,
+		  SoundId::PISTOL_ATTACK
 	  });
   return std::make_unique<Weapon>(pistol_params);
 }

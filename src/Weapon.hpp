@@ -5,6 +5,7 @@
 #include "Animation.hpp"
 #include "SpriteSetting.hpp"
 #include "managers/TextureManager.hpp"
+#include "managers/SoundManager.hpp"
 
 // TODO: Weapon configuration from a constant
 
@@ -13,6 +14,7 @@ struct WeaponParams {
   SpriteId hud_sprite_id;
   SpriteId idle_sprite_id;
   float attack_rate;
+  SoundId attack_sound_id;
 };
 
 /*
@@ -30,18 +32,22 @@ class Weapon {
   int ammo = 100000;
   float attack_rate;
   Timer attack_timer;
+  bool is_attacking = false;
+
+  /* Sound */
+  SoundId attack_sound_id;
 
   /* Animation */
   sf::Sprite hud_sprite;
   sf::Sprite idle_sprite;
   Animation attack_animation;
-  bool is_attacking = false;
 
  public:
   explicit Weapon(WeaponParams weapon_params)
 	  : attack_animation(weapon_params.attack_animation_params, [this]() { end_attack(); }),
 		attack_rate(weapon_params.attack_rate),
-		attack_timer(weapon_params.attack_rate) {
+		attack_timer(weapon_params.attack_rate),
+		attack_sound_id(weapon_params.attack_sound_id) {
 	SpriteSetting hud_sprite_setting = SPRITE_SETTINGS.at(weapon_params.hud_sprite_id);
 	SpriteSetting idle_sprite_setting = SPRITE_SETTINGS.at(weapon_params.idle_sprite_id);
 
@@ -66,6 +72,7 @@ class Weapon {
 	}
 	is_attacking = true;
 	ammo -= 1;
+	SoundManager::get_instance().play_sound(attack_sound_id);
 
 	return true;
   }
