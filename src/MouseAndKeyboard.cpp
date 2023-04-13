@@ -1,6 +1,13 @@
 #include "MouseAndKeyboard.hpp"
 #include "Player.hpp"
 
+void MouseAndKeyboard::handle_player_attack(Player &player) {
+  // allowing multiple keys to be pressed at once
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+	player.try_attack();
+  }
+}
+
 void MouseAndKeyboard::handle_player_movement(Player &player) {
   // allowing multiple keys to be pressed at once
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
@@ -90,6 +97,7 @@ void MouseAndKeyboard::handle_user_inputs(sf::RenderWindow &window, Player &play
   handle_player_movement(player);
   move_window_position(window, 50);
   center_window_position(window);
+  handle_player_attack(player);
 }
 
 void MouseAndKeyboard::handle_user_inputs_event_based(Player &player, sf::RenderWindow &window, sf::Event &event) {

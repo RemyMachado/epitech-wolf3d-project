@@ -1,3 +1,4 @@
+#include <chrono>
 #include "GameManager.hpp"
 #include "draw.hpp"
 #include "raycasting.hpp"
@@ -313,4 +314,92 @@ void draw_hud(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprite &h
   hud_sprite.setScale((float) render_width / (float) hud_texture.getSize().x,
 					  (float) game_manager.hud.height / (float) hud_texture.getSize().y);
   game_manager.window.draw(hud_sprite);
+}
+
+void draw_equipped_weapon(GameManager &game_manager, sf::Texture &weapon_texture, sf::Sprite &weapon_sprite) {
+  float width_to_height_ratio = (float) weapon_texture.getSize().x / (float) weapon_texture.getSize().y;
+  int render_width = game_manager.hud.height * width_to_height_ratio;
+
+  // draw the hud
+  weapon_sprite.setPosition(game_manager.window.getSize().x - render_width, game_manager.window.getSize().y - game_manager.hud.height);
+  weapon_sprite.setScale((float) render_width / (float) weapon_texture.getSize().x,
+						 (float) game_manager.hud.height / (float) weapon_texture.getSize().y);
+  game_manager.window.draw(weapon_sprite);
+}
+
+void render_game_frame(GameManager &game_manager,
+					   sf::Texture &wall_texture,
+					   sf::Sprite &wall_sprite,
+					   sf::Texture &floor_texture,
+					   sf::Sprite &floor_sprite,
+					   sf::Texture &ceiling_texture,
+					   sf::Sprite &ceiling_sprite,
+					   sf::Texture &hud_empty_texture,
+					   sf::Sprite &hud_empty_sprite) {
+ /*
+	 * Clear the window for drawing
+	 * */
+  game_manager.window.clear();
+
+  /*
+   * Draw
+   * */
+
+  // 3d floor
+  auto start_floor = std::chrono::high_resolution_clock::now();
+
+  draw_floor_and_ceiling_3d(game_manager,
+							floor_texture,
+							floor_sprite,
+							ceiling_texture,
+							ceiling_sprite);
+  // Stop the timer
+  auto end_floor = std::chrono::high_resolution_clock::now();
+
+  // Calculate the duration
+  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_floor - start_floor).count();
+  std::cout << "--------------------------------------------" << std::endl << "Draw floor execution time: "
+			<< duration << " ms" << std::endl;
+
+  // 3d walls
+  auto start_walls = std::chrono::high_resolution_clock::now();
+  draw_walls_3d(game_manager, wall_texture, wall_sprite);
+  // Stop the timer
+  auto end_walls = std::chrono::high_resolution_clock::now();
+
+  // Calculate the duration
+  duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_walls - start_walls).count();
+  std::cout << "Draw walls execution time: " << duration << " ms" << std::endl;
+
+  // minimap
+  auto start_minimap = std::chrono::high_resolution_clock::now();
+  draw_minimap(game_manager);
+  // Stop the timer
+  auto end_minimap = std::chrono::high_resolution_clock::now();
+
+  // Calculate the duration
+  duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_minimap - start_minimap).count();
+  std::cout << "Draw minimap execution time: " << duration << " ms" << std::endl;
+
+  // draw player weapon
+  game_manager.player.knife->update_sprite();
+  sf::Sprite &current_weapon_sprite = game_manager.player.knife->get_current_sprite();
+  current_weapon_sprite.setScale(6, 6);
+  current_weapon_sprite.setPosition(game_manager.window.getSize().x / 2 - current_weapon_sprite.getGlobalBounds().width / 2,
+									game_manager.window.getSize().y - game_manager.hud.height - current_weapon_sprite.getGlobalBounds().height);
+  game_manager.window.draw(current_weapon_sprite);
+
+  // draw hud
+  draw_hud(game_manager, hud_empty_texture, hud_empty_sprite);
+
+  /*
+   * display
+   * */
+  auto start_display = std::chrono::high_resolution_clock::now();
+  game_manager.window.display();
+  auto end_display = std::chrono::high_resolution_clock::now();
+
+  // Calculate the duration
+  duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_display - start_display).count();
+  std::cout << "Render Display() execution time: " << duration << " ms" << std::endl;
 }

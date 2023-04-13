@@ -7,17 +7,17 @@
 
 void Player::move(float direction_deg) {
   std::optional<Raycast>
-      raycast_wall = raycast(this->pos, direction_deg, this->camera.render_distance, this->grid, Tile::Symbol::WALL);
+	  raycast_wall = raycast(this->pos, direction_deg, this->camera.render_distance, this->grid, Tile::Symbol::WALL);
 
   if (raycast_wall.has_value()) {
-    this->pos = polar_to_cartesian(this->pos,
-                                   std::min(raycast_wall.value().distance - (grid.tile_size / 100),
-                                            this->move_speed),
-                                   direction_deg);
+	this->pos = polar_to_cartesian(this->pos,
+								   std::min(raycast_wall.value().distance - (grid.tile_size / 100),
+											this->move_speed),
+								   direction_deg);
   } else {
-    this->pos = polar_to_cartesian(this->pos,
-                                   this->move_speed,
-                                   direction_deg);
+	this->pos = polar_to_cartesian(this->pos,
+								   this->move_speed,
+								   direction_deg);
   }
 }
 
@@ -40,4 +40,8 @@ void Player::move_right() {
 void Player::rotate(float direction_deg) {
   this->dir_deg += direction_deg;
   this->dir_deg = std::fmod(this->dir_deg, 360.f);
+}
+
+void Player::try_attack() const {
+  this->knife->try_attack();
 }
