@@ -6,7 +6,7 @@
 #include "my_math.hpp"
 #include "Grid.hpp"
 #include "Tile.hpp"
-#include "GameManager.hpp"
+#include "managers/GameManager.hpp"
 
 Tile::Side determine_hit_side(float tile_size, const Tile &tile, const Line &intersected_segment) {
   // Get the center of the intersected segment

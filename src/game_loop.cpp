@@ -3,7 +3,7 @@
 #include <chrono>
 #include "game_loop.hpp"
 #include "draw.hpp"
-#include "GameManager.hpp"
+#include "managers/GameManager.hpp"
 
 void run_game(GameManager &game_manager) {
   // load textures (wall, floor)

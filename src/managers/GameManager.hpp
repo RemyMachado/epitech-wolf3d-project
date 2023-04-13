@@ -3,12 +3,12 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-#include "Grid.hpp"
-#include "Player.hpp"
-#include "Camera.hpp"
-#include "Hud.hpp"
-#include "MouseAndKeyboard.hpp"
-#include "my_math.hpp"
+#include "../Grid.hpp"
+#include "../Player.hpp"
+#include "../Camera.hpp"
+#include "../Hud.hpp"
+#include "../MouseAndKeyboard.hpp"
+#include "../my_math.hpp"
 
 class GameManager {
  public:

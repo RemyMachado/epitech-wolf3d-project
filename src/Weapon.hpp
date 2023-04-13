@@ -4,7 +4,7 @@
 #include <string>
 #include "Animation.hpp"
 #include "SpriteSetting.hpp"
-#include "TextureManager.hpp"
+#include "managers/TextureManager.hpp"
 
 // TODO: Weapon configuration from a constant
 
@@ -25,7 +25,7 @@ struct WeaponParams {
 class Weapon {
  public:
   bool is_unlocked = true;
-  
+
  private:
   int ammo = 100000;
   float attack_rate;

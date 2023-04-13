@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics/Texture.hpp>
 #include <iostream>
-#include "SpriteSetting.hpp"
+#include "../SpriteSetting.hpp"
 
 class TextureManager {
  private:

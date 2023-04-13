@@ -1,5 +1,5 @@
 #include <chrono>
-#include "GameManager.hpp"
+#include "managers/GameManager.hpp"
 #include "draw.hpp"
 #include "raycasting.hpp"
 

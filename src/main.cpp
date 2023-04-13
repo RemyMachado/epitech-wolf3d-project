@@ -1,10 +1,8 @@
 #include <iostream>
-#include "GameManager.hpp"
+#include "managers/GameManager.hpp"
 #include "game_loop.hpp"
 
-// TODO: idea -> start the game with no weapons,
-//  and kill an officer to get a knife (use the knife sprite-sheet to create a fist sprite-sheet)
-//  if too hard, give the player a knife at the start of the game
+// TODO: create doors with wood texture and destroy it with any weapon
 
 // retrieve filename from command line
 int main(int argc, char **argv) {
