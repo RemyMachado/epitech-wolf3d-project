@@ -46,64 +46,14 @@ void Player::try_attack() const {
   this->current_weapon->try_attack();
 }
 
-std::unique_ptr<Weapon> Player::create_knife() {
-  float knife_attack_rate = 0.4f;
-  SpriteSetting knife_attack_sprite_setting = SPRITE_SETTINGS.at(SpriteId::KNIFE_ATTACK);
-  AnimationParams knife_attack_animation_params = AnimationParams(
-	  {
-		  TextureManager::get_instance().get_texture(
-			  SpriteId::KNIFE_ATTACK),
-		  knife_attack_sprite_setting.frame_size,
-		  knife_attack_sprite_setting.frame_count,
-		  knife_attack_sprite_setting.initial_offset,
-		  knife_attack_sprite_setting.frame_offset,
-		  knife_attack_rate / knife_attack_sprite_setting.frame_count
-	  }
-  );
-  WeaponParams knife_params = WeaponParams(
-	  {
-		  knife_attack_animation_params,
-		  SpriteId::KNIFE_HUD,
-		  SpriteId::KNIFE_IDLE,
-		  knife_attack_rate,
-		  SoundId::KNIFE_ATTACK
-	  });
-  return std::make_unique<Weapon>(knife_params);
-}
-
-std::unique_ptr<Weapon> Player::create_pistol() {
-  float pistol_attack_rate = 0.8f;
-  SpriteSetting pistol_attack_sprite_setting = SPRITE_SETTINGS.at(SpriteId::PISTOL_ATTACK);
-  AnimationParams pistol_attack_animation_params = AnimationParams(
-	  {
-		  TextureManager::get_instance().get_texture(
-			  SpriteId::PISTOL_ATTACK),
-		  pistol_attack_sprite_setting.frame_size,
-		  pistol_attack_sprite_setting.frame_count,
-		  pistol_attack_sprite_setting.initial_offset,
-		  pistol_attack_sprite_setting.frame_offset,
-		  pistol_attack_rate / pistol_attack_sprite_setting.frame_count
-	  }
-  );
-  WeaponParams pistol_params = WeaponParams(
-	  {
-		  pistol_attack_animation_params,
-		  SpriteId::PISTOL_HUD,
-		  SpriteId::PISTOL_IDLE,
-		  pistol_attack_rate,
-		  SoundId::PISTOL_ATTACK
-	  });
-  return std::make_unique<Weapon>(pistol_params);
-}
-
 Player::Player(sf::Vector2f pos, float direction_deg, float move_speed, Grid &grid, Camera &camera)
 	: pos(pos),
 	  dir_deg(direction_deg),
 	  move_speed(move_speed),
 	  grid(grid),
 	  camera(camera),
-	  knife(create_knife()),
-	  pistol(create_pistol()),
+	  knife(std::make_unique<Weapon>(WEAPON_SETTINGS.at(WeaponId::KNIFE))),
+	  pistol(std::make_unique<Weapon>(WEAPON_SETTINGS.at(WeaponId::PISTOL))),
 	  current_weapon(knife.get()),
 	  weapon_switch_timer(0.2f) {}
 

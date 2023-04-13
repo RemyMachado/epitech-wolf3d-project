@@ -353,7 +353,7 @@ void render_game_frame(GameManager &game_manager,
 							floor_sprite,
 							ceiling_texture,
 							ceiling_sprite);
-  // Stop the timer
+  // Stop the frame_timer
   auto end_floor = std::chrono::high_resolution_clock::now();
 
   // Calculate the duration
@@ -364,7 +364,7 @@ void render_game_frame(GameManager &game_manager,
   // 3d walls
   auto start_walls = std::chrono::high_resolution_clock::now();
   draw_walls_3d(game_manager, wall_texture, wall_sprite);
-  // Stop the timer
+  // Stop the frame_timer
   auto end_walls = std::chrono::high_resolution_clock::now();
 
   // Calculate the duration
@@ -374,7 +374,7 @@ void render_game_frame(GameManager &game_manager,
   // minimap
   auto start_minimap = std::chrono::high_resolution_clock::now();
   draw_minimap(game_manager);
-  // Stop the timer
+  // Stop the frame_timer
   auto end_minimap = std::chrono::high_resolution_clock::now();
 
   // Calculate the duration

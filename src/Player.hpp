@@ -38,8 +38,6 @@ class Player {
  private:
   void switch_weapon(Weapon *new_weapon);
   void move(float direction_deg);
-  static std::unique_ptr<Weapon> create_knife();
-  static std::unique_ptr<Weapon> create_pistol();
 };
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_PLAYER_HPP_

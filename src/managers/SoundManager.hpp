@@ -44,7 +44,6 @@ class SoundManager {
 	auto found = sounds.find(sound_id);
 
 	if (found != sounds.end()) {
-	  std::cout << "playing sound" << std::endl;
 	  found->second->play();
 	  return;
 	}
