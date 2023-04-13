@@ -20,6 +20,7 @@ class MouseAndKeyboard {
   void handle_user_inputs_event_based(Player &player, sf::RenderWindow &window, sf::Event &event);
 
  private:
+  static void handle_player_switch_weapon(Player &player);
   static void handle_player_attack(Player &player);
   static void handle_player_movement(Player &player);
   void handle_player_rotation(Player &player,

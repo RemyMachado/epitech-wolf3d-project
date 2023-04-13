@@ -23,8 +23,10 @@ struct WeaponParams {
  * - keeping track of the knife's ammo
  * */
 class Weapon {
- private:
+ public:
   bool is_unlocked = true;
+  
+ private:
   int ammo = 100000;
   float attack_rate;
   Timer attack_timer;

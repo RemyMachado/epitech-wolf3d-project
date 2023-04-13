@@ -140,12 +140,12 @@ void draw_floor_and_ceiling_3d(GameManager &game_manager,
       game_manager.window.draw(floor_sprite);
 
       // draw the ceiling
-      ceiling_sprite.setPosition((float) window_x, render_height - (float) window_y);
+      /*ceiling_sprite.setPosition((float) window_x, render_height - (float) window_y);
       ceiling_sprite.setTextureRect(sf::IntRect((int) texture_coordinates.x,
                                                 (int) texture_coordinates.y,
                                                 ray_thickness,
                                                 ray_thickness));
-      game_manager.window.draw(ceiling_sprite);
+      game_manager.window.draw(ceiling_sprite);*/
     }
   }
 }
@@ -358,8 +358,8 @@ void render_game_frame(GameManager &game_manager,
 
   // Calculate the duration
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_floor - start_floor).count();
-  std::cout << "--------------------------------------------" << std::endl << "Draw floor execution time: "
-			<< duration << " ms" << std::endl;
+//  std::cout << "--------------------------------------------" << std::endl << "Draw floor execution time: "
+//			<< duration << " ms" << std::endl;
 
   // 3d walls
   auto start_walls = std::chrono::high_resolution_clock::now();
@@ -369,7 +369,7 @@ void render_game_frame(GameManager &game_manager,
 
   // Calculate the duration
   duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_walls - start_walls).count();
-  std::cout << "Draw walls execution time: " << duration << " ms" << std::endl;
+//  std::cout << "Draw walls execution time: " << duration << " ms" << std::endl;
 
   // minimap
   auto start_minimap = std::chrono::high_resolution_clock::now();
@@ -379,11 +379,11 @@ void render_game_frame(GameManager &game_manager,
 
   // Calculate the duration
   duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_minimap - start_minimap).count();
-  std::cout << "Draw minimap execution time: " << duration << " ms" << std::endl;
+//  std::cout << "Draw minimap execution time: " << duration << " ms" << std::endl;
 
   // draw player weapon
-  game_manager.player.knife->update_sprite();
-  sf::Sprite &current_weapon_sprite = game_manager.player.knife->get_current_sprite();
+  game_manager.player.update_current_weapon_sprite();
+  sf::Sprite &current_weapon_sprite = game_manager.player.current_weapon->get_current_sprite();
   current_weapon_sprite.setScale(6, 6);
   current_weapon_sprite.setPosition(game_manager.window.getSize().x / 2 - current_weapon_sprite.getGlobalBounds().width / 2,
 									game_manager.window.getSize().y - game_manager.hud.height - current_weapon_sprite.getGlobalBounds().height);
@@ -401,5 +401,5 @@ void render_game_frame(GameManager &game_manager,
 
   // Calculate the duration
   duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_display - start_display).count();
-  std::cout << "Render Display() execution time: " << duration << " ms" << std::endl;
+//  std::cout << "Render Display() execution time: " << duration << " ms" << std::endl;
 }

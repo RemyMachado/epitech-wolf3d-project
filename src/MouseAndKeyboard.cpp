@@ -1,8 +1,16 @@
 #include "MouseAndKeyboard.hpp"
 #include "Player.hpp"
 
+void MouseAndKeyboard::handle_player_switch_weapon(Player &player) {
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+	player.select_knife();
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
+	player.select_pistol();
+  }
+}
+
 void MouseAndKeyboard::handle_player_attack(Player &player) {
-  // allowing multiple keys to be pressed at once
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 	player.try_attack();
   }
@@ -98,6 +106,7 @@ void MouseAndKeyboard::handle_user_inputs(sf::RenderWindow &window, Player &play
   move_window_position(window, 50);
   center_window_position(window);
   handle_player_attack(player);
+  handle_player_switch_weapon(player);
 }
 
 void MouseAndKeyboard::handle_user_inputs_event_based(Player &player, sf::RenderWindow &window, sf::Event &event) {

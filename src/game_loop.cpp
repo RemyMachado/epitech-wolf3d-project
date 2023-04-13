@@ -56,6 +56,6 @@ void run_game(GameManager &game_manager) {
 	// Stop the timer
 	auto end_loop = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_loop - start_loop).count();
-	std::cout << "Total loop execution time: " << duration << " ms" << std::endl << std::endl;
+//	std::cout << "Total loop execution time: " << duration << " ms" << std::endl << std::endl;
   }
 }

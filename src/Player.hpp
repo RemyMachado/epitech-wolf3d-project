@@ -15,41 +15,20 @@ class Player {
   Grid &grid;
   Camera &camera;
   std::unique_ptr<Weapon> knife;
+  std::unique_ptr<Weapon> pistol;
+  Weapon *current_weapon;
+  Timer weapon_switch_timer;
 
   Player(sf::Vector2f pos,
 		 float direction_deg,
 		 float move_speed,
 		 Grid &grid,
-		 Camera &camera)
-	  : pos(pos),
-		dir_deg(direction_deg),
-		move_speed(move_speed),
-		grid(grid),
-		camera(camera) {
-	float attack_rate = 0.2f;
-	SpriteSetting knife_attack_sprite_setting = SPRITE_SETTINGS.at(SpriteId::KNIFE_ATTACK);
-	AnimationParams knife_attack_animation_params = AnimationParams(
-		{
-			TextureManager::get_instance().get_texture(
-				SpriteId::KNIFE_ATTACK),
-			knife_attack_sprite_setting.frame_size,
-			knife_attack_sprite_setting.frame_count,
-			knife_attack_sprite_setting.initial_offset,
-			knife_attack_sprite_setting.frame_offset,
-			attack_rate / knife_attack_sprite_setting.frame_count
-		}
-	);
-	WeaponParams knife_params = WeaponParams(
-		{
-			knife_attack_animation_params,
-			SpriteId::KNIFE_HUD,
-			SpriteId::KNIFE_IDLE,
-			attack_rate
-		});
-	knife = std::make_unique<Weapon>(knife_params);
-  };
+		 Camera &camera);
 
+  void update_current_weapon_sprite() const;
   void try_attack() const;
+  void select_knife();
+  void select_pistol();
   void move_forward();
   void move_backward();
   void move_left();
@@ -57,7 +36,10 @@ class Player {
   void rotate(float direction_deg);
 
  private:
+  void switch_weapon(Weapon *new_weapon);
   void move(float direction_deg);
+  static std::unique_ptr<Weapon> create_knife();
+  static std::unique_ptr<Weapon> create_pistol();
 };
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_PLAYER_HPP_
