@@ -5,19 +5,56 @@
 #include "Camera.hpp"
 #include "Grid.hpp"
 
+/*
+ * Handles wall sliding by staying away from the wall from a minimum distance.
+ * */
 void Player::move(float direction_deg) {
-  std::optional<Raycast>
-	  raycast_wall = raycast(this->pos, direction_deg, this->camera.render_distance, this->grid, Tile::Symbol::WALL);
+  float minimum_distance_from_wall = this->grid.tile_size * body_radius;
 
-  if (raycast_wall.has_value()) {
-	this->pos = polar_to_cartesian(this->pos,
-								   std::min(raycast_wall.value().distance - (grid.tile_size / 100),
-											this->move_speed),
-								   direction_deg);
+  sf::Vector2f new_ghost_pos = polar_to_cartesian(this->pos, this->move_speed, direction_deg);
+
+  float delta_x = new_ghost_pos.x - this->pos.x;
+  float delta_y = new_ghost_pos.y - this->pos.y;
+
+  float x_dir_deg = delta_x > 0 ? 0 : 180;
+
+  std::optional<Raycast>
+	  raycast_wall_x = raycast(this->pos, x_dir_deg, camera.render_distance, this->grid, Tile::Symbol::WALL);
+
+  if (raycast_wall_x.has_value()) {
+	// if going too close to a wall in the x-axis
+	if (raycast_wall_x.value().distance < (std::abs(delta_x) + minimum_distance_from_wall)) {
+	  // need to keep a small distance from the wall to avoid clipping
+	  if (delta_x > 0) {
+		this->pos.x += raycast_wall_x.value().distance - minimum_distance_from_wall; // working
+	  } else {
+		this->pos.x -= raycast_wall_x.value().distance - minimum_distance_from_wall;
+	  }
+	} else {
+	  this->pos.x += delta_x;
+	}
   } else {
-	this->pos = polar_to_cartesian(this->pos,
-								   this->move_speed,
-								   direction_deg);
+	this->pos.x += delta_x;
+  }
+
+  float y_dir_deg = delta_y > 0 ? 90 : -90;
+
+  std::optional<Raycast>
+	  raycast_wall_y = raycast(this->pos, y_dir_deg, camera.render_distance, this->grid, Tile::Symbol::WALL);
+
+  if (raycast_wall_y.has_value()) {
+	if (raycast_wall_y.value().distance < (std::abs(delta_y) + minimum_distance_from_wall)) {
+	  // need to keep a small distance from the wall to avoid clipping
+	  if (delta_y > 0) {
+		this->pos.y += raycast_wall_y.value().distance - minimum_distance_from_wall;
+	  } else {
+		this->pos.y -= raycast_wall_y.value().distance - minimum_distance_from_wall;
+	  }
+	} else {
+	  this->pos.y += delta_y;
+	}
+  } else {
+	this->pos.y += delta_y;
   }
 }
 

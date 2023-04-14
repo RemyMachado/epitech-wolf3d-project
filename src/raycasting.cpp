@@ -94,7 +94,7 @@ std::vector<ComputedDrawHit> compute_partial_walls_raycast_vec(
   ComputedDrawHit
 	  computed_draw_hit = ComputedDrawHit(Tile::Symbol::WALL, {0, 0});
 
-  int field_height = game_manager.window.getSize().y - game_manager.hud.height;
+  int field_height = game_manager.window.getSize().y - game_manager.hud.bar_height;
 
   // for each pixel in width, cast a ray and draw a vertical line
   for (int screen_x = start_x; screen_x < end_x; screen_x += ray_thickness) {
@@ -168,7 +168,7 @@ std::vector<ComputedDrawHit> compute_partial_floor_raycast_vec(GameManager &game
 	  computed_draw_hit = ComputedDrawHit(Tile::Symbol::FLOOR, {0, 0});
 
   int field_width = game_manager.window.getSize().x;
-  int field_height = game_manager.window.getSize().y - game_manager.hud.height;
+  int field_height = game_manager.window.getSize().y - game_manager.hud.bar_height;
   int half_field_height = field_height / 2;
 
   // for each pixel in height, cast a ray and draw a horizontal line

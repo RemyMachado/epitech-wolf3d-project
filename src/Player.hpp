@@ -18,6 +18,7 @@ class Player {
   std::unique_ptr<Weapon> pistol;
   Weapon *current_weapon;
   Timer weapon_switch_timer;
+  float body_radius = 0.2f;
 
   Player(sf::Vector2f pos,
 		 float direction_deg,

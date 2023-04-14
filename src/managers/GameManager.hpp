@@ -30,7 +30,7 @@ class GameManager {
 				 * grid.tile_size),
 	  player(grid.get_player_initial_pos(),
 			 0,
-			 grid.tile_size * 0.1f, grid, camera),
+			 grid.tile_size * 0.05f, grid, camera),
 	  hud(),
 	  mouse_and_keyboard() {
 	// set the mouse cursor to the center of the window
