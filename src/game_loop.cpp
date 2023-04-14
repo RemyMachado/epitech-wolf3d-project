@@ -12,7 +12,8 @@ void run_game(GameManager &game_manager) {
   sf::Texture ceiling_texture = TextureManager::get_instance().get_texture(SpriteId::CEILING);
   sf::Texture hud_empty_texture = TextureManager::get_instance().get_texture(SpriteId::HUD_EMPTY);
 
-  game_manager.hud.height =
+  game_manager.hud.bar_width = game_manager.window.getSize().x;
+  game_manager.hud.bar_height =
 	  hud_empty_texture.getSize().y * game_manager.window.getSize().x / hud_empty_texture.getSize().x;
 
   // assign textures to sprites

@@ -4,55 +4,70 @@
 #include "raycasting.hpp"
 
 void draw_player_on_minimap(GameManager &game_manager) {
-  int circle_radius = game_manager.grid.tile_size / 2;
+  // the minimap height should respect the window height ratio
+  float minimap_height = (float)game_manager.window.getSize().y * game_manager.hud.minimap_to_height_ratio;
+  float minimap_tile_size = minimap_height / (float)game_manager.grid.height;
+
+  float circle_radius = minimap_tile_size / 2;
   sf::CircleShape circleShape(circle_radius);
   circleShape.setFillColor(sf::Color::Red);
 
-  circleShape.setPosition(game_manager.player.pos.x - circle_radius,
-                          game_manager.player.pos.y - circle_radius);
+  circleShape.setPosition(game_manager.player.pos.x / game_manager.grid.tile_size * minimap_tile_size - circle_radius,
+						  game_manager.player.pos.y / game_manager.grid.tile_size * minimap_tile_size - circle_radius);
   game_manager.window.draw(circleShape);
 }
 
 void draw_minimap_grid(GameManager &game_manager) {
+  // the minimap height should respect the window height ratio
+  float minimap_height = (float)game_manager.window.getSize().y * game_manager.hud.minimap_to_height_ratio;
+  float minimap_tile_size = minimap_height / (float)game_manager.grid.height;
+
   // draw background
-  sf::RectangleShape rectangle(sf::Vector2f((float) game_manager.grid.width * game_manager.grid.tile_size,
-      (float) game_manager.grid.height * game_manager.grid.tile_size));
+  sf::RectangleShape rectangle(sf::Vector2f((float) game_manager.grid.width * minimap_tile_size,
+	  (float)game_manager.grid.height * minimap_tile_size));
   rectangle.setFillColor(sf::Color::Black);
   rectangle.setPosition(0, 0);
   game_manager.window.draw(rectangle);
 
   // draw walls on the grid
   for (const Tile &tile : game_manager.grid.tiles) {
-    if (tile.symbol != Tile::Symbol::WALL) {
-      continue;
-    }
+	if (tile.symbol != Tile::Symbol::WALL) {
+	  continue;
+	}
 
-    for (const Line &segment : tile.horizontal_segments) {
-      sf::Vertex line[] = {
-          sf::Vertex(sf::Vector2f(segment.start.x + 1, segment.start.y + 1)),
-          sf::Vertex(sf::Vector2f(segment.end.x + 1, segment.end.y + 1))
-      };
-      game_manager.window.draw(line, 2, sf::Lines);
-    }
+	for (const Line &segment : tile.horizontal_segments) {
+	  sf::Vertex line[] = {
+		  sf::Vertex(sf::Vector2f((segment.start.x / game_manager.grid.tile_size * minimap_tile_size) + 1,
+								  (segment.start.y / game_manager.grid.tile_size * minimap_tile_size) + 1)),
+		  sf::Vertex(sf::Vector2f((segment.end.x / game_manager.grid.tile_size * minimap_tile_size) + 1,
+								  (segment.end.y / game_manager.grid.tile_size * minimap_tile_size) + 1))
+	  };
+	  game_manager.window.draw(line, 2, sf::Lines);
+	}
   }
 }
 
+// raycast from the player position in the player direction
+// and draw a line from the player position to the intersection point
 void draw_player_direction_minimap(GameManager &game_manager) {
-  // raycast from the player position in the player direction
-  // and draw a line from the player position to the intersection point
+  // the minimap height should respect the window height ratio
+  float minimap_height = (float)game_manager.window.getSize().y * game_manager.hud.minimap_to_height_ratio;
+  float minimap_tile_size = minimap_height / (float)game_manager.grid.height;
+
   std::optional<Raycast>
-      raycast_wall =
-      raycast(game_manager.player.pos,
-              game_manager.player.dir_deg,
-              game_manager.camera.render_distance,
-              game_manager.grid,
-              Tile::Symbol::WALL);
+	  raycast_wall =
+	  raycast(game_manager.player.pos,
+			  game_manager.player.dir_deg,
+			  game_manager.camera.render_distance,
+			  game_manager.grid,
+			  Tile::Symbol::WALL);
   if (raycast_wall.has_value()) {
-    sf::Vertex line[] = {
-        sf::Vertex(sf::Vector2f(game_manager.player.pos.x, game_manager.player.pos.y)),
-        sf::Vertex(raycast_wall.value().intersection_pos)
-    };
-    game_manager.window.draw(line, 2, sf::Lines);
+	sf::Vertex line[] = {
+		sf::Vertex(sf::Vector2f(game_manager.player.pos.x / game_manager.grid.tile_size * minimap_tile_size,
+								game_manager.player.pos.y / game_manager.grid.tile_size * minimap_tile_size)),
+		sf::Vertex(raycast_wall.value().intersection_pos / game_manager.grid.tile_size * minimap_tile_size)
+	};
+	game_manager.window.draw(line, 2, sf::Lines);
   }
 }
 
