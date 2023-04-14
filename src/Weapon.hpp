@@ -40,19 +40,13 @@ static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
 	}}
 };
 
-/*
- * The knife class handles the knife of the player
- * It is responsible for:
- * - drawing the knife on the screen
- * - handling the knife's animations
- * - keeping track of the knife's ammo
- * */
+// TODO: move_speed multiplier (heavier weapons make the player move slower)
 class Weapon {
  public:
   bool is_unlocked = true;
 
  private:
-  int ammo = 100000;
+  int ammo = 100000; // TODO: -1 for unlimited ammo
   float attack_delay;
   Timer attack_timer;
   bool is_attacking = false;

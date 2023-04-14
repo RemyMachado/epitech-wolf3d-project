@@ -1,4 +1,3 @@
-#include <chrono>
 #include "managers/GameManager.hpp"
 #include "draw.hpp"
 #include "raycasting.hpp"
@@ -328,7 +327,37 @@ void draw_raycast_map(std::vector<ComputedDrawHit> &raycast_map,
   }
 }
 
-void draw_hud(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprite &hud_sprite) {
+void draw_hud_bar_level(GameManager &game_manager) {
+  // draw the level with the numbers sprite sheet and the corresponding SpriteId
+  sf::Texture
+	  numbers_texture = TextureManager::get_instance().get_texture(static_cast<SpriteId>(game_manager.current_level));
+  sf::Sprite digit_sprite = sf::Sprite(numbers_texture);
+  SpriteSetting digit_sprite_settings = SPRITE_SETTINGS.at(SpriteId(game_manager.current_level));
+
+  digit_sprite.setTextureRect(sf::IntRect(digit_sprite_settings.initial_offset.x,
+										  digit_sprite_settings.initial_offset.y,
+										  digit_sprite_settings.frame_size.x,
+										  digit_sprite_settings.frame_size.y));
+
+  sf::Vector2i hud_bar_start_pos = sf::Vector2i(0, game_manager.window.getSize().y - game_manager.hud.bar_height);
+  sf::Vector2f level_sprite_center_ratio_pos = HUD_RELATIVE_CENTER_RATIO_SETTINGS.level;
+
+  float scale_factor =
+	  (float)game_manager.hud.bar_height / TextureManager::get_instance().get_texture(SpriteId::HUD_EMPTY).getSize().y;
+  digit_sprite.setScale(scale_factor, scale_factor);
+
+  // center the sprite in the hud bar
+//  digit_sprite.setPosition(hud_bar_start_pos.x + HUD_RELATIVE_CENTER_RATIO_SETTINGS.level.x * game_manager.hud.bar_width,
+//						   hud_bar_start_pos.y + HUD_RELATIVE_CENTER_RATIO_SETTINGS.level.y * game_manager.hud.bar_height);
+  digit_sprite.setPosition(hud_bar_start_pos.x + level_sprite_center_ratio_pos.x * game_manager.hud.bar_width
+							   - (digit_sprite_settings.frame_size.x * scale_factor) / 2,
+						   hud_bar_start_pos.y + level_sprite_center_ratio_pos.y * game_manager.hud.bar_height
+							   - (digit_sprite_settings.frame_size.y * scale_factor) / 2);
+
+  game_manager.window.draw(digit_sprite);
+}
+
+void draw_hud_bar(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprite &hud_sprite) {
   float width_to_height_ratio = (float)hud_texture.getSize().x / (float)hud_texture.getSize().y;
   int render_width = game_manager.hud.bar_height * width_to_height_ratio;
 
@@ -337,6 +366,13 @@ void draw_hud(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprite &h
   hud_sprite.setScale((float)render_width / (float)hud_texture.getSize().x,
 					  (float)game_manager.hud.bar_height / (float)hud_texture.getSize().y);
   game_manager.window.draw(hud_sprite);
+
+  draw_hud_bar_level(game_manager);
+}
+
+void draw_hud(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprite &hud_sprite) {
+  draw_minimap(game_manager);
+  draw_hud_bar(game_manager, hud_texture, hud_sprite);
 }
 
 void draw_equipped_weapon(GameManager &game_manager, sf::Texture &weapon_texture, sf::Sprite &weapon_sprite) {
@@ -361,8 +397,8 @@ void render_game_frame(GameManager &game_manager,
 					   sf::Texture &hud_empty_texture,
 					   sf::Sprite &hud_empty_sprite) {
   /*
-	  * Clear the window for drawing
-	  * */
+  * Clear the window for drawing
+  * */
   game_manager.window.clear();
 
   /*
@@ -370,40 +406,13 @@ void render_game_frame(GameManager &game_manager,
    * */
 
   // 3d floor
-  auto start_floor = std::chrono::high_resolution_clock::now();
-
   draw_floor_and_ceiling_3d(game_manager,
 							floor_texture,
 							floor_sprite,
 							ceiling_texture,
 							ceiling_sprite);
-  // Stop the frame_timer
-  auto end_floor = std::chrono::high_resolution_clock::now();
-
-  // Calculate the duration
-  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_floor - start_floor).count();
-//  std::cout << "--------------------------------------------" << std::endl << "Draw floor execution time: "
-//			<< duration << " ms" << std::endl;
-
   // 3d walls
-  auto start_walls = std::chrono::high_resolution_clock::now();
   draw_walls_3d(game_manager, wall_texture, wall_sprite);
-  // Stop the frame_timer
-  auto end_walls = std::chrono::high_resolution_clock::now();
-
-  // Calculate the duration
-  duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_walls - start_walls).count();
-//  std::cout << "Draw walls execution time: " << duration << " ms" << std::endl;
-
-  // minimap
-  auto start_minimap = std::chrono::high_resolution_clock::now();
-  draw_minimap(game_manager);
-  // Stop the frame_timer
-  auto end_minimap = std::chrono::high_resolution_clock::now();
-
-  // Calculate the duration
-  duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_minimap - start_minimap).count();
-//  std::cout << "Draw minimap execution time: " << duration << " ms" << std::endl;
 
   // draw player weapon
   game_manager.player.update_current_weapon_sprite();
@@ -414,17 +423,11 @@ void render_game_frame(GameManager &game_manager,
 	  game_manager.window.getSize().y - game_manager.hud.bar_height - current_weapon_sprite.getGlobalBounds().height);
   game_manager.window.draw(current_weapon_sprite);
 
-  // draw hud
+  // draw hud (bar & minimap)
   draw_hud(game_manager, hud_empty_texture, hud_empty_sprite);
 
   /*
    * display
    * */
-  auto start_display = std::chrono::high_resolution_clock::now();
   game_manager.window.display();
-  auto end_display = std::chrono::high_resolution_clock::now();
-
-  // Calculate the duration
-  duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_display - start_display).count();
-//  std::cout << "Render Display() execution time: " << duration << " ms" << std::endl;
 }
