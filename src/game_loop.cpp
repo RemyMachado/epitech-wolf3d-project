@@ -15,6 +15,10 @@ void run_game(GameManager &game_manager) {
   game_manager.hud.bar_height =
 	  hud_empty_texture.getSize().y * game_manager.window.getSize().x / hud_empty_texture.getSize().x;
 
+  game_manager.hud.scale_factor =
+	  (float)game_manager.hud.bar_height
+		  / (float)TextureManager::get_instance().get_texture(SpriteId::HUD_EMPTY).getSize().y;
+
   // assign textures to sprites
   sf::Sprite wall_sprite;
   sf::Sprite floor_sprite;

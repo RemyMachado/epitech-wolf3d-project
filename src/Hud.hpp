@@ -36,6 +36,7 @@ class Hud {
  public:
   int bar_width; // equal to screen bar_width
   int bar_height; // computed by the HUD texture ratio with/height
+  float scale_factor; // computed by the HUD texture ratio new/original
   float minimap_to_height_ratio = 0.2f;
 
   explicit Hud()

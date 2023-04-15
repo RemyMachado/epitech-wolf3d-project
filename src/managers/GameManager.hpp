@@ -19,6 +19,7 @@ class GameManager {
   Hud hud;
   MouseAndKeyboard mouse_and_keyboard;
   int current_level = 1;
+  int score = 72;
 
   GameManager(char *filename, float tile_size, sf::Vector2i screen_size) :
 	  window(sf::VideoMode(screen_size.x,

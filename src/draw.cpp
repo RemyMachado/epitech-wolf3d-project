@@ -327,12 +327,71 @@ void draw_raycast_map(std::vector<ComputedDrawHit> &raycast_map,
   }
 }
 
+/*
+ * Returns a vector of sprites that represent the number starting from the least significant digit
+ * */
+std::vector<SpriteSetting> number_to_sprites(int number) {
+  // use division and modulo to get the digits of the number
+  std::vector<int> digits;
+  std::vector<SpriteSetting> sprites_settings;
+
+  if (number == 0) {
+	digits.push_back(0);
+  }
+  while (number != 0) {
+	digits.push_back(number % 10);
+	number /= 10;
+  }
+
+  for (int digit : digits) {
+	SpriteSetting digit_sprite_settings = SPRITE_SETTINGS.at(SpriteId(digit));
+
+	sprites_settings.push_back(digit_sprite_settings);
+  }
+
+  return sprites_settings;
+}
+
+void draw_hud_bar_score(GameManager &game_manager) {
+  // draw the score with the numbers sprite sheet and the corresponding SpriteId
+  std::vector<SpriteSetting> score_sprites_settings = number_to_sprites(game_manager.score);
+
+  sf::Vector2i hud_bar_start_pos = sf::Vector2i(0, game_manager.window.getSize().y - game_manager.hud.bar_height);
+  sf::Vector2f score_sprite_center_ratio_pos = HUD_RELATIVE_CENTER_RATIO_SETTINGS.score;
+  float scale_factor = game_manager.hud.scale_factor;
+  float total_score_width = score_sprites_settings[0].frame_size.x * scale_factor * score_sprites_settings.size();
+
+  sf::Vector2f score_start_pos = {score_sprite_center_ratio_pos.x * game_manager.hud.bar_width + total_score_width / 2
+	  // to write from right to left
+									  - score_sprites_settings[0].frame_size.x
+										  * scale_factor,
+								  score_sprite_center_ratio_pos.y * game_manager.hud.bar_height};
+
+  for (int i = 0; i < score_sprites_settings.size(); i++) {
+	const SpriteSetting &digit_sprite_settings = score_sprites_settings[i];
+	const sf::Texture &digit_texture = TextureManager::get_instance().get_texture(digit_sprite_settings.id);
+	sf::Sprite digit_sprite = sf::Sprite(digit_texture);
+	digit_sprite.setScale(game_manager.hud.scale_factor, game_manager.hud.scale_factor);
+
+	digit_sprite.setTextureRect(sf::IntRect(digit_sprite_settings.initial_offset.x,
+											digit_sprite_settings.initial_offset.y,
+											digit_sprite_settings.frame_size.x,
+											digit_sprite_settings.frame_size.y));
+
+	digit_sprite.setPosition(score_start_pos.x - (float)i * digit_sprite_settings.frame_size.x * scale_factor,
+							 hud_bar_start_pos.y + score_sprite_center_ratio_pos.y * game_manager.hud.bar_height
+								 - (digit_sprite_settings.frame_size.y * game_manager.hud.scale_factor) / 2);
+
+	game_manager.window.draw(digit_sprite);
+  }
+}
+
 void draw_hud_bar_level(GameManager &game_manager) {
   // draw the level with the numbers sprite sheet and the corresponding SpriteId
   sf::Texture
 	  numbers_texture = TextureManager::get_instance().get_texture(static_cast<SpriteId>(game_manager.current_level));
   sf::Sprite digit_sprite = sf::Sprite(numbers_texture);
-  SpriteSetting digit_sprite_settings = SPRITE_SETTINGS.at(SpriteId(game_manager.current_level));
+  SpriteSetting digit_sprite_settings = SPRITE_SETTINGS.at(static_cast<SpriteId>(game_manager.current_level));
 
   digit_sprite.setTextureRect(sf::IntRect(digit_sprite_settings.initial_offset.x,
 										  digit_sprite_settings.initial_offset.y,
@@ -342,17 +401,14 @@ void draw_hud_bar_level(GameManager &game_manager) {
   sf::Vector2i hud_bar_start_pos = sf::Vector2i(0, game_manager.window.getSize().y - game_manager.hud.bar_height);
   sf::Vector2f level_sprite_center_ratio_pos = HUD_RELATIVE_CENTER_RATIO_SETTINGS.level;
 
-  float scale_factor =
-	  (float)game_manager.hud.bar_height / TextureManager::get_instance().get_texture(SpriteId::HUD_EMPTY).getSize().y;
+  float scale_factor = game_manager.hud.scale_factor;
   digit_sprite.setScale(scale_factor, scale_factor);
 
   // center the sprite in the hud bar
-//  digit_sprite.setPosition(hud_bar_start_pos.x + HUD_RELATIVE_CENTER_RATIO_SETTINGS.level.x * game_manager.hud.bar_width,
-//						   hud_bar_start_pos.y + HUD_RELATIVE_CENTER_RATIO_SETTINGS.level.y * game_manager.hud.bar_height);
-  digit_sprite.setPosition(hud_bar_start_pos.x + level_sprite_center_ratio_pos.x * game_manager.hud.bar_width
-							   - (digit_sprite_settings.frame_size.x * scale_factor) / 2,
+  digit_sprite.setPosition(hud_bar_start_pos.x + (level_sprite_center_ratio_pos.x * game_manager.hud.bar_width)
+							   - digit_sprite_settings.frame_size.x * scale_factor / 2,
 						   hud_bar_start_pos.y + level_sprite_center_ratio_pos.y * game_manager.hud.bar_height
-							   - (digit_sprite_settings.frame_size.y * scale_factor) / 2);
+							   - digit_sprite_settings.frame_size.y * scale_factor / 2);
 
   game_manager.window.draw(digit_sprite);
 }
@@ -368,6 +424,7 @@ void draw_hud_bar(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprit
   game_manager.window.draw(hud_sprite);
 
   draw_hud_bar_level(game_manager);
+  draw_hud_bar_score(game_manager);
 }
 
 void draw_hud(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprite &hud_sprite) {
