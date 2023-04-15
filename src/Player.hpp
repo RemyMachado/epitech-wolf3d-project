@@ -19,6 +19,8 @@ class Player {
   Weapon *current_weapon;
   Timer weapon_switch_timer;
   float body_radius = 0.2f;
+  float lives = 3;
+  float health = 100;
 
   Player(sf::Vector2f pos,
 		 float direction_deg,

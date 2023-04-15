@@ -44,9 +44,9 @@ static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
 class Weapon {
  public:
   bool is_unlocked = true;
+  int ammo = 100; // TODO: -1 for unlimited ammo
 
  private:
-  int ammo = 100000; // TODO: -1 for unlimited ammo
   float attack_delay;
   Timer attack_timer;
   bool is_attacking = false;

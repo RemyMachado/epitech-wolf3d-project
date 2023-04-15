@@ -352,6 +352,131 @@ std::vector<SpriteSetting> number_to_sprites(int number) {
   return sprites_settings;
 }
 
+void draw_hud_bar_current_weapon(GameManager &game_manager) {
+  // draw the current weapon with the corresponding SpriteId
+  sf::Sprite weapon_sprite = game_manager.player.current_weapon->get_hud_sprite();
+
+  sf::Vector2i hud_bar_start_pos = sf::Vector2i(0, game_manager.window.getSize().y - game_manager.hud.bar_height);
+  sf::Vector2f weapon_sprite_center_ratio_pos = HUD_RELATIVE_CENTER_RATIO_SETTINGS.weapon;
+
+  float scale_factor = game_manager.hud.scale_factor;
+  float total_weapon_width = weapon_sprite.getTextureRect().width * scale_factor;
+
+  sf::Vector2f weapon_pos =
+	  {hud_bar_start_pos.x + weapon_sprite_center_ratio_pos.x * game_manager.hud.bar_width  -total_weapon_width / 2,
+	   hud_bar_start_pos.y + weapon_sprite_center_ratio_pos.y * game_manager.hud.bar_height
+		   - weapon_sprite.getTextureRect().height * scale_factor / 2};
+
+  weapon_sprite.setPosition(weapon_pos);
+  weapon_sprite.setScale(scale_factor, scale_factor);
+
+  game_manager.window.draw(weapon_sprite);
+}
+
+void draw_hud_bar_ammo(GameManager &game_manager) {
+  // draw the ammo with the numbers sprite sheet and the corresponding SpriteId
+  std::vector<SpriteSetting> ammo_sprites_settings = number_to_sprites(game_manager.player.current_weapon->ammo);
+
+  sf::Vector2i hud_bar_start_pos = sf::Vector2i(0, game_manager.window.getSize().y - game_manager.hud.bar_height);
+  sf::Vector2f score_sprite_center_ratio_pos = HUD_RELATIVE_CENTER_RATIO_SETTINGS.ammo;
+
+  float scale_factor = game_manager.hud.scale_factor;
+  float total_score_width = ammo_sprites_settings[0].frame_size.x * scale_factor * ammo_sprites_settings.size();
+
+  sf::Vector2f score_start_pos = {score_sprite_center_ratio_pos.x * game_manager.hud.bar_width + total_score_width / 2
+	  // to write from right to left
+									  - ammo_sprites_settings[0].frame_size.x
+										  * scale_factor,
+								  score_sprite_center_ratio_pos.y * game_manager.hud.bar_height};
+
+  for (int i = 0; i < ammo_sprites_settings.size(); i++) {
+	const SpriteSetting &digit_sprite_settings = ammo_sprites_settings[i];
+	const sf::Texture &digit_texture = TextureManager::get_instance().get_texture(digit_sprite_settings.id);
+	sf::Sprite digit_sprite = sf::Sprite(digit_texture);
+	digit_sprite.setScale(game_manager.hud.scale_factor, game_manager.hud.scale_factor);
+
+	digit_sprite.setTextureRect(sf::IntRect(digit_sprite_settings.initial_offset.x,
+											digit_sprite_settings.initial_offset.y,
+											digit_sprite_settings.frame_size.x,
+											digit_sprite_settings.frame_size.y));
+
+	digit_sprite.setPosition(score_start_pos.x - (float)i * digit_sprite_settings.frame_size.x * scale_factor,
+							 hud_bar_start_pos.y + score_sprite_center_ratio_pos.y * game_manager.hud.bar_height
+								 - (digit_sprite_settings.frame_size.y * game_manager.hud.scale_factor) / 2);
+
+	game_manager.window.draw(digit_sprite);
+  }
+}
+
+void draw_hud_bar_health(GameManager &game_manager) {
+  // draw the health with the numbers sprite sheet and the corresponding SpriteId
+  std::vector<SpriteSetting> health_sprites_settings = number_to_sprites(game_manager.player.health);
+
+  sf::Vector2i hud_bar_start_pos = sf::Vector2i(0, game_manager.window.getSize().y - game_manager.hud.bar_height);
+  sf::Vector2f score_sprite_center_ratio_pos = HUD_RELATIVE_CENTER_RATIO_SETTINGS.health;
+
+  float scale_factor = game_manager.hud.scale_factor;
+  float total_score_width = health_sprites_settings[0].frame_size.x * scale_factor * health_sprites_settings.size();
+
+  sf::Vector2f score_start_pos = {score_sprite_center_ratio_pos.x * game_manager.hud.bar_width + total_score_width / 2
+	  // to write from right to left
+									  - health_sprites_settings[0].frame_size.x
+										  * scale_factor,
+								  score_sprite_center_ratio_pos.y * game_manager.hud.bar_height};
+
+  for (int i = 0; i < health_sprites_settings.size(); i++) {
+	const SpriteSetting &digit_sprite_settings = health_sprites_settings[i];
+	const sf::Texture &digit_texture = TextureManager::get_instance().get_texture(digit_sprite_settings.id);
+	sf::Sprite digit_sprite = sf::Sprite(digit_texture);
+	digit_sprite.setScale(game_manager.hud.scale_factor * 0.8f, game_manager.hud.scale_factor * 0.8f);
+
+	digit_sprite.setTextureRect(sf::IntRect(digit_sprite_settings.initial_offset.x,
+											digit_sprite_settings.initial_offset.y,
+											digit_sprite_settings.frame_size.x,
+											digit_sprite_settings.frame_size.y));
+
+	digit_sprite.setPosition(score_start_pos.x - (float)i * digit_sprite_settings.frame_size.x * scale_factor,
+							 hud_bar_start_pos.y + score_sprite_center_ratio_pos.y * game_manager.hud.bar_height
+								 - (digit_sprite_settings.frame_size.y * game_manager.hud.scale_factor * 0.8f) / 2);
+
+	game_manager.window.draw(digit_sprite);
+  }
+}
+
+void draw_hud_bar_lives(GameManager &game_manager) {
+  // draw the lives with the numbers sprite sheet and the corresponding SpriteId
+  std::vector<SpriteSetting> lives_sprites_settings = number_to_sprites(game_manager.player.lives);
+
+  sf::Vector2i hud_bar_start_pos = sf::Vector2i(0, game_manager.window.getSize().y - game_manager.hud.bar_height);
+  sf::Vector2f score_sprite_center_ratio_pos = HUD_RELATIVE_CENTER_RATIO_SETTINGS.lives;
+  float scale_factor = game_manager.hud.scale_factor;
+  float total_score_width = lives_sprites_settings[0].frame_size.x * scale_factor * lives_sprites_settings.size();
+
+  sf::Vector2f score_start_pos = {score_sprite_center_ratio_pos.x * game_manager.hud.bar_width + total_score_width / 2
+	  // to write from right to left
+									  - lives_sprites_settings[0].frame_size.x
+										  * scale_factor,
+								  score_sprite_center_ratio_pos.y * game_manager.hud.bar_height};
+
+  for (int i = 0; i < lives_sprites_settings.size(); i++) {
+	const SpriteSetting &digit_sprite_settings = lives_sprites_settings[i];
+	const sf::Texture &digit_texture = TextureManager::get_instance().get_texture(digit_sprite_settings.id);
+	sf::Sprite digit_sprite = sf::Sprite(digit_texture);
+	digit_sprite.setScale(game_manager.hud.scale_factor, game_manager.hud.scale_factor);
+
+	digit_sprite.setTextureRect(sf::IntRect(digit_sprite_settings.initial_offset.x,
+											digit_sprite_settings.initial_offset.y,
+											digit_sprite_settings.frame_size.x,
+											digit_sprite_settings.frame_size.y));
+
+	digit_sprite.setPosition(score_start_pos.x - (float)i * digit_sprite_settings.frame_size.x * scale_factor,
+							 hud_bar_start_pos.y + score_sprite_center_ratio_pos.y * game_manager.hud.bar_height
+								 - (digit_sprite_settings.frame_size.y * game_manager.hud.scale_factor) / 2);
+
+	game_manager.window.draw(digit_sprite);
+  }
+}
+
 void draw_hud_bar_score(GameManager &game_manager) {
   // draw the score with the numbers sprite sheet and the corresponding SpriteId
   std::vector<SpriteSetting> score_sprites_settings = number_to_sprites(game_manager.score);
@@ -425,6 +550,10 @@ void draw_hud_bar(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprit
 
   draw_hud_bar_level(game_manager);
   draw_hud_bar_score(game_manager);
+  draw_hud_bar_lives(game_manager);
+  draw_hud_bar_health(game_manager);
+  draw_hud_bar_ammo(game_manager);
+  draw_hud_bar_current_weapon(game_manager);
 }
 
 void draw_hud(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprite &hud_sprite) {
