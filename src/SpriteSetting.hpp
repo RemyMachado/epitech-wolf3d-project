@@ -25,6 +25,7 @@ enum class SpriteId {
 
   // Hud
   HUD_EMPTY,
+  HUD_FACES,
 
   // Weapons
   KNIFE_IDLE,
@@ -95,6 +96,14 @@ static std::unordered_map<SpriteId, SpriteSetting> SPRITE_SETTINGS = {
 		1,
 		sf::Vector2i(0, 0),
 		sf::Vector2i(0, 0)
+	}},
+	{SpriteId::HUD_FACES, SpriteSetting{
+		SpriteId::HUD_FACES,
+		"assets/textures/hud/hud-faces-sprite-sheet.png",
+		sf::Vector2i(24, 31),
+		8,
+		sf::Vector2i(0, 1),
+		sf::Vector2i(0, 31 + 2)
 	}},
 
 	/*

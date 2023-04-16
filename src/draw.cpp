@@ -363,7 +363,7 @@ void draw_hud_bar_current_weapon(GameManager &game_manager) {
   float total_weapon_width = weapon_sprite.getTextureRect().width * scale_factor;
 
   sf::Vector2f weapon_pos =
-	  {hud_bar_start_pos.x + weapon_sprite_center_ratio_pos.x * game_manager.hud.bar_width  -total_weapon_width / 2,
+	  {hud_bar_start_pos.x + weapon_sprite_center_ratio_pos.x * game_manager.hud.bar_width - total_weapon_width / 2,
 	   hud_bar_start_pos.y + weapon_sprite_center_ratio_pos.y * game_manager.hud.bar_height
 		   - weapon_sprite.getTextureRect().height * scale_factor / 2};
 
@@ -441,6 +441,21 @@ void draw_hud_bar_health(GameManager &game_manager) {
 
 	game_manager.window.draw(digit_sprite);
   }
+}
+
+void draw_hud_face(GameManager &game_manager) {
+  sf::Vector2i hud_bar_start_pos = sf::Vector2i(0, game_manager.window.getSize().y - game_manager.hud.bar_height);
+  sf::Vector2f face_sprite_center_ratio_pos = HUD_RELATIVE_CENTER_RATIO_SETTINGS.face;
+
+  float scale_factor = game_manager.hud.scale_factor;
+  game_manager.player.get_hud_face_sprite().setScale(scale_factor, scale_factor);
+
+  game_manager.player.get_hud_face_sprite().setPosition(
+	  hud_bar_start_pos.x + face_sprite_center_ratio_pos.x * game_manager.hud.bar_width
+		  - game_manager.player.get_hud_face_sprite().getLocalBounds().width * scale_factor / 2,
+	  hud_bar_start_pos.y + face_sprite_center_ratio_pos.y * game_manager.hud.bar_height
+		  - game_manager.player.get_hud_face_sprite().getLocalBounds().height * scale_factor / 2);
+  game_manager.window.draw(game_manager.player.get_hud_face_sprite());
 }
 
 void draw_hud_bar_lives(GameManager &game_manager) {
@@ -551,6 +566,7 @@ void draw_hud_bar(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprit
   draw_hud_bar_level(game_manager);
   draw_hud_bar_score(game_manager);
   draw_hud_bar_lives(game_manager);
+  draw_hud_face(game_manager);
   draw_hud_bar_health(game_manager);
   draw_hud_bar_ammo(game_manager);
   draw_hud_bar_current_weapon(game_manager);
@@ -561,16 +577,15 @@ void draw_hud(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprite &h
   draw_hud_bar(game_manager, hud_texture, hud_sprite);
 }
 
-void draw_equipped_weapon(GameManager &game_manager, sf::Texture &weapon_texture, sf::Sprite &weapon_sprite) {
-  float width_to_height_ratio = (float)weapon_texture.getSize().x / (float)weapon_texture.getSize().y;
-  int render_width = game_manager.hud.bar_height * width_to_height_ratio;
+void draw_weapon_3d(GameManager &game_manager) {
+  game_manager.player.update_sprites();
+  sf::Sprite &current_weapon_sprite = game_manager.player.current_weapon->get_current_sprite();
+  current_weapon_sprite.setScale(6, 6);
+  current_weapon_sprite.setPosition(
+	  game_manager.window.getSize().x / 2 - current_weapon_sprite.getGlobalBounds().width / 2,
+	  game_manager.window.getSize().y - game_manager.hud.bar_height - current_weapon_sprite.getGlobalBounds().height);
+  game_manager.window.draw(current_weapon_sprite);
 
-  // draw the hud
-  weapon_sprite.setPosition(game_manager.window.getSize().x - render_width,
-							game_manager.window.getSize().y - game_manager.hud.bar_height);
-  weapon_sprite.setScale((float)render_width / (float)weapon_texture.getSize().x,
-						 (float)game_manager.hud.bar_height / (float)weapon_texture.getSize().y);
-  game_manager.window.draw(weapon_sprite);
 }
 
 void render_game_frame(GameManager &game_manager,
@@ -601,13 +616,7 @@ void render_game_frame(GameManager &game_manager,
   draw_walls_3d(game_manager, wall_texture, wall_sprite);
 
   // draw player weapon
-  game_manager.player.update_current_weapon_sprite();
-  sf::Sprite &current_weapon_sprite = game_manager.player.current_weapon->get_current_sprite();
-  current_weapon_sprite.setScale(6, 6);
-  current_weapon_sprite.setPosition(
-	  game_manager.window.getSize().x / 2 - current_weapon_sprite.getGlobalBounds().width / 2,
-	  game_manager.window.getSize().y - game_manager.hud.bar_height - current_weapon_sprite.getGlobalBounds().height);
-  game_manager.window.draw(current_weapon_sprite);
+  draw_weapon_3d(game_manager);
 
   // draw hud (bar & minimap)
   draw_hud(game_manager, hud_empty_texture, hud_empty_sprite);

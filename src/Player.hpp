@@ -20,7 +20,7 @@ class Player {
   Timer weapon_switch_timer;
   float body_radius = 0.2f;
   float lives = 3;
-  float health = 100;
+  float health = 100; // max is 100
 
   Player(sf::Vector2f pos,
 		 float direction_deg,
@@ -28,7 +28,8 @@ class Player {
 		 Grid &grid,
 		 Camera &camera);
 
-  void update_current_weapon_sprite() const;
+  sf::Sprite &get_hud_face_sprite();
+  void update_sprites();
   void try_attack() const;
   void select_knife();
   void select_pistol();
@@ -39,6 +40,12 @@ class Player {
   void rotate(float direction_deg);
 
  private:
+  sf::Sprite hud_face_sprite;
+
+ private:
+  int get_hud_face_animation_frame() const;
+  void update_hud_face_sprite();
+  void update_current_weapon_sprite() const;
   void switch_weapon(Weapon *new_weapon);
   void move(float direction_deg);
 };

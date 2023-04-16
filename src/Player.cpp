@@ -92,7 +92,16 @@ Player::Player(sf::Vector2f pos, float direction_deg, float move_speed, Grid &gr
 	  knife(std::make_unique<Weapon>(WEAPON_SETTINGS.at(WeaponId::KNIFE))),
 	  pistol(std::make_unique<Weapon>(WEAPON_SETTINGS.at(WeaponId::PISTOL))),
 	  current_weapon(knife.get()),
-	  weapon_switch_timer(0.2f) {}
+	  weapon_switch_timer(0.2f) {
+  SpriteSetting hud_face_sprite_setting = SPRITE_SETTINGS.at(SpriteId::HUD_FACES);
+  hud_face_sprite.setTexture(TextureManager::get_instance().get_texture(SpriteId::HUD_FACES));
+  int current_face_frame = this->get_hud_face_animation_frame();
+  hud_face_sprite.setTextureRect(sf::IntRect(
+	  hud_face_sprite_setting.initial_offset.x + current_face_frame * hud_face_sprite_setting.frame_offset.x,
+	  hud_face_sprite_setting.initial_offset.y + current_face_frame * hud_face_sprite_setting.frame_offset.y,
+	  hud_face_sprite_setting.frame_size.x,
+	  hud_face_sprite_setting.frame_size.y));
+}
 
 void Player::switch_weapon(Weapon *new_weapon) {
   if (current_weapon == new_weapon ||
@@ -102,6 +111,28 @@ void Player::switch_weapon(Weapon *new_weapon) {
   }
 
   current_weapon = new_weapon;
+}
+
+int Player::get_hud_face_animation_frame() const {
+  SpriteSetting hud_face_sprite_setting = SPRITE_SETTINGS.at(SpriteId::HUD_FACES);
+  int alive_frame_count = hud_face_sprite_setting.frame_count - 1; // because last frame is dead face
+
+  float health_per_frame = (float)100 / (float)alive_frame_count;
+
+  int current_health_frame = alive_frame_count - this->health / health_per_frame;
+
+  return current_health_frame;
+}
+
+void Player::update_hud_face_sprite() {
+  SpriteSetting hud_face_sprite_setting = SPRITE_SETTINGS.at(SpriteId::HUD_FACES);
+  int current_face_frame = this->get_hud_face_animation_frame();
+
+  hud_face_sprite.setTextureRect(sf::IntRect(
+	  hud_face_sprite_setting.initial_offset.x + current_face_frame * hud_face_sprite_setting.frame_offset.x,
+	  hud_face_sprite_setting.initial_offset.y + current_face_frame * hud_face_sprite_setting.frame_offset.y,
+	  hud_face_sprite_setting.frame_size.x,
+	  hud_face_sprite_setting.frame_size.y));
 }
 
 void Player::update_current_weapon_sprite() const {
@@ -114,4 +145,12 @@ void Player::select_knife() {
 
 void Player::select_pistol() {
   this->switch_weapon(this->pistol.get());
+}
+
+void Player::update_sprites() {
+  this->update_current_weapon_sprite();
+  this->update_hud_face_sprite();
+}
+sf::Sprite &Player::get_hud_face_sprite() {
+  return this->hud_face_sprite;
 }
