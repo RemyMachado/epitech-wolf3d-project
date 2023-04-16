@@ -27,3 +27,15 @@ sf::Vector2f polar_to_cartesian(sf::Vector2f origin, float magnitude, float angl
   float angle_rad = degrees_to_radians(angle_deg);
   return {origin.x + magnitude * cosf(angle_rad), origin.y + magnitude * sinf(angle_rad)};
 }
+
+float get_angle_between_vectors(const sf::Vector2f &a, const sf::Vector2f &b) {
+  float dot = dot_product(a, b);
+  float magnitude_a = get_magnitude(a);
+  float magnitude_b = get_magnitude(b);
+
+  return acosf(dot / degrees_to_radians(magnitude_a * magnitude_b));
+}
+
+float get_distance_between_points(const sf::Vector2f &a, const sf::Vector2f &b) {
+  return sqrtf(powf(a.x - b.x, 2) + powf(a.y - b.y, 2));
+}

@@ -10,10 +10,13 @@
 class GameManager;
 class Grid;
 class Line;
+class Enemy;
+class EnemyDistanceToPlayer;
 
 /*
  * To store a pair of two values as a key in an unordered_map, we need to define a hash function for it.
- * */
+ * *//*
+
 struct PairHash {
   template<class T1, class T2>
   std::size_t operator()(const std::pair<T1, T2> &pair) const {
@@ -22,6 +25,7 @@ struct PairHash {
 	return hash1 ^ hash2;
   }
 };
+*/
 
 struct ComputedDrawHit {
   sf::Vector2i pixel_pos;
@@ -41,13 +45,14 @@ struct Raycast {
   Tile tile;
 };
 
+std::vector<EnemyDistanceToPlayer> compute_sort_enemy_distance_to_player_vec(GameManager &game_manager);
 Tile::Side determine_hit_side(float tile_size, const Tile &tile, const Line &intersected_segment);
 std::optional<Raycast> raycast(sf::Vector2f origin,
 							   float direction_deg,
 							   float render_distance,
 							   Grid &grid,
 							   Tile::Symbol symbol_target);
-std::vector<ComputedDrawHit> compute_partial_walls_raycast_vec(
+/*std::vector<ComputedDrawHit> compute_partial_walls_raycast_vec(
 	GameManager &game_manager,
 	int start_x,
 	int end_x,
@@ -65,6 +70,6 @@ std::vector<ComputedDrawHit> &compute_floor_raycast_vec(std::vector<ComputedDraw
 														GameManager &game_manager,
 														int field_width,
 														int field_height,
-														int ray_thickness);
+														int ray_thickness);*/
 
 #endif //EPITECH_WOLF3D_PROJECT_RAYCASTING_HPP

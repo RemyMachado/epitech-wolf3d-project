@@ -18,8 +18,10 @@ class GameManager {
   Camera camera;
   Hud hud;
   MouseAndKeyboard mouse_and_keyboard;
+  std::vector<Enemy> enemies;
   int current_level = 1;
   int score = 72;
+  unsigned int render_loop_count = 0;
 
   GameManager(char *filename, float tile_size, sf::Vector2i screen_size) :
 	  window(sf::VideoMode(screen_size.x,
@@ -34,7 +36,8 @@ class GameManager {
 			 0,
 			 grid.tile_size * 0.05f, grid, camera),
 	  hud(),
-	  mouse_and_keyboard() {
+	  mouse_and_keyboard(),
+	  enemies(grid.get_initial_enemies()) {
 	// set the mouse cursor to the center of the window
 	window.setMouseCursorGrabbed(true);
 	// hide the mouse cursor

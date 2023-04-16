@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <utility>
 #include <unordered_map>
 #include <optional>
@@ -84,6 +85,7 @@ std::optional<Raycast> raycast(sf::Vector2f origin,
   return closest_raycast;
 }
 
+/*
 std::vector<ComputedDrawHit> compute_partial_walls_raycast_vec(
 														GameManager &game_manager,
 														int start_x,
@@ -305,14 +307,17 @@ std::vector<ComputedDrawHit> &compute_walls_raycast_vec(std::vector<ComputedDraw
 		  break;
 		}
 
-		/*// double loop for ray_thickness
+		*/
+/*//*
+/ double loop for ray_thickness
 		for (int ray_thickness_x = 0; ray_thickness_x < ray_thickness; ray_thickness_x++) {
 		  for (int ray_thickness_y = 0; ray_thickness_y < ray_thickness; ray_thickness_y++) {
 			// store the computed raycast for the given pixel
 			raycast_vec.emplace(std::make_pair(field_x + ray_thickness_x, field_y + ray_thickness_y),
 								computed_draw_hit);
 		  }
-		}*/
+		}*//*
+
 
 		// store the computed raycast for the given pixel
 		raycast_vec.emplace_back(computed_draw_hit);
@@ -405,4 +410,29 @@ std::vector<ComputedDrawHit> &compute_floor_raycast_vec(std::vector<ComputedDraw
   }
 
   return raycast_vec;
+}*/
+
+/*
+ * sort the enemies by distance to the player (DESC)
+ * */
+std::vector<EnemyDistanceToPlayer> compute_sort_enemy_distance_to_player_vec(GameManager &game_manager) {
+  std::vector<EnemyDistanceToPlayer> enemy_distance_to_player_vec;
+
+  // for each enemy, calculate the distance to the player
+  for (auto &enemy : game_manager.enemies) {
+	// calculate the distance to the player
+	float distance_to_player = get_distance_between_points(game_manager.player.pos, enemy.pos);
+
+	// store the enemy and the distance to the player
+	enemy_distance_to_player_vec.emplace_back(EnemyDistanceToPlayer({enemy, distance_to_player}));
+  }
+
+  // sort the enemies by distance to the player (DESC)
+  std::sort(enemy_distance_to_player_vec.begin(),
+			enemy_distance_to_player_vec.end(),
+			[](const EnemyDistanceToPlayer &a, const EnemyDistanceToPlayer &b) {
+			  return a.distance > b.distance;
+			});
+
+  return enemy_distance_to_player_vec;
 }

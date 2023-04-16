@@ -162,9 +162,16 @@ void draw_floor_and_ceiling_3d(GameManager &game_manager,
   }
 }
 
-void draw_walls_3d(GameManager &game_manager,
+void draw_enemies(GameManager &game_manager, const std::vector<Raycast> &walls_raycast_hits) {
+  // sort enemies by distance to player (DESC)
+  // iterate over render_width and for each render_x if there's a raycast hit that is further than the enemy, draw the enemy
+}
+
+std::vector<Raycast> draw_walls_3d(GameManager &game_manager,
 				   sf::Sprite &wall_sprite,
 				   sf::Sprite &wall_shadow_sprite) {
+  std::vector<Raycast> raycast_hits;
+
   int render_width = (int)game_manager.window.getSize().x;
   int render_height = (int)game_manager.window.getSize().y - game_manager.hud.bar_height;
   int ray_thickness = 6;
@@ -195,14 +202,10 @@ void draw_walls_3d(GameManager &game_manager,
 		  std::fmin((float)render_height * (game_manager.grid.tile_size / raycast_distance_corrected), 10000);
 
 	  Tile::Side hit_side = raycast_wall.value().hit_side;
-	  // print hit_side
-	  std::cout << "hit_side: " << hit_side << std::endl;
 
 	  auto texture_size = (hit_side == Tile::Side::NORTH || hit_side == Tile::Side::EAST)
 						  ? wall_sprite.getTexture()->getSize()
 						  : wall_shadow_sprite.getTexture()->getSize();
-	  // print texture size with labels
-	  std::cout << "texture size: " << texture_size.x << " " << texture_size.y << std::endl;
 
 	  sf::Sprite &wall_sprite_to_draw = (hit_side == Tile::Side::NORTH || hit_side == Tile::Side::EAST)
 										? wall_sprite
@@ -245,10 +248,16 @@ void draw_walls_3d(GameManager &game_manager,
 													   ray_thickness));
 		game_manager.window.draw(wall_sprite_to_draw);
 	  }
+
+	  // move the raycast to the vector
+	  raycast_hits.emplace_back(std::move(raycast_wall.value()));
 	}
   }
+
+  return raycast_hits;
 }
 
+/*
 void draw_chunked_raycast_hits(std::vector<std::vector<ComputedDrawHit>>
 							   &chunked_raycast_hits, GameManager &game_manager,
 							   int raycast_thickness,
@@ -297,8 +306,9 @@ void draw_chunked_raycast_hits(std::vector<std::vector<ComputedDrawHit>>
 	}
   }
 }
+*/
 
-void draw_raycast_map(std::vector<ComputedDrawHit> &raycast_map,
+/*void draw_raycast_map(std::vector<ComputedDrawHit> &raycast_map,
 					  sf::RenderWindow &window,
 					  int raycast_thickness,
 					  sf::Texture &wall_texture,
@@ -339,7 +349,7 @@ void draw_raycast_map(std::vector<ComputedDrawHit> &raycast_map,
 	  window.draw(ceiling_sprite);
 	}
   }
-}
+}*/
 
 /*
  * Returns a vector of sprites that represent the number starting from the least significant digit
@@ -602,6 +612,16 @@ void draw_weapon_3d(GameManager &game_manager) {
 
 }
 
+void draw_enemies(GameManager &game_manager) {
+  auto sorted_enemies = compute_sort_enemy_distance_to_player_vec(game_manager);
+
+  if (game_manager.render_loop_count == 1) {
+	for (auto &sorted_enemy : sorted_enemies) {
+	  std::cout << sorted_enemy.enemy << ", distance: " << sorted_enemy.distance << std::endl;
+	}
+  }
+}
+
 void render_game_frame(GameManager &game_manager,
 					   sf::Sprite &wall_sprite,
 					   sf::Sprite &wall_shadow_sprite,
@@ -623,6 +643,8 @@ void render_game_frame(GameManager &game_manager,
 							ceiling_sprite);
   // 3d walls
   draw_walls_3d(game_manager, wall_sprite, wall_shadow_sprite);
+
+  draw_enemies(game_manager);
 
   // draw player weapon
   draw_weapon_3d(game_manager);

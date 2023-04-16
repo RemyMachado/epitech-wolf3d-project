@@ -29,11 +29,13 @@ class Tile {
 	FLOOR = ' ',
 	WALL = 'W',
 	PLAYER = 'P',
+	ENEMY_DOG = 'D',
+	ENEMY_GUARD = 'G',
   };
 
   static const std::unordered_set<char> &get_valid_symbols() {
 	static const std::unordered_set<char> valid_symbols = {
-		Symbol::FLOOR, Symbol::WALL, Symbol::PLAYER
+		Symbol::FLOOR, Symbol::WALL, Symbol::PLAYER, Symbol::ENEMY_DOG, Symbol::ENEMY_GUARD
 	};
 	return valid_symbols;
   }

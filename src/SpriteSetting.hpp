@@ -35,18 +35,17 @@ enum class SpriteId {
   PISTOL_ATTACK,
   KNIFE_HUD,
   PISTOL_HUD,
-  SHOTGUN,
-  MACHINE_GUN,
-  RIFLE,
-  BULLET,
-  ENEMY,
-  HEALTH,
-  AMMO,
-  KEY,
-  DOOR,
-  EXIT,
-  TEXT,
 
+  // Enemies
+  ENEMY_GUARD_IDLE,
+  ENEMY_DOG_IDLE,
+  ENEMY_GUARD_ATTACK,
+  ENEMY_DOG_ATTACK,
+  ENEMY_GUARD_DEATH,
+  ENEMY_DOG_DEATH,
+  ENEMY_GUARD_WALK,
+  ENEMY_DOG_WALK,
+  ENEMY_GUARD_HIT,
 };
 
 struct SpriteSetting {
@@ -257,6 +256,82 @@ static std::unordered_map<SpriteId, SpriteSetting> SPRITE_SETTINGS = {
 		1,
 		sf::Vector2i(72 + 9, 0),
 		sf::Vector2i(0, 0)
+	}},
+
+	/*
+	 * ENEMIES
+	 * */
+	{SpriteId::ENEMY_GUARD_IDLE, SpriteSetting{
+		SpriteId::ENEMY_GUARD_IDLE,
+		"assets/textures/enemies/guard-sprite-sheet.png",
+		sf::Vector2i(64, 64),
+		1,
+		sf::Vector2i(0, 0),
+		sf::Vector2i(0, 0)
+	}},
+	{SpriteId::ENEMY_GUARD_WALK, SpriteSetting{
+		SpriteId::ENEMY_GUARD_WALK,
+		"assets/textures/enemies/guard-sprite-sheet.png",
+		sf::Vector2i(64, 64),
+		4,
+		sf::Vector2i(0, 64 + 1),
+		sf::Vector2i(0, 64 + 1)
+	}},
+	{SpriteId::ENEMY_GUARD_ATTACK, SpriteSetting{
+		SpriteId::ENEMY_GUARD_ATTACK,
+		"assets/textures/enemies/guard-sprite-sheet.png",
+		sf::Vector2i(64, 64),
+		3,
+		sf::Vector2i(0, (64 + 1) * 6),
+		sf::Vector2i(64 + 1, 0)
+	}},
+	{SpriteId::ENEMY_GUARD_HIT, SpriteSetting{
+		SpriteId::ENEMY_GUARD_HIT,
+		"assets/textures/enemies/guard-sprite-sheet.png",
+		sf::Vector2i(64, 64),
+		1,
+		sf::Vector2i((64 + 1) * 7, (64 + 1) * 5),
+		sf::Vector2i(0, 0)
+	}},
+	{SpriteId::ENEMY_GUARD_DEATH, SpriteSetting{
+		SpriteId::ENEMY_GUARD_DEATH,
+		"assets/textures/enemies/guard-sprite-sheet.png",
+		sf::Vector2i(64, 64),
+		5,
+		sf::Vector2i(0, (64 + 1) * 5),
+		sf::Vector2i((64 + 1), 0)
+	}},
+	{SpriteId::ENEMY_DOG_IDLE, SpriteSetting{
+		SpriteId::ENEMY_DOG_IDLE,
+		"assets/textures/enemies/dog-sprite-sheet.png",
+		sf::Vector2i(64, 64),
+		1,
+		sf::Vector2i(0, 0),
+		sf::Vector2i(0, 0)
+	}},
+	{SpriteId::ENEMY_DOG_WALK, SpriteSetting{
+		SpriteId::ENEMY_DOG_WALK,
+		"assets/textures/enemies/dog-sprite-sheet.png",
+		sf::Vector2i(64, 64),
+		4,
+		sf::Vector2i(0, 0),
+		sf::Vector2i(0, 64 + 1)
+	}},
+	{SpriteId::ENEMY_DOG_ATTACK, SpriteSetting{
+		SpriteId::ENEMY_DOG_ATTACK,
+		"assets/textures/enemies/dog-sprite-sheet.png",
+		sf::Vector2i(64, 64),
+		3,
+		sf::Vector2i(0, (64 + 1) * 5),
+		sf::Vector2i(64 + 1, 0)
+	}},
+	{SpriteId::ENEMY_DOG_DEATH, SpriteSetting{
+		SpriteId::ENEMY_DOG_DEATH,
+		"assets/textures/enemies/dog-sprite-sheet.png",
+		sf::Vector2i(64, 64),
+		4,
+		sf::Vector2i(0, (64 + 1) * 4),
+		sf::Vector2i(64 + 1, 0)
 	}},
 };
 
