@@ -20,6 +20,7 @@ enum class SpriteId {
 
   // Environment
   WALL,
+  WALL_SHADOW,
   FLOOR,
   CEILING,
 
@@ -64,6 +65,14 @@ static std::unordered_map<SpriteId, SpriteSetting> SPRITE_SETTINGS = {
 	{SpriteId::WALL, SpriteSetting{
 		SpriteId::WALL,
 		"assets/textures/walls/redbrick.png",
+		sf::Vector2i(64, 64),
+		1,
+		sf::Vector2i(0, 0),
+		sf::Vector2i(0, 0)
+	}},
+	{SpriteId::WALL_SHADOW, SpriteSetting{
+		SpriteId::WALL_SHADOW,
+		"assets/textures/walls/redbrick-dark.png",
 		sf::Vector2i(64, 64),
 		1,
 		sf::Vector2i(0, 0),

@@ -165,8 +165,8 @@ void draw_floor_and_ceiling_3d(GameManager &game_manager,
 }
 
 void draw_walls_3d(GameManager &game_manager,
-				   sf::Texture &wall_texture,
-				   sf::Sprite &wall_sprite) {
+				   sf::Sprite &wall_sprite,
+				   sf::Sprite &wall_shadow_sprite) {
   int render_width = (int)game_manager.window.getSize().x;
   int render_height = (int)game_manager.window.getSize().y - game_manager.hud.bar_height;
   int ray_thickness = 6;
@@ -195,29 +195,42 @@ void draw_walls_3d(GameManager &game_manager,
 	  float column_height = (float)render_height * (game_manager.grid.tile_size / raycast_distance_corrected);
 	  float column_render_height =
 		  std::fmin((float)render_height * (game_manager.grid.tile_size / raycast_distance_corrected), 10000);
-//	  std::cout << "column_height: " << column_render_height << std::endl;
+
+	  Tile::Side hit_side = raycast_wall.value().hit_side;
+	  // print hit_side
+	  std::cout << "hit_side: " << hit_side << std::endl;
+
+	  auto texture_size = (hit_side == Tile::Side::NORTH || hit_side == Tile::Side::SOUTH)
+						  ? wall_sprite.getTexture()->getSize()
+						  : wall_shadow_sprite.getTexture()->getSize();
+	  // print texture size with labels
+	  std::cout << "texture size: " << texture_size.x << " " << texture_size.y << std::endl;
+
+	  sf::Sprite &wall_sprite_to_draw = (hit_side == Tile::Side::NORTH || hit_side == Tile::Side::SOUTH)
+										? wall_sprite
+										: wall_shadow_sprite;
 
 	  // calculate the position of the window_x pixel in the texture using hit side
 	  float texture_pixel_x = 0;
 
 	  if (raycast_wall.value().hit_side == Tile::Side::SOUTH) {
 		texture_pixel_x =
-			raycast_wall.value().local_intersection.x / game_manager.grid.tile_size * wall_texture.getSize().x;
+			raycast_wall.value().local_intersection.x / game_manager.grid.tile_size * texture_size.x;
 	  } else if (raycast_wall.value().hit_side == Tile::Side::NORTH) {
 		texture_pixel_x =
-			(1 - raycast_wall.value().local_intersection.x / game_manager.grid.tile_size) * wall_texture.getSize().x;
+			(1 - raycast_wall.value().local_intersection.x / game_manager.grid.tile_size) * texture_size.x;
 	  } else if (raycast_wall.value().hit_side == Tile::Side::WEST) {
 		texture_pixel_x =
-			raycast_wall.value().local_intersection.y / game_manager.grid.tile_size * wall_texture.getSize().x;
+			raycast_wall.value().local_intersection.y / game_manager.grid.tile_size * texture_size.x;
 	  } else if (raycast_wall.value().hit_side == Tile::Side::EAST) {
 		texture_pixel_x =
-			(1 - raycast_wall.value().local_intersection.y / game_manager.grid.tile_size) * wall_texture.getSize().x;
+			(1 - raycast_wall.value().local_intersection.y / game_manager.grid.tile_size) * texture_size.x;
 	  }
 
 	  // for each pixel in height, draw the corresponding pixel of the texture
 	  for (int y = 0; y < column_render_height; y += ray_thickness) {
 		// calculate the position of the y pixel in the texture
-		float texture_pixel_y = (float)y / column_height * wall_texture.getSize().y;
+		float texture_pixel_y = (float)y / column_height * texture_size.y;
 
 		// calculate the position of the pixel in the window
 		float window_y = ((float)render_height - column_height) / 2 + (float)y;
@@ -227,9 +240,12 @@ void draw_walls_3d(GameManager &game_manager,
 		}
 
 		// draw the pixel
-		wall_sprite.setPosition((float)window_x, window_y);
-		wall_sprite.setTextureRect(sf::IntRect(texture_pixel_x, (int)texture_pixel_y, ray_thickness, ray_thickness));
-		game_manager.window.draw(wall_sprite);
+		wall_sprite_to_draw.setPosition((float)window_x, window_y);
+		wall_sprite_to_draw.setTextureRect(sf::IntRect(texture_pixel_x,
+													   (int)texture_pixel_y,
+													   ray_thickness,
+													   ray_thickness));
+		game_manager.window.draw(wall_sprite_to_draw);
 	  }
 	}
   }
@@ -589,8 +605,8 @@ void draw_weapon_3d(GameManager &game_manager) {
 }
 
 void render_game_frame(GameManager &game_manager,
-					   sf::Texture &wall_texture,
 					   sf::Sprite &wall_sprite,
+					   sf::Sprite &wall_shadow_sprite,
 					   sf::Texture &floor_texture,
 					   sf::Sprite &floor_sprite,
 					   sf::Texture &ceiling_texture,
@@ -613,7 +629,7 @@ void render_game_frame(GameManager &game_manager,
 							ceiling_texture,
 							ceiling_sprite);
   // 3d walls
-  draw_walls_3d(game_manager, wall_texture, wall_sprite);
+  draw_walls_3d(game_manager, wall_sprite, wall_shadow_sprite);
 
   // draw player weapon
   draw_weapon_3d(game_manager);

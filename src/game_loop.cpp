@@ -7,6 +7,7 @@
 void run_game(GameManager &game_manager) {
   // load textures (wall, floor)
   sf::Texture wall_texture = TextureManager::get_instance().get_texture(SpriteId::WALL);
+  sf::Texture wall_shadow_texture = TextureManager::get_instance().get_texture(SpriteId::WALL_SHADOW);
   sf::Texture floor_texture = TextureManager::get_instance().get_texture(SpriteId::FLOOR);
   sf::Texture ceiling_texture = TextureManager::get_instance().get_texture(SpriteId::CEILING);
   sf::Texture hud_empty_texture = TextureManager::get_instance().get_texture(SpriteId::HUD_EMPTY);
@@ -21,10 +22,12 @@ void run_game(GameManager &game_manager) {
 
   // assign textures to sprites
   sf::Sprite wall_sprite;
+  sf::Sprite wall_shadow_sprite;
   sf::Sprite floor_sprite;
   sf::Sprite ceiling_sprite;
   sf::Sprite hud_empty_sprite;
   wall_sprite.setTexture(wall_texture);
+  wall_shadow_sprite.setTexture(wall_shadow_texture);
   floor_sprite.setTexture(floor_texture);
   ceiling_sprite.setTexture(ceiling_texture);
   hud_empty_sprite.setTexture(hud_empty_texture);
@@ -48,8 +51,8 @@ void run_game(GameManager &game_manager) {
 	}
 
 	render_game_frame(game_manager,
-					  wall_texture,
 					  wall_sprite,
+					  wall_shadow_sprite,
 					  floor_texture,
 					  floor_sprite,
 					  ceiling_texture,
