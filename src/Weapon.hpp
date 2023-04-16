@@ -60,63 +60,15 @@ class Weapon {
   Animation attack_animation;
 
  public:
-  explicit Weapon(const WeaponSetting &weapon_setting)
-	  : attack_animation(weapon_setting.attack_animation_params, [this]() { end_attack(); }),
-		attack_delay(weapon_setting.attack_delay),
-		attack_timer(weapon_setting.attack_delay),
-		attack_sound_id(weapon_setting.attack_sound_id) {
-	// TODO: generic loader
-	SpriteSetting hud_sprite_setting = SPRITE_SETTINGS.at(weapon_setting.hud_sprite_id);
-	SpriteSetting idle_sprite_setting = SPRITE_SETTINGS.at(weapon_setting.idle_sprite_id);
+  explicit Weapon(const WeaponSetting &weapon_setting);
 
-	hud_sprite.setTexture(TextureManager::get_instance().get_texture(weapon_setting.hud_sprite_id));
-	hud_sprite.setTextureRect(sf::IntRect(
-		hud_sprite_setting.initial_offset.x,
-		hud_sprite_setting.initial_offset.y,
-		hud_sprite_setting.frame_size.x,
-		hud_sprite_setting.frame_size.y));
-
-	idle_sprite.setTexture(TextureManager::get_instance().get_texture(weapon_setting.idle_sprite_id));
-	idle_sprite.setTextureRect(sf::IntRect(
-		idle_sprite_setting.initial_offset.x,
-		idle_sprite_setting.initial_offset.y,
-		idle_sprite_setting.frame_size.x,
-		idle_sprite_setting.frame_size.y));
-  }
-
-  bool try_attack() {
-	if (!is_unlocked || !attack_timer.check_is_elapsed() || ammo <= 0) {
-	  return false;
-	}
-	is_attacking = true;
-	ammo -= 1;
-	attack_animation.reset_animation();
-	SoundManager::get_instance().play_sound(attack_sound_id);
-
-	return true;
-  }
-
-  void update_sprite() {
-	if (is_attacking) {
-	  attack_animation.update_sprite();
-	}
-  }
-
-  sf::Sprite &get_current_sprite() {
-	if (is_attacking) {
-	  return attack_animation.getSprite();
-	}
-	return idle_sprite;
-  }
-
-  sf::Sprite &get_hud_sprite() {
-	return hud_sprite;
-  }
+  bool try_attack();
+  void update_sprite();
+  sf::Sprite &get_current_sprite();
+  sf::Sprite &get_hud_sprite();
 
  private:
-  void end_attack() {
-	is_attacking = false;
-  }
+  void end_attack();
 };
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_WEAPON_HPP_
