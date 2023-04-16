@@ -200,13 +200,13 @@ void draw_walls_3d(GameManager &game_manager,
 	  // print hit_side
 	  std::cout << "hit_side: " << hit_side << std::endl;
 
-	  auto texture_size = (hit_side == Tile::Side::NORTH || hit_side == Tile::Side::SOUTH)
+	  auto texture_size = (hit_side == Tile::Side::NORTH || hit_side == Tile::Side::EAST)
 						  ? wall_sprite.getTexture()->getSize()
 						  : wall_shadow_sprite.getTexture()->getSize();
 	  // print texture size with labels
 	  std::cout << "texture size: " << texture_size.x << " " << texture_size.y << std::endl;
 
-	  sf::Sprite &wall_sprite_to_draw = (hit_side == Tile::Side::NORTH || hit_side == Tile::Side::SOUTH)
+	  sf::Sprite &wall_sprite_to_draw = (hit_side == Tile::Side::NORTH || hit_side == Tile::Side::EAST)
 										? wall_sprite
 										: wall_shadow_sprite;
 
