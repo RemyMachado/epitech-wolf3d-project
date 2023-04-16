@@ -82,9 +82,7 @@ void draw_minimap(GameManager &game_manager) {
 }
 
 void draw_floor_and_ceiling_3d(GameManager &game_manager,
-							   sf::Texture &floor_texture,
 							   sf::Sprite &floor_sprite,
-							   sf::Texture &ceiling_texture,
 							   sf::Sprite &ceiling_sprite) {
   int render_width = (int)game_manager.window.getSize().x;
   int render_height = (int)game_manager.window.getSize().y - game_manager.hud.bar_height;
@@ -141,9 +139,9 @@ void draw_floor_and_ceiling_3d(GameManager &game_manager,
 			  floor(floor_intersection_pos.x / game_manager.grid.tile_size) * game_manager.grid.tile_size,
 			  floor(floor_intersection_pos.y / game_manager.grid.tile_size) * game_manager.grid.tile_size);
 	  sf::Vector2f texture_coordinates =
-		  sf::Vector2f(local_intersection.x / game_manager.grid.tile_size * floor_texture.getSize().x,
+		  sf::Vector2f(local_intersection.x / game_manager.grid.tile_size * floor_sprite.getTexture()->getSize().x,
 					   local_intersection.y / game_manager.grid.tile_size
-						   * floor_texture.getSize().y);
+						   * floor_sprite.getTexture()->getSize().y);
 
 	  // draw the floor
 	  floor_sprite.setPosition((float)window_x, (float)window_y);
@@ -569,14 +567,14 @@ void draw_hud_bar_level(GameManager &game_manager) {
   game_manager.window.draw(digit_sprite);
 }
 
-void draw_hud_bar(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprite &hud_sprite) {
-  float width_to_height_ratio = (float)hud_texture.getSize().x / (float)hud_texture.getSize().y;
+void draw_hud_bar(GameManager &game_manager, sf::Sprite &hud_sprite) {
+  float width_to_height_ratio = (float)hud_sprite.getTexture()->getSize().x / (float)hud_sprite.getTexture()->getSize().y;
   int render_width = game_manager.hud.bar_height * width_to_height_ratio;
 
   // draw the hud
   hud_sprite.setPosition(0, game_manager.window.getSize().y - game_manager.hud.bar_height);
-  hud_sprite.setScale((float)render_width / (float)hud_texture.getSize().x,
-					  (float)game_manager.hud.bar_height / (float)hud_texture.getSize().y);
+  hud_sprite.setScale((float)render_width / (float)hud_sprite.getTexture()->getSize().x,
+					  (float)game_manager.hud.bar_height / (float)hud_sprite.getTexture()->getSize().y);
   game_manager.window.draw(hud_sprite);
 
   draw_hud_bar_level(game_manager);
@@ -588,9 +586,9 @@ void draw_hud_bar(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprit
   draw_hud_bar_current_weapon(game_manager);
 }
 
-void draw_hud(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprite &hud_sprite) {
+void draw_hud(GameManager &game_manager, sf::Sprite &hud_sprite) {
   draw_minimap(game_manager);
-  draw_hud_bar(game_manager, hud_texture, hud_sprite);
+  draw_hud_bar(game_manager, hud_sprite);
 }
 
 void draw_weapon_3d(GameManager &game_manager) {
@@ -607,11 +605,8 @@ void draw_weapon_3d(GameManager &game_manager) {
 void render_game_frame(GameManager &game_manager,
 					   sf::Sprite &wall_sprite,
 					   sf::Sprite &wall_shadow_sprite,
-					   sf::Texture &floor_texture,
 					   sf::Sprite &floor_sprite,
-					   sf::Texture &ceiling_texture,
 					   sf::Sprite &ceiling_sprite,
-					   sf::Texture &hud_empty_texture,
 					   sf::Sprite &hud_empty_sprite) {
   /*
   * Clear the window for drawing
@@ -624,9 +619,7 @@ void render_game_frame(GameManager &game_manager,
 
   // 3d floor
   draw_floor_and_ceiling_3d(game_manager,
-							floor_texture,
 							floor_sprite,
-							ceiling_texture,
 							ceiling_sprite);
   // 3d walls
   draw_walls_3d(game_manager, wall_sprite, wall_shadow_sprite);
@@ -635,7 +628,7 @@ void render_game_frame(GameManager &game_manager,
   draw_weapon_3d(game_manager);
 
   // draw hud (bar & minimap)
-  draw_hud(game_manager, hud_empty_texture, hud_empty_sprite);
+  draw_hud(game_manager, hud_empty_sprite);
 
   /*
    * display

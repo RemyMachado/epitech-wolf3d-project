@@ -21,9 +21,7 @@ void draw_chunked_raycast_hits(std::vector<std::vector<ComputedDrawHit>>
 							   sf::Texture &ceiling_texture,
 							   sf::Sprite &ceiling_sprite);
 void draw_floor_and_ceiling_3d(GameManager &game_manager,
-							   sf::Texture &floor_texture,
 							   sf::Sprite &floor_sprite,
-							   sf::Texture &ceiling_texture,
 							   sf::Sprite &ceiling_sprite);
 void draw_walls_3d(GameManager &game_manager,
 				   sf::Sprite &wall_sprite,
@@ -37,15 +35,12 @@ void draw_raycast_map(std::vector<ComputedDrawHit> &raycast_map,
 					  sf::Sprite &floor_sprite,
 					  sf::Texture &ceiling_texture,
 					  sf::Sprite &ceiling_sprite);
-void draw_hud(GameManager &game_manager, sf::Texture &hud_texture, sf::Sprite &hud_sprite);
+void draw_hud(GameManager &game_manager, sf::Sprite &hud_sprite);
 void render_game_frame(GameManager &game_manager,
 					   sf::Sprite &wall_sprite,
 					   sf::Sprite &wall_shadow_sprite,
-					   sf::Texture &floor_texture,
 					   sf::Sprite &floor_sprite,
-					   sf::Texture &ceiling_texture,
 					   sf::Sprite &ceiling_sprite,
-					   sf::Texture &hud_empty_texture,
 					   sf::Sprite &hud_empty_sprite);
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_DRAW_HPP_

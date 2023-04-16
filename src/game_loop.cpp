@@ -53,11 +53,8 @@ void run_game(GameManager &game_manager) {
 	render_game_frame(game_manager,
 					  wall_sprite,
 					  wall_shadow_sprite,
-					  floor_texture,
 					  floor_sprite,
-					  ceiling_texture,
 					  ceiling_sprite,
-					  hud_empty_texture,
 					  hud_empty_sprite);
 
 	// Stop the frame_timer
