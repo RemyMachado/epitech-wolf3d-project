@@ -50,7 +50,7 @@ Tile::Side determine_hit_side(float tile_size, const Tile &tile, const Line &int
 std::optional<Raycast> raycast(sf::Vector2f origin,
 							   float direction_deg,
 							   float render_distance,
-							   Grid &grid,
+							   const Grid &grid,
 							   Tile::Symbol symbol_target);
 /*std::vector<ComputedDrawHit> compute_partial_walls_raycast_vec(
 	GameManager &game_manager,

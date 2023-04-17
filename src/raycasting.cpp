@@ -35,7 +35,7 @@ Tile::Side determine_hit_side(float tile_size, const Tile &tile, const Line &int
 std::optional<Raycast> raycast(sf::Vector2f origin,
 							   float direction_deg,
 							   float render_distance,
-							   Grid &grid,
+							   const Grid &grid,
 							   Tile::Symbol symbol_target) {
   // get closest intersection from pos to dir_deg with symbol_target horizontal_segments
   std::optional<Raycast> closest_raycast = std::nullopt;

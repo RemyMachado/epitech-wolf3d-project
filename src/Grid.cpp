@@ -43,7 +43,7 @@ std::vector<Enemy> Grid::get_initial_enemies() const {
   for (int y = 0; y < height; y++) {
 	for (int x = 0; x < width; x++) {
 	  if (get(x, y).symbol == Tile::Symbol::ENEMY_DOG || get(x, y).symbol == Tile::Symbol::ENEMY_GUARD) {
-		enemies.emplace_back(ENEMY_SETTINGS.at(get(x, y).symbol), sf::Vector2i(x, y),
+		enemies.emplace_back(ENEMY_SETTINGS.at(get(x, y).symbol), *this, sf::Vector2i(x, y),
 							 sf::Vector2f{(float)x * tile_size + tile_size / 2, (float)y * tile_size + tile_size / 2});
 	  }
 	}

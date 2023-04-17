@@ -35,6 +35,16 @@ sf::Vector2f normalize_line(const Line &line) {
   return normalize_vector(line.end - line.start);
 }
 
+Polar cartesian_to_polar(const sf::Vector2f &origin, const sf::Vector2f &point) {
+  float x = point.x - origin.x;
+  float y = point.y - origin.y;
+
+  float magnitude = sqrtf(x * x + y * y);
+  float angle_rad = atan2f(y, x);
+
+  return {magnitude, radians_to_degrees(angle_rad)};
+}
+
 sf::Vector2f polar_to_cartesian(sf::Vector2f origin, float magnitude, float angle_deg) {
   float angle_rad = degrees_to_radians(angle_deg);
   return {origin.x + magnitude * cosf(angle_rad), origin.y + magnitude * sinf(angle_rad)};

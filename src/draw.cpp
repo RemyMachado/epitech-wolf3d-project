@@ -618,7 +618,7 @@ void draw_hud(GameManager &game_manager, sf::Sprite &hud_sprite) {
 }
 
 void draw_weapon_3d(GameManager &game_manager) {
-  game_manager.player.update_sprites();
+  game_manager.player.update();
   sf::Sprite &current_weapon_sprite = game_manager.player.current_weapon->get_current_sprite();
   current_weapon_sprite.setScale(6, 6);
   current_weapon_sprite.setPosition(
@@ -633,7 +633,6 @@ void draw_enemies(GameManager &game_manager, std::vector<std::optional<Raycast>>
 
   // set enemy sprites position and scale
   for (auto &sorted_enemy_info : sorted_enemies_info) {
-	sorted_enemy_info.enemy_ref.get().update();
 	sf::Sprite &enemy_sprite = sorted_enemy_info.enemy_ref.get().get_current_sprite();
 	float column_height =
 		std::fmin((float)render_height * (game_manager.grid.tile_size / sorted_enemy_info.distance), 10000);

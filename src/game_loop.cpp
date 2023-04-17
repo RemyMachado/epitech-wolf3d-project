@@ -33,8 +33,9 @@ void run_game(GameManager &game_manager) {
   hud_empty_sprite.setTexture(hud_empty_texture);
 
   while (game_manager.window.isOpen()) {
-	game_manager.render_loop_count++;
 	auto start_loop = std::chrono::high_resolution_clock::now();
+	game_manager.render_loop_count++;
+	game_manager.update();
 
 	/*
 	* Handle user inputs

@@ -6,10 +6,17 @@
 
 class Line;
 
+// a struct depicting a polar coordinate
+struct Polar {
+  float magnitude;
+  float angle_deg;
+};
+
 float degrees_to_radians(float degrees);
 float radians_to_degrees(float radians);
 float get_magnitude(sf::Vector2f vec);
 sf::Vector2f polar_to_cartesian(sf::Vector2f origin, float magnitude, float angle_deg);
+Polar cartesian_to_polar(const sf::Vector2f &origin, const sf::Vector2f &point);
 sf::Vector2f normalize_vector(const sf::Vector2f &vector);
 sf::Vector2f normalize_line(const Line &line);
 float dot_product(const sf::Vector2f &a, const sf::Vector2f &b);

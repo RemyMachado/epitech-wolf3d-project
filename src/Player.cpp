@@ -146,10 +146,12 @@ void Player::select_knife() {
 void Player::select_pistol() {
   this->switch_weapon(this->pistol.get());
 }
-
 void Player::update_sprites() {
   this->update_current_weapon_sprite();
   this->update_hud_face_sprite();
+}
+void Player::update() {
+  update_sprites();
 }
 sf::Sprite &Player::get_hud_face_sprite() {
   return this->hud_face_sprite;
@@ -157,3 +159,13 @@ sf::Sprite &Player::get_hud_face_sprite() {
 sf::Vector2f Player::get_dir_vector() const {
   return compute_dir_vector(this->dir_deg);
 }
+sf::Vector2f Player::get_pos() const {
+  return this->pos;
+}
+void Player::take_damage(float damage) {
+  this->health -= damage;
+  if (this->health <= 0) {
+	this->health = 0;
+  }
+}
+

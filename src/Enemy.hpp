@@ -6,8 +6,11 @@
 #include "Animation.hpp"
 #include "Tile.hpp"
 #include "managers/SoundManager.hpp"
+#include "Grid.hpp"
 
 class Enemy;
+class Player;
+class Grid;
 
 struct EnemySetting {
   Tile::Symbol symbol;
@@ -15,6 +18,8 @@ struct EnemySetting {
   SpriteId idle_sprite_id;
   float attack_delay;
   float max_additional_random_attack_delay;
+  float attack_tile_range;
+  float attack_damage;
   SoundId attack_sound_id;
 };
 
@@ -30,6 +35,8 @@ static std::unordered_map<Tile::Symbol, EnemySetting> ENEMY_SETTINGS = {
 		SpriteId::ENEMY_GUARD_IDLE,
 		1.5f,
 		0.5f,
+		10,
+		5,
 		SoundId::PISTOL_ATTACK
 	}},
 	{Tile::Symbol::ENEMY_DOG, {
@@ -38,6 +45,8 @@ static std::unordered_map<Tile::Symbol, EnemySetting> ENEMY_SETTINGS = {
 		SpriteId::ENEMY_DOG_IDLE,
 		2.0f,
 		0.5f,
+		1,
+		10,
 		SoundId::ENEMY_DOG_BARK
 	}},
 };
@@ -53,6 +62,9 @@ class Enemy {
   bool is_attacking = false;
 
  private:
+  const Grid &grid;
+  float attack_tile_range;
+  float attack_damage;
   /* Sound */
   SoundId attack_sound_id;
 
@@ -61,16 +73,17 @@ class Enemy {
   Animation attack_animation;
 
  public:
-  explicit Enemy(const EnemySetting &setting, sf::Vector2i initial_coords, sf::Vector2f initial_pos);
+  explicit Enemy(const EnemySetting &setting, const Grid &grid, sf::Vector2i initial_coords, sf::Vector2f initial_pos);
 
   sf::Sprite &get_current_sprite();
-  void update();
+  void update(Player &player);
 
   // print operator
   friend std::ostream &operator<<(std::ostream &os, const Enemy &enemy);
 
  private:
-  void try_attack();
+  void try_attack(Player &player);
+  bool is_player_in_range(const Player &player);
   void update_sprites();
   void update_attack_animation();
   void update_idle_animation();

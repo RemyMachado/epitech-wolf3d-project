@@ -29,8 +29,9 @@ class Player {
 		 Camera &camera);
 
   sf::Sprite &get_hud_face_sprite();
-  void update_sprites();
+  void update();
   void try_attack() const;
+  void take_damage(float damage);
   void select_knife();
   void select_pistol();
   void move_forward();
@@ -38,6 +39,7 @@ class Player {
   void move_left();
   void move_right();
   void rotate(float direction_deg);
+  sf::Vector2f get_pos() const;
   sf::Vector2f get_dir_vector() const;
 
  private:
@@ -47,6 +49,7 @@ class Player {
   int get_hud_face_animation_frame() const;
   void update_hud_face_sprite();
   void update_current_weapon_sprite() const;
+  void update_sprites();
   void switch_weapon(Weapon *new_weapon);
   void move(float direction_deg);
 };
