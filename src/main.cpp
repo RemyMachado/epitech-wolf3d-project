@@ -3,7 +3,6 @@
 #include "game_loop.hpp"
 
 // TODO: create doors with wood texture and destroy it with any weapon
-// TODO: add shader to the wall texture depending on hit_side (create a darker texture in Gimp)
 
 // retrieve filename from command line
 int main(int argc, char **argv) {

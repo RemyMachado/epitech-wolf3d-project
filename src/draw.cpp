@@ -633,11 +633,11 @@ void draw_enemies(GameManager &game_manager, std::vector<std::optional<Raycast>>
 
   // set enemy sprites position and scale
   for (auto &sorted_enemy_info : sorted_enemies_info) {
-	sorted_enemy_info.enemy_ref.get().update_sprites();
+	sorted_enemy_info.enemy_ref.get().update();
 	sf::Sprite &enemy_sprite = sorted_enemy_info.enemy_ref.get().get_current_sprite();
 	float column_height =
 		std::fmin((float)render_height * (game_manager.grid.tile_size / sorted_enemy_info.distance), 10000);
-	float scale_factor = column_height / enemy_sprite.getGlobalBounds().height;
+	float scale_factor = column_height / 64; // TODO: get frame width instead of magic 64
 	enemy_sprite.setScale(scale_factor, scale_factor);
 
 	// compute angle difference between player and enemy
@@ -667,12 +667,11 @@ void draw_enemies(GameManager &game_manager, std::vector<std::optional<Raycast>>
 
 	int loop_start_x = std::max(sprite_start_x, 0);
 	int loop_end_x = std::min(sprite_end_x, (int)game_manager.window.getSize().x);
-	std::cout << "loop_start_x: " << loop_start_x << " loop_end_x: " << loop_end_x << std::endl;
 
 	for (int window_x = loop_start_x; window_x < loop_end_x; window_x++) {
 	  int sprite_x = window_x - sprite_start_x;
 	  float sprite_x_percentage = (float)sprite_x / (float)enemy_sprite.getGlobalBounds().width;
-	  int texture_x = sprite_x_percentage * 64; // TODO: get dynamic frame width (NOT TEXTURE WIDTH) instead of magic 64
+	  int texture_x = sprite_x_percentage * 64; // TODO: get frame width instead of magic 64
 	  std::optional<Raycast> &wall_raycast = walls_raycast[window_x];
 
 	  if (wall_raycast.has_value()) {

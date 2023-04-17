@@ -8,6 +8,7 @@
 enum class SoundId {
   KNIFE_ATTACK,
   PISTOL_ATTACK,
+  ENEMY_DOG_BARK,
 };
 
 struct SoundSetting {
@@ -23,6 +24,9 @@ static std::unordered_map<SoundId, SoundSetting> SOUND_SETTINGS = {
 	}},
 	{SoundId::PISTOL_ATTACK, SoundSetting{
 		"assets/sounds/weapons/pistol_attack.wav",
+	}},
+	{SoundId::ENEMY_DOG_BARK, SoundSetting{
+		"assets/sounds/enemies/dog_bark.wav",
 	}},
 };
 

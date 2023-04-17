@@ -15,7 +15,7 @@ class Grid {
   std::vector<Tile> tiles;
 
   // constructor for FileData type
-  Grid(FileData file_data, float tile_size);;
+  Grid(FileData file_data, float tile_size);
 
   [[nodiscard]] Tile get(int x, int y) const;
 
@@ -26,6 +26,9 @@ class Grid {
 
   // stringify the grid with the cout operator (not working anymore)
 //  friend std::ostream &operator<<(std::ostream &os, const Grid &grid);
+
+ private:
+  [[nodiscard]] unsigned int count_enemies() const;
 };
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_GRID_HPP_
