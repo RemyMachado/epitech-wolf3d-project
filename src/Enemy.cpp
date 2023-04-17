@@ -26,6 +26,11 @@ Enemy::Enemy(const EnemySetting &setting, sf::Vector2i initial_coords, sf::Vecto
 	  attack_delay(setting.attack_delay),
 	  attack_timer(setting.attack_delay),
 	  attack_sound_id(setting.attack_sound_id) {
+  // generate a random number between 0 and 1
+  float random_number = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+  // add a random number between 0 and max_additional_random_attack_delay
+  additional_random_attack_delay = random_number * setting.max_additional_random_attack_delay;
+
   // TODO: generic loader
   SpriteSetting idle_sprite_setting = SPRITE_SETTINGS.at(setting.idle_sprite_id);
 
@@ -49,7 +54,7 @@ void Enemy::update_sprites() {
 }
 // TODO: check if the player is in range
 void Enemy::try_attack() {
-  if (is_attacking || !attack_timer.check_is_elapsed()) {
+  if (is_attacking || !attack_timer.check_is_elapsed(additional_random_attack_delay)) {
 	return;
   }
   is_attacking = true;

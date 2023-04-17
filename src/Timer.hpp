@@ -12,12 +12,12 @@ class Timer {
  public:
   explicit Timer(float interval) : interval(interval), elapsedTime(0.0f), clock() {}
 
-  bool check_is_elapsed() {
+  bool check_is_elapsed(float additional_time = 0.0f) {
 	float deltaTime = clock.restart().asSeconds();
 
 	elapsedTime += deltaTime;
 
-	if (elapsedTime >= interval) {
+	if (elapsedTime >= interval + additional_time) {
 	  reset();
 	  return true;
 	}

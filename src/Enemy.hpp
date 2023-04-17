@@ -14,6 +14,7 @@ struct EnemySetting {
   AnimationParams attack_animation_params;
   SpriteId idle_sprite_id;
   float attack_delay;
+  float max_additional_random_attack_delay;
   SoundId attack_sound_id;
 };
 
@@ -28,6 +29,7 @@ static std::unordered_map<Tile::Symbol, EnemySetting> ENEMY_SETTINGS = {
 		{SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_ATTACK), 0.5f},
 		SpriteId::ENEMY_GUARD_IDLE,
 		1.5f,
+		0.5f,
 		SoundId::PISTOL_ATTACK
 	}},
 	{Tile::Symbol::ENEMY_DOG, {
@@ -35,6 +37,7 @@ static std::unordered_map<Tile::Symbol, EnemySetting> ENEMY_SETTINGS = {
 		{SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_ATTACK), 0.6f},
 		SpriteId::ENEMY_DOG_IDLE,
 		2.0f,
+		0.5f,
 		SoundId::ENEMY_DOG_BARK
 	}},
 };
@@ -45,6 +48,7 @@ class Enemy {
   sf::Vector2f pos;
   Tile::Symbol symbol;
   float attack_delay;
+  float additional_random_attack_delay;
   Timer attack_timer;
   bool is_attacking = false;
 
