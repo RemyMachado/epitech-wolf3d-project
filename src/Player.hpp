@@ -38,6 +38,7 @@ class Player {
   void move_left();
   void move_right();
   void rotate(float direction_deg);
+  sf::Vector2f get_dir_vector() const;
 
  private:
   sf::Sprite hud_face_sprite;

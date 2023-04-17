@@ -154,3 +154,6 @@ void Player::update_sprites() {
 sf::Sprite &Player::get_hud_face_sprite() {
   return this->hud_face_sprite;
 }
+sf::Vector2f Player::get_dir_vector() const {
+  return compute_dir_vector(this->dir_deg);
+}

@@ -81,6 +81,24 @@ void draw_minimap(GameManager &game_manager) {
   draw_player_on_minimap(game_manager);
 }
 
+void draw_monochrome_floor_and_ceiling(GameManager &game_manager) {
+  int render_height = (int)game_manager.window.getSize().y - game_manager.hud.bar_height;
+
+  // draw the bottom half of the screen for the floor
+  sf::RectangleShape floor(sf::Vector2f((float)game_manager.window.getSize().x,
+	  render_height / 2));
+  floor.setFillColor(sf::Color(100, 100, 100, 255));
+  floor.setPosition(0, render_height / 2);
+  game_manager.window.draw(floor);
+
+  // draw the top half of the screen for the ceiling
+  sf::RectangleShape ceiling(sf::Vector2f((float)game_manager.window.getSize().x,
+	  render_height / 2));
+  ceiling.setFillColor(sf::Color(50, 50, 50, 255));
+  ceiling.setPosition(0, 0);
+  game_manager.window.draw(ceiling);
+}
+
 void draw_floor_and_ceiling_3d(GameManager &game_manager,
 							   sf::Sprite &floor_sprite,
 							   sf::Sprite &ceiling_sprite) {
@@ -162,19 +180,14 @@ void draw_floor_and_ceiling_3d(GameManager &game_manager,
   }
 }
 
-void draw_enemies(GameManager &game_manager, const std::vector<Raycast> &walls_raycast_hits) {
-  // sort enemies by distance to player (DESC)
-  // iterate over render_width and for each render_x if there's a raycast hit that is further than the enemy, draw the enemy
-}
-
-std::vector<Raycast> draw_walls_3d(GameManager &game_manager,
-				   sf::Sprite &wall_sprite,
-				   sf::Sprite &wall_shadow_sprite) {
-  std::vector<Raycast> raycast_hits;
+std::vector<std::optional<Raycast>> draw_walls_3d(GameManager &game_manager,
+												  sf::Sprite &wall_sprite,
+												  sf::Sprite &wall_shadow_sprite) {
+  std::vector<std::optional<Raycast>> raycast_hits;
 
   int render_width = (int)game_manager.window.getSize().x;
   int render_height = (int)game_manager.window.getSize().y - game_manager.hud.bar_height;
-  int ray_thickness = 6;
+  int ray_thickness = 4;
 
   // for each pixel in width, cast a ray and draw a vertical line
   for (int window_x = 0; window_x < render_width; window_x += ray_thickness) {
@@ -196,18 +209,17 @@ std::vector<Raycast> draw_walls_3d(GameManager &game_manager,
 	if (raycast_wall.has_value()) {
 	  float raycast_distance_corrected = raycast_wall.value().distance * fish_eye_correction;
 
-	  // the height to draw
-	  float column_height = (float)render_height * (game_manager.grid.tile_size / raycast_distance_corrected);
-	  float column_render_height =
+	  // the height to draw clamped to 10000 (to avoid slow computations when the player is close to the wall)
+	  float column_height =
 		  std::fmin((float)render_height * (game_manager.grid.tile_size / raycast_distance_corrected), 10000);
 
 	  Tile::Side hit_side = raycast_wall.value().hit_side;
 
-	  auto texture_size = (hit_side == Tile::Side::NORTH || hit_side == Tile::Side::EAST)
+	  auto texture_size = (hit_side == Tile::Side::NORTH || hit_side == Tile::Side::SOUTH)
 						  ? wall_sprite.getTexture()->getSize()
 						  : wall_shadow_sprite.getTexture()->getSize();
 
-	  sf::Sprite &wall_sprite_to_draw = (hit_side == Tile::Side::NORTH || hit_side == Tile::Side::EAST)
+	  sf::Sprite &wall_sprite_to_draw = (hit_side == Tile::Side::NORTH || hit_side == Tile::Side::SOUTH)
 										? wall_sprite
 										: wall_shadow_sprite;
 
@@ -229,7 +241,7 @@ std::vector<Raycast> draw_walls_3d(GameManager &game_manager,
 	  }
 
 	  // for each pixel in height, draw the corresponding pixel of the texture
-	  for (int y = 0; y < column_render_height; y += ray_thickness) {
+	  for (int y = 0; y < column_height; y += ray_thickness) {
 		// calculate the position of the y pixel in the texture
 		float texture_pixel_y = (float)y / column_height * texture_size.y;
 
@@ -250,7 +262,10 @@ std::vector<Raycast> draw_walls_3d(GameManager &game_manager,
 	  }
 
 	  // move the raycast to the vector
-	  raycast_hits.emplace_back(std::move(raycast_wall.value()));
+	}
+
+	for (int i = 0; i < ray_thickness; i++) {
+	  raycast_hits.push_back(raycast_wall);
 	}
   }
 
@@ -578,7 +593,8 @@ void draw_hud_bar_level(GameManager &game_manager) {
 }
 
 void draw_hud_bar(GameManager &game_manager, sf::Sprite &hud_sprite) {
-  float width_to_height_ratio = (float)hud_sprite.getTexture()->getSize().x / (float)hud_sprite.getTexture()->getSize().y;
+  float
+	  width_to_height_ratio = (float)hud_sprite.getTexture()->getSize().x / (float)hud_sprite.getTexture()->getSize().y;
   int render_width = game_manager.hud.bar_height * width_to_height_ratio;
 
   // draw the hud
@@ -609,15 +625,75 @@ void draw_weapon_3d(GameManager &game_manager) {
 	  game_manager.window.getSize().x / 2 - current_weapon_sprite.getGlobalBounds().width / 2,
 	  game_manager.window.getSize().y - game_manager.hud.bar_height - current_weapon_sprite.getGlobalBounds().height);
   game_manager.window.draw(current_weapon_sprite);
-
 }
 
-void draw_enemies(GameManager &game_manager) {
-  auto sorted_enemies = compute_sort_enemy_distance_to_player_vec(game_manager);
+void draw_enemies(GameManager &game_manager, std::vector<std::optional<Raycast>> &walls_raycast) {
+  int render_height = (int)game_manager.window.getSize().y - game_manager.hud.bar_height;
+  auto sorted_enemies_info = compute_sort_enemy_distance_to_player_vec(game_manager);
 
-  if (game_manager.render_loop_count == 1) {
-	for (auto &sorted_enemy : sorted_enemies) {
-	  std::cout << sorted_enemy.enemy << ", distance: " << sorted_enemy.distance << std::endl;
+  // set enemy sprites position and scale
+  for (auto &sorted_enemy_info : sorted_enemies_info) {
+	sorted_enemy_info.enemy_ref.get().update_sprites();
+	sf::Sprite &enemy_sprite = sorted_enemy_info.enemy_ref.get().get_current_sprite();
+	float column_height =
+		std::fmin((float)render_height * (game_manager.grid.tile_size / sorted_enemy_info.distance), 10000);
+	float scale_factor = column_height / enemy_sprite.getGlobalBounds().height;
+	enemy_sprite.setScale(scale_factor, scale_factor);
+
+	// compute angle difference between player and enemy
+	float angle_diff_deg = get_angle_between_vectors_deg(game_manager.player.get_dir_vector(),
+														 get_difference_vector(game_manager.player.pos,
+																			   sorted_enemy_info.enemy_ref.get().pos));
+
+	float angle_step_deg = game_manager.camera.fov_horizontal_deg / game_manager.window.getSize().x;
+
+	float window_center_x = game_manager.window.getSize().x / 2;
+	float difference_x = angle_diff_deg / angle_step_deg;
+
+	float window_x = window_center_x + difference_x - (enemy_sprite.getGlobalBounds().width) / 2;
+
+	float window_y =
+		((float)game_manager.window.getSize().y - game_manager.hud.bar_height) / 2
+			- enemy_sprite.getGlobalBounds().height / 2;
+
+	enemy_sprite.setPosition(window_x, window_y);
+  }
+
+  // draw visible enemies vertical lines (not hidden by wall)
+  for (auto &sorted_enemy_info : sorted_enemies_info) {
+	sf::Sprite &enemy_sprite = sorted_enemy_info.enemy_ref.get().get_current_sprite();
+	int sprite_start_x = enemy_sprite.getPosition().x;
+	int sprite_end_x = enemy_sprite.getPosition().x + enemy_sprite.getGlobalBounds().width;
+
+	int loop_start_x = std::max(sprite_start_x, 0);
+	int loop_end_x = std::min(sprite_end_x, (int)game_manager.window.getSize().x);
+	std::cout << "loop_start_x: " << loop_start_x << " loop_end_x: " << loop_end_x << std::endl;
+
+	for (int window_x = loop_start_x; window_x < loop_end_x; window_x++) {
+	  int sprite_x = window_x - sprite_start_x;
+	  float sprite_x_percentage = (float)sprite_x / (float)enemy_sprite.getGlobalBounds().width;
+	  int texture_x = sprite_x_percentage * 64; // TODO: get dynamic frame width (NOT TEXTURE WIDTH) instead of magic 64
+	  std::optional<Raycast> &wall_raycast = walls_raycast[window_x];
+
+	  if (wall_raycast.has_value()) {
+		float wall_distance = wall_raycast.value().distance;
+		float enemy_distance = sorted_enemy_info.distance;
+
+		if (enemy_distance > wall_distance) {
+		  continue;
+		}
+	  }
+
+	  // Draw the sprite only for this x column
+	  sf::IntRect texture_rect = enemy_sprite.getTextureRect();
+	  texture_rect.left += texture_x;
+	  texture_rect.width = 1;
+
+	  sf::Sprite column_sprite(*enemy_sprite.getTexture(), texture_rect);
+	  column_sprite.setPosition(window_x, enemy_sprite.getPosition().y);
+	  column_sprite.setScale(enemy_sprite.getScale());
+
+	  game_manager.window.draw(column_sprite);
 	}
   }
 }
@@ -638,13 +714,17 @@ void render_game_frame(GameManager &game_manager,
    * */
 
   // 3d floor
+  draw_monochrome_floor_and_ceiling(game_manager);
+/*
   draw_floor_and_ceiling_3d(game_manager,
 							floor_sprite,
 							ceiling_sprite);
-  // 3d walls
-  draw_walls_3d(game_manager, wall_sprite, wall_shadow_sprite);
+*/
 
-  draw_enemies(game_manager);
+  // 3d walls
+  std::vector<std::optional<Raycast>> walls_raycast = draw_walls_3d(game_manager, wall_sprite, wall_shadow_sprite);
+
+  draw_enemies(game_manager, walls_raycast);
 
   // draw player weapon
   draw_weapon_3d(game_manager);

@@ -30,9 +30,9 @@ void draw_floor_and_ceiling_3d(GameManager &game_manager,
 /*
  * Returns a vector of raycast hits, sorted from x=0 to x=window_width.
  * */
-std::vector<Raycast> draw_walls_3d(GameManager &game_manager,
-								   sf::Sprite &wall_sprite,
-								   sf::Sprite &wall_shadow_sprite);
+std::vector<std::optional<Raycast>> draw_walls_3d(GameManager &game_manager,
+												  sf::Sprite &wall_sprite,
+												  sf::Sprite &wall_shadow_sprite);
 /*
 void draw_raycast_map(std::vector<ComputedDrawHit> &raycast_map,
 					  sf::RenderWindow &window,

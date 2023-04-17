@@ -418,12 +418,12 @@ std::vector<ComputedDrawHit> &compute_floor_raycast_vec(std::vector<ComputedDraw
 std::vector<EnemyDistanceToPlayer> compute_sort_enemy_distance_to_player_vec(GameManager &game_manager) {
   std::vector<EnemyDistanceToPlayer> enemy_distance_to_player_vec;
 
-  // for each enemy, calculate the distance to the player
+  // for each enemy_ref, calculate the distance to the player
   for (auto &enemy : game_manager.enemies) {
 	// calculate the distance to the player
 	float distance_to_player = get_distance_between_points(game_manager.player.pos, enemy.pos);
 
-	// store the enemy and the distance to the player
+	// store the enemy_ref and the distance to the player
 	enemy_distance_to_player_vec.emplace_back(EnemyDistanceToPlayer({enemy, distance_to_player}));
   }
 
