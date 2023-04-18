@@ -20,6 +20,8 @@ GameManager::GameManager(char *filename, float tile_size, sf::Vector2i screen_si
   window.setMouseCursorGrabbed(true);
   // hide the mouse cursor
   window.setMouseCursorVisible(false);
+
+  SoundManager::get_instance().play_music_background();
 }
 void GameManager::update() {
   // Update player and enemy states.

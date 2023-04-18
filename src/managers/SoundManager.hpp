@@ -9,6 +9,10 @@ enum class SoundId {
   KNIFE_ATTACK,
   PISTOL_ATTACK,
   ENEMY_DOG_BARK,
+  PLAYER_DIES,
+  PLAYER_SMALL_PAIN,
+  PLAYER_BIG_PAIN,
+  MUSIC_BACKGROUND,
 };
 
 struct SoundSetting {
@@ -28,6 +32,18 @@ static std::unordered_map<SoundId, SoundSetting> SOUND_SETTINGS = {
 	{SoundId::ENEMY_DOG_BARK, SoundSetting{
 		"assets/sounds/enemies/dog_bark.wav",
 	}},
+	{SoundId::PLAYER_DIES, SoundSetting{
+		"assets/sounds/player/player_dies.wav",
+	}},
+	{SoundId::PLAYER_SMALL_PAIN, SoundSetting{
+		"assets/sounds/player/player_small_pain.wav",
+	}},
+	{SoundId::PLAYER_BIG_PAIN, SoundSetting{
+		"assets/sounds/player/player_big_pain.wav",
+	}},
+	{SoundId::MUSIC_BACKGROUND, SoundSetting{
+		"assets/sounds/background/2_wondering_about_my_loved_ones.ogg",
+	}},
 };
 
 class SoundManager {
@@ -44,7 +60,7 @@ class SoundManager {
 	return instance;
   }
 
-  void play_sound(SoundId sound_id) {
+  void play_sound(SoundId sound_id, bool loop = false) {
 	auto found = sounds.find(sound_id);
 
 	if (found != sounds.end()) {
@@ -60,9 +76,16 @@ class SoundManager {
 	}
 
 	auto sound = std::make_unique<sf::Sound>(*sound_buffer);
+	if (loop) {
+	  sound->setLoop(true);
+	}
 	sound->play();
 	sound_buffers.insert({sound_id, std::move(sound_buffer)});
 	sounds.insert({sound_id, std::move(sound)});
+  }
+
+  void play_music_background() {
+	play_sound(SoundId::MUSIC_BACKGROUND, true);
   }
 
  private:
