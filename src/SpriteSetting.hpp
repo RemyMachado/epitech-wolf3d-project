@@ -45,7 +45,7 @@ enum class SpriteId {
   ENEMY_DOG_DEATH,
   ENEMY_GUARD_WALK,
   ENEMY_DOG_WALK,
-  ENEMY_GUARD_HIT,
+  ENEMY_GUARD_HURT,
 
   // Texts
   TEXT_GAME_OVER,
@@ -288,8 +288,8 @@ static std::unordered_map<SpriteId, SpriteSetting> SPRITE_SETTINGS = {
 		sf::Vector2i(0, (64 + 1) * 6),
 		sf::Vector2i(64 + 1, 0)
 	}},
-	{SpriteId::ENEMY_GUARD_HIT, SpriteSetting{
-		SpriteId::ENEMY_GUARD_HIT,
+	{SpriteId::ENEMY_GUARD_HURT, SpriteSetting{
+		SpriteId::ENEMY_GUARD_HURT,
 		"assets/textures/enemies/guard-sprite-sheet.png",
 		sf::Vector2i(64, 64),
 		1,

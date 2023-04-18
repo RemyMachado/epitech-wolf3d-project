@@ -10,9 +10,9 @@ void MouseAndKeyboard::handle_player_switch_weapon(Player &player) {
   }
 }
 
-void MouseAndKeyboard::handle_player_attack(Player &player) {
+void MouseAndKeyboard::handle_player_attack(Player &player, std::vector<Enemy> &enemies) {
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-	player.try_attack();
+	player.try_attack(enemies);
   }
 }
 
@@ -101,11 +101,11 @@ void center_window_position(sf::RenderWindow &window) {
   }
 }
 
-void MouseAndKeyboard::handle_user_inputs(sf::RenderWindow &window, Player &player) {
+void MouseAndKeyboard::handle_user_inputs(sf::RenderWindow &window, Player &player, std::vector<Enemy> &enemies) {
   handle_player_movement(player);
   move_window_position(window, 50);
   center_window_position(window);
-  handle_player_attack(player);
+  handle_player_attack(player, enemies);
   handle_player_switch_weapon(player);
 }
 

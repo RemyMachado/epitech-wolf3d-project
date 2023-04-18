@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 
 class Player;
+class Enemy;
 
 class MouseAndKeyboard {
  public:
@@ -16,12 +17,12 @@ class MouseAndKeyboard {
 
   MouseAndKeyboard() = default;
 
-  static void handle_user_inputs(sf::RenderWindow &window, Player &player);
+  static void handle_user_inputs(sf::RenderWindow &window, Player &player, std::vector<Enemy> &enemies);
   void handle_user_inputs_event_based(Player &player, sf::RenderWindow &window, sf::Event &event);
 
  private:
   static void handle_player_switch_weapon(Player &player);
-  static void handle_player_attack(Player &player);
+  static void handle_player_attack(Player &player, std::vector<Enemy> &enemies);
   static void handle_player_movement(Player &player);
   void handle_player_rotation(Player &player,
 							  sf::RenderWindow &window,

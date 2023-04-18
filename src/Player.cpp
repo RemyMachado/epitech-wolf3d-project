@@ -81,8 +81,8 @@ void Player::rotate(float direction_deg) {
   this->dir_deg = std::fmod(this->dir_deg, 360.f);
 }
 
-void Player::try_attack() const {
-  this->current_weapon->try_attack();
+void Player::try_attack(std::vector<Enemy> &enemies) {
+  this->current_weapon->try_attack(pos, enemies);
 }
 
 Player::Player(sf::Vector2f pos, float direction_deg, float move_speed, Grid &grid, Camera &camera)
@@ -179,7 +179,7 @@ void Player::take_damage(float damage) {
   } else {
 	// pick a random pain sound
 	int random_pain_sound = rand() % 2;
-	std::cout << random_pain_sound << std::endl;
+
 	if (random_pain_sound == 0) {
 	  SoundManager::get_instance().play_sound(SoundId::PLAYER_SMALL_PAIN);
 	} else {

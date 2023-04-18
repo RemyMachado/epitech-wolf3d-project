@@ -31,7 +31,7 @@ class Player {
   sf::Sprite &get_hud_face_sprite();
   bool get_is_dead() const;
   void update();
-  void try_attack() const;
+  void try_attack(std::vector<Enemy> &enemies);
   void take_damage(float damage);
   void select_knife();
   void select_pistol();

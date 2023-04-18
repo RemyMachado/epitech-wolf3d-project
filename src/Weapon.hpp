@@ -7,6 +7,8 @@
 #include "managers/TextureManager.hpp"
 #include "managers/SoundManager.hpp"
 
+class Enemy;
+
 enum class WeaponId {
   KNIFE,
   PISTOL
@@ -20,7 +22,9 @@ struct WeaponSetting {
   float attack_delay;
   SoundId attack_sound_id;
   int ammo;
-  float move_speed_multiplier = 1.0f;
+  float move_speed_multiplier;
+  float attack_tile_range;
+  float attack_damage;
 };
 
 static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
@@ -33,6 +37,8 @@ static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
 		SoundId::KNIFE_ATTACK,
 		10000,
 		1.6f,
+		2.0f,
+		50.0f
 	}},
 	{WeaponId::PISTOL, {
 		WeaponId::PISTOL,
@@ -43,6 +49,8 @@ static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
 		SoundId::PISTOL_ATTACK,
 		32,
 		1.0f,
+		1000.0f,
+		40.0f
 	}}
 };
 
@@ -53,6 +61,8 @@ class Weapon {
   bool is_unlocked = true;
   int ammo; // show ammo HUD above 1000
   float move_speed_multiplier;
+  float attack_tile_range;
+  float attack_damage;
 
  private:
   float attack_delay;
@@ -70,12 +80,13 @@ class Weapon {
  public:
   explicit Weapon(const WeaponSetting &weapon_setting);
 
-  bool try_attack();
+  bool try_attack(sf::Vector2f player_pos, std::vector<Enemy> &enemies);
   void update_sprite();
   sf::Sprite &get_current_sprite();
   sf::Sprite &get_hud_sprite();
 
  private:
+  bool is_enemy_in_attack_range(sf::Vector2f player_pos, const Enemy &Enemy);
   void end_attack();
 };
 
