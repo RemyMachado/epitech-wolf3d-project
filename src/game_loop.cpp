@@ -44,10 +44,10 @@ void run_game(GameManager &game_manager) {
 	  game_manager.mouse_and_keyboard.handle_user_inputs_event_based(game_manager.player, game_manager.window, event);
 	}
 
-	if (game_manager.player.get_is_dead()) {
-	  render_game_over_screen(game_manager, hud_empty_sprite);
+	if (game_manager.check_is_game_over(hud_empty_sprite)) {
 	  continue;
 	}
+	
 	/*
 	* Handle user inputs
 	* */

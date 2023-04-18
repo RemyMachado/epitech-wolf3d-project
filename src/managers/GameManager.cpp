@@ -1,3 +1,4 @@
+#include "../draw.hpp"
 #include "GameManager.hpp"
 
 GameManager::GameManager(char *filename, float tile_size, sf::Vector2i screen_size) :
@@ -26,4 +27,12 @@ void GameManager::update() {
   for (Enemy &enemy : enemies) {
 	enemy.update(player);
   }
+}
+bool GameManager::check_is_game_over(sf::Sprite &hud_empty_sprite) {
+  if (player.get_is_dead()) {
+	render_game_over_screen(*this, hud_empty_sprite);
+	return true;
+  }
+
+  return false;
 }

@@ -26,6 +26,7 @@ class GameManager {
  public:
   GameManager(char *filename, float tile_size, sf::Vector2i screen_size);
 
+  bool check_is_game_over(sf::Sprite &hud_empty_sprite);
   void update();
 };
 
