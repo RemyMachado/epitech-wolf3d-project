@@ -49,6 +49,7 @@ static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
 // TODO: move_speed multiplier (heavier weapons make the player move slower)
 class Weapon {
  public:
+  WeaponId id;
   bool is_unlocked = true;
   int ammo; // show ammo HUD above 1000
   float move_speed_multiplier;

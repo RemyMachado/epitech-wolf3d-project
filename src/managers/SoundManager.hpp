@@ -13,6 +13,8 @@ enum class SoundId {
   PLAYER_SMALL_PAIN,
   PLAYER_BIG_PAIN,
   MUSIC_BACKGROUND,
+  SWITCH_WEAPON,
+  AMMO,
 };
 
 struct SoundSetting {
@@ -43,6 +45,12 @@ static std::unordered_map<SoundId, SoundSetting> SOUND_SETTINGS = {
 	}},
 	{SoundId::MUSIC_BACKGROUND, SoundSetting{
 		"assets/sounds/background/2_wondering_about_my_loved_ones.ogg",
+	}},
+	{SoundId::SWITCH_WEAPON, SoundSetting{
+		"assets/sounds/weapons/switch_weapon.wav",
+	}},
+	{SoundId::AMMO, SoundSetting{
+		"assets/sounds/weapons/ammo.wav",
 	}},
 };
 

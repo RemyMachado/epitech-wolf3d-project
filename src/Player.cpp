@@ -113,6 +113,11 @@ void Player::switch_weapon(Weapon *new_weapon) {
   }
 
   current_weapon = new_weapon;
+  if (new_weapon->id == WeaponId::KNIFE) {
+	SoundManager::get_instance().play_sound(SoundId::KNIFE_ATTACK);
+  } else if (new_weapon->id == WeaponId::PISTOL) {
+	SoundManager::get_instance().play_sound(SoundId::AMMO);
+  }
 }
 
 int Player::get_hud_face_animation_frame() const {

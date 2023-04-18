@@ -1,7 +1,8 @@
 #include "Weapon.hpp"
 
 Weapon::Weapon(const WeaponSetting &weapon_setting)
-	: attack_animation(weapon_setting.attack_animation_params, [this]() { end_attack(); }),
+	: id(weapon_setting.id),
+	  attack_animation(weapon_setting.attack_animation_params, [this]() { end_attack(); }),
 	  attack_delay(weapon_setting.attack_delay),
 	  attack_timer(weapon_setting.attack_delay),
 	  attack_sound_id(weapon_setting.attack_sound_id),
