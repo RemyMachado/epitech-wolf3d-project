@@ -153,6 +153,9 @@ void Player::update_sprites() {
   this->update_hud_face_sprite();
 }
 void Player::update() {
+  if (get_is_dead()) {
+	return;
+  }
   update_sprites();
 }
 sf::Sprite &Player::get_hud_face_sprite() {
@@ -167,7 +170,13 @@ sf::Vector2f Player::get_pos() const {
 void Player::take_damage(float damage) {
   this->health -= damage;
   if (this->health <= 0) {
-	this->health = 0;
+	die();
   }
 }
-
+bool Player::get_is_dead() const {
+  return this->health <= 0;
+}
+void Player::die() {
+  this->health = 0;
+  lives--;
+}

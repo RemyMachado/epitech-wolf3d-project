@@ -46,6 +46,9 @@ enum class SpriteId {
   ENEMY_GUARD_WALK,
   ENEMY_DOG_WALK,
   ENEMY_GUARD_HIT,
+
+  // Texts
+  TEXT_GAME_OVER,
 };
 
 struct SpriteSetting {
@@ -332,6 +335,18 @@ static std::unordered_map<SpriteId, SpriteSetting> SPRITE_SETTINGS = {
 		4,
 		sf::Vector2i(0, (64 + 1) * 4),
 		sf::Vector2i(64 + 1, 0)
+	}},
+
+	/*
+	 * TEXTS
+	 * */
+	{SpriteId::TEXT_GAME_OVER, SpriteSetting{
+		SpriteId::TEXT_GAME_OVER,
+		"assets/textures/texts/game-over.png",
+		sf::Vector2i(202, 38),
+		1,
+		sf::Vector2i(0, 0),
+		sf::Vector2i(0, 0)
 	}},
 };
 

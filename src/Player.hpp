@@ -19,7 +19,7 @@ class Player {
   Weapon *current_weapon;
   Timer weapon_switch_timer;
   float body_radius = 0.2f;
-  float lives = 3;
+  float lives = 1;
   float health = 100; // max is 100
 
   Player(sf::Vector2f pos,
@@ -29,6 +29,7 @@ class Player {
 		 Camera &camera);
 
   sf::Sprite &get_hud_face_sprite();
+  bool get_is_dead() const;
   void update();
   void try_attack() const;
   void take_damage(float damage);
@@ -46,6 +47,7 @@ class Player {
   sf::Sprite hud_face_sprite;
 
  private:
+  void die();
   int get_hud_face_animation_frame() const;
   void update_hud_face_sprite();
   void update_current_weapon_sprite() const;

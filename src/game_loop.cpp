@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-#include <chrono>
 #include "game_loop.hpp"
 #include "draw.hpp"
 #include "managers/GameManager.hpp"
@@ -33,14 +32,7 @@ void run_game(GameManager &game_manager) {
   hud_empty_sprite.setTexture(hud_empty_texture);
 
   while (game_manager.window.isOpen()) {
-	auto start_loop = std::chrono::high_resolution_clock::now();
 	game_manager.render_loop_count++;
-	game_manager.update();
-
-	/*
-	* Handle user inputs
-	* */
-	game_manager.mouse_and_keyboard.handle_user_inputs(game_manager.window, game_manager.player);
 
 	sf::Event event;
 	while (game_manager.window.pollEvent(event)) {
@@ -52,6 +44,16 @@ void run_game(GameManager &game_manager) {
 	  game_manager.mouse_and_keyboard.handle_user_inputs_event_based(game_manager.player, game_manager.window, event);
 	}
 
+	if (game_manager.player.get_is_dead()) {
+	  render_game_over_screen(game_manager, hud_empty_sprite);
+	  continue;
+	}
+	/*
+	* Handle user inputs
+	* */
+	game_manager.mouse_and_keyboard.handle_user_inputs(game_manager.window, game_manager.player);
+
+	game_manager.update();
 	render_game_frame(game_manager,
 					  wall_sprite,
 					  wall_shadow_sprite,
@@ -59,9 +61,5 @@ void run_game(GameManager &game_manager) {
 					  ceiling_sprite,
 					  hud_empty_sprite);
 
-	// Stop the frame_timer
-	auto end_loop = std::chrono::high_resolution_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_loop - start_loop).count();
-//	std::cout << "Total loop execution time: " << duration << " ms" << std::endl << std::endl;
   }
 }

@@ -617,7 +617,9 @@ void draw_hud_bar(GameManager &game_manager, sf::Sprite &hud_sprite) {
 }
 
 void draw_hud(GameManager &game_manager, sf::Sprite &hud_sprite) {
-  draw_minimap(game_manager);
+  if (!game_manager.player.get_is_dead()) {
+	draw_minimap(game_manager);
+  }
   draw_hud_bar(game_manager, hud_sprite);
 }
 
@@ -698,6 +700,31 @@ void draw_enemies(GameManager &game_manager, std::vector<std::optional<Raycast>>
 	  game_manager.window.draw(column_sprite);
 	}
   }
+}
+
+void render_game_over_screen(GameManager &game_manager, sf::Sprite &hud_empty_sprite) {
+  game_manager.window.clear();
+
+  int render_height = (int)game_manager.window.getSize().y - game_manager.hud.bar_height;
+  sf::Texture text_game_over_texture = TextureManager::get_instance().get_texture(SpriteId::TEXT_GAME_OVER);
+  sf::Sprite game_over_sprite(text_game_over_texture);
+  float text_width_screen_ratio = game_over_sprite.getGlobalBounds().width / game_manager.window.getSize().x;
+  float scale_factor = 0.8f / text_width_screen_ratio;
+  game_over_sprite.setScale(scale_factor, scale_factor);
+
+  // draw black screen
+  sf::RectangleShape black_screen(sf::Vector2f(game_manager.window.getSize().x, render_height));
+  black_screen.setFillColor(sf::Color::Black);
+  game_manager.window.draw(black_screen);
+
+  // draw text game over
+  game_over_sprite.setPosition(
+	  game_manager.window.getSize().x / 2 - game_over_sprite.getGlobalBounds().width / 2,
+	  game_manager.window.getSize().y / 2 - game_over_sprite.getGlobalBounds().height / 2);
+
+  game_manager.window.draw(game_over_sprite);
+  draw_hud(game_manager, hud_empty_sprite);
+  game_manager.window.display();
 }
 
 void render_game_frame(GameManager &game_manager,
