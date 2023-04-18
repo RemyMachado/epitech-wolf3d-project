@@ -416,6 +416,10 @@ void draw_hud_bar_ammo(GameManager &game_manager) {
   // draw the ammo with the numbers sprite sheet and the corresponding SpriteId
   std::vector<SpriteSetting> ammo_sprites_settings = number_to_sprites(game_manager.player.current_weapon->ammo);
 
+  if (ammo_sprites_settings.size() >= 4) { // Only knife has 1000+ ammo
+	return;
+  }
+
   sf::Vector2i hud_bar_start_pos = sf::Vector2i(0, game_manager.window.getSize().y - game_manager.hud.bar_height);
   sf::Vector2f score_sprite_center_ratio_pos = HUD_RELATIVE_CENTER_RATIO_SETTINGS.ammo;
 
