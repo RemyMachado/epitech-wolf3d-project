@@ -171,6 +171,15 @@ void Player::take_damage(float damage) {
   this->health -= damage;
   if (this->health <= 0) {
 	die();
+  } else {
+	// pick a random pain sound
+	int random_pain_sound = rand() % 2;
+	std::cout << random_pain_sound << std::endl;
+	if (random_pain_sound == 0) {
+	  SoundManager::get_instance().play_sound(SoundId::PLAYER_SMALL_PAIN);
+	} else {
+	  SoundManager::get_instance().play_sound(SoundId::PLAYER_BIG_PAIN);
+	}
   }
 }
 bool Player::get_is_dead() const {
@@ -179,4 +188,5 @@ bool Player::get_is_dead() const {
 void Player::die() {
   this->health = 0;
   lives--;
+  SoundManager::get_instance().play_sound(SoundId::PLAYER_DIES);
 }
