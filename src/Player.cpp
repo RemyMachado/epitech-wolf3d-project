@@ -9,9 +9,11 @@
  * Handles wall sliding by staying away from the wall from a minimum distance.
  * */
 void Player::move(float direction_deg) {
+  float move_speed_with_weapon = this->move_speed * this->current_weapon->move_speed_multiplier;
+
   float minimum_distance_from_wall = this->grid.tile_size * body_radius;
 
-  sf::Vector2f new_ghost_pos = polar_to_cartesian(this->pos, this->move_speed, direction_deg);
+  sf::Vector2f new_ghost_pos = polar_to_cartesian(this->pos, move_speed_with_weapon, direction_deg);
 
   float delta_x = new_ghost_pos.x - this->pos.x;
   float delta_y = new_ghost_pos.y - this->pos.y;

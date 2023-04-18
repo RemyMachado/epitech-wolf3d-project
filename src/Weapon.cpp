@@ -5,7 +5,8 @@ Weapon::Weapon(const WeaponSetting &weapon_setting)
 	  attack_delay(weapon_setting.attack_delay),
 	  attack_timer(weapon_setting.attack_delay),
 	  attack_sound_id(weapon_setting.attack_sound_id),
-	  ammo(weapon_setting.ammo) {
+	  ammo(weapon_setting.ammo),
+	  move_speed_multiplier(weapon_setting.move_speed_multiplier) {
   // TODO: generic loader
   SpriteSetting hud_sprite_setting = SPRITE_SETTINGS.at(weapon_setting.hud_sprite_id);
   SpriteSetting idle_sprite_setting = SPRITE_SETTINGS.at(weapon_setting.idle_sprite_id);

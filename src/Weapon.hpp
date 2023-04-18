@@ -20,6 +20,7 @@ struct WeaponSetting {
   float attack_delay;
   SoundId attack_sound_id;
   int ammo;
+  float move_speed_multiplier = 1.0f;
 };
 
 static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
@@ -31,6 +32,7 @@ static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
 		0.4f,
 		SoundId::KNIFE_ATTACK,
 		10000,
+		1.6f,
 	}},
 	{WeaponId::PISTOL, {
 		WeaponId::PISTOL,
@@ -40,6 +42,7 @@ static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
 		0.8f,
 		SoundId::PISTOL_ATTACK,
 		32,
+		1.0f,
 	}}
 };
 
@@ -48,6 +51,7 @@ class Weapon {
  public:
   bool is_unlocked = true;
   int ammo; // show ammo HUD above 1000
+  float move_speed_multiplier;
 
  private:
   float attack_delay;
