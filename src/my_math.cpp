@@ -88,6 +88,9 @@ sf::Vector2f compute_dir_vector(float angle_deg) {
 
 float random_float(Range<float> range) {
   float random_value = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-  
+
   return range.min + random_value * (range.max - range.min);
+}
+float positive_angle_deg(float angle_deg) {
+  return std::fmod(angle_deg + 360, 360);
 }

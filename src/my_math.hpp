@@ -31,5 +31,6 @@ float get_distance_between_points(const sf::Vector2f &a, const sf::Vector2f &b);
 sf::Vector2f compute_dir_vector(float angle_deg);
 sf::Vector2f get_difference_vector(const sf::Vector2f &start, const sf::Vector2f &end);
 float random_float(Range<float> range);
+float positive_angle_deg(float angle_deg);
 
 #endif //EPITECH_WOLF3D_PROJECT_MY_MATH_HPP

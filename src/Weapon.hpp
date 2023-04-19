@@ -40,7 +40,7 @@ static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
 		10000,
 		1.6f,
 		2.0f,
-		50.0f,
+		20.0f,
 		60.0f
 	}},
 	{WeaponId::PISTOL, {

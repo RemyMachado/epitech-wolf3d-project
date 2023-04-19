@@ -36,11 +36,14 @@ Weapon::Weapon(const WeaponSetting &weapon_setting)
 /*
  * Returns true if the enemy is in range and there is no wall blocking the attack
  * */
+// TODO: fix wall in the way
 bool Weapon::is_enemy_in_attack_range(Player &player, const Enemy &enemy) const {
   Polar polar_vector_to_enemy = cartesian_to_polar(player.pos, enemy.pos);
 
   // range check
   if (polar_vector_to_enemy.magnitude > attack_tile_range * player.grid.tile_size) {
+	std::cout << "Enemy too far: " << polar_vector_to_enemy.magnitude << " > "
+			  << attack_tile_range * player.grid.tile_size << std::endl;
 	return false;
   }
 
@@ -53,11 +56,13 @@ bool Weapon::is_enemy_in_attack_range(Player &player, const Enemy &enemy) const 
 			  Tile::Symbol::WALL);
 
   if (raycast_result.has_value()) {
+	std::cout << "Wall in the way" << std::endl;
 	return false;
   }
 
   // direction check
-  float angle_diff_deg = std::abs(player.dir_deg - polar_vector_to_enemy.angle_deg);
+  float angle_diff_deg = std::abs(
+	  positive_angle_deg(player.dir_deg) - positive_angle_deg(polar_vector_to_enemy.angle_deg));
   if (angle_diff_deg > attack_angle_deg) {
 	return false;
   }
@@ -81,6 +86,7 @@ bool Weapon::try_attack(Player &player, std::vector<Enemy> &enemies) {
 	}
 	if (is_enemy_in_attack_range(player, enemy)) {
 	  enemy.take_damage(attack_damage);
+	  std::cout << "Attacking Enemy at " << enemy.pos.x << ", " << enemy.pos.y << std::endl;
 	}
   }
 

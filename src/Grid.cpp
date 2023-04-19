@@ -35,6 +35,11 @@ unsigned int Grid::count_enemies() const {
 
 std::vector<Enemy> Grid::get_initial_enemies() const {
   std::vector<Enemy> enemies;
+  unsigned int enemy_count = count_enemies();
+
+  if (enemy_count == 0) {
+	return enemies;
+  }
   // if reserve is not provided, the vector will be resized every time an enemy is added and
   // will create issues because of the callback functions pointing to deleted objects
   enemies.reserve(count_enemies());

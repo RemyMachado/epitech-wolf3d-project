@@ -125,7 +125,11 @@ void Enemy::try_move(Player &player, PathFinder &path_finder) {
   }
 
   // print the path length to the player
-  auto shortest_path = path_finder.get_shortest_path(tile_coords, player.get_tile_coords(), UNWALKABLE_TILES, 1);
+  auto shortest_path =
+	  path_finder.get_shortest_path(tile_coords,
+									player.get_tile_coords(),
+									UNWALKABLE_TILES,
+									std::max((int)attack_tile_range - 1, 1));
 /*
   std::cout << "Enemy (" << tile_coords.x << ", " << tile_coords.y << ") path length to player: "
 			<< shortest_path.size()
@@ -141,8 +145,6 @@ void Enemy::try_move(Player &player, PathFinder &path_finder) {
 	// divide vector_to_target by the number of frame
 	// to get the vector to move per frame
 	walk_delta_per_frame = vector_to_target / (float)walk_animation.get_frame_count();
-	std::cout << "ORIGINAL walk_delta_per_frame: (" << walk_delta_per_frame.x << ", " << walk_delta_per_frame.y << ")"
-			  << std::endl;
   }
 }
 void Enemy::try_attack(Player &player) {
@@ -159,7 +161,8 @@ void Enemy::try_attack(Player &player) {
 }
 
 Enemy::~Enemy() {
-  std::cout << "Enemy destroyed: (" << pos.x << ", " << pos.y << ")" << std::endl;
+  std::cout << "______________________________________________________________________"
+			   "Enemy destroyed: (" << pos.x << ", " << pos.y << ")" << std::endl;
 }
 bool Enemy::get_is_busy() const {
   return is_walking || is_attacking || is_dying || is_hurting || is_dead;

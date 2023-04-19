@@ -131,7 +131,7 @@ std::vector<sf::Vector2i> PathFinder::get_shortest_path(const sf::Vector2i &star
   while (current_tile != end) {
 	int current_weight = weights[current_tile.y][current_tile.x];
 
-	if (current_weight == stop_at_weight) {
+	if (current_weight <= stop_at_weight) {
 	  return shortest_path;
 	}
 
