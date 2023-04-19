@@ -7,6 +7,7 @@
 #include "managers/TextureManager.hpp"
 #include "managers/SoundManager.hpp"
 
+class Player;
 class Enemy;
 
 enum class WeaponId {
@@ -25,6 +26,7 @@ struct WeaponSetting {
   float move_speed_multiplier;
   float attack_tile_range;
   float attack_damage;
+  float attack_angle_deg;
 };
 
 static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
@@ -38,7 +40,8 @@ static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
 		10000,
 		1.6f,
 		2.0f,
-		50.0f
+		50.0f,
+		30.0f
 	}},
 	{WeaponId::PISTOL, {
 		WeaponId::PISTOL,
@@ -50,7 +53,8 @@ static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
 		32,
 		1.0f,
 		1000.0f,
-		40.0f
+		40.0f,
+		4.0f
 	}}
 };
 
@@ -63,6 +67,7 @@ class Weapon {
   float move_speed_multiplier;
   float attack_tile_range;
   float attack_damage;
+  float attack_angle_deg;
 
  private:
   float attack_delay;
@@ -80,13 +85,13 @@ class Weapon {
  public:
   explicit Weapon(const WeaponSetting &weapon_setting);
 
-  bool try_attack(sf::Vector2f player_pos, std::vector<Enemy> &enemies);
+  bool try_attack(Player &player, std::vector<Enemy> &enemies);
   void update_sprite();
   sf::Sprite &get_current_sprite();
   sf::Sprite &get_hud_sprite();
 
  private:
-  bool is_enemy_in_attack_range(sf::Vector2f player_pos, const Enemy &Enemy);
+  bool is_enemy_in_attack_range(Player &player, const Enemy &Enemy) const;
   void end_attack();
 };
 

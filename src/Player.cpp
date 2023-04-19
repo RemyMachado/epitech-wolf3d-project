@@ -82,7 +82,7 @@ void Player::rotate(float direction_deg) {
 }
 
 void Player::try_attack(std::vector<Enemy> &enemies) {
-  this->current_weapon->try_attack(pos, enemies);
+  this->current_weapon->try_attack(*this, enemies);
 }
 
 Player::Player(sf::Vector2f pos, float direction_deg, float move_speed, Grid &grid, Camera &camera)
