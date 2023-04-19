@@ -45,7 +45,8 @@ struct Raycast {
   Tile tile;
 };
 
-std::vector<EnemyDistanceToPlayer> compute_sort_enemy_distance_to_player_vec(GameManager &game_manager);
+std::vector<EnemyDistanceToPlayer> compute_sort_desc_enemy_distance_to_player_vec(sf::Vector2f player_pos,
+																				  std::vector<Enemy> &enemies);
 Tile::Side determine_hit_side(float tile_size, const Tile &tile, const Line &intersected_segment);
 std::optional<Raycast> raycast(sf::Vector2f origin,
 							   float direction_deg,

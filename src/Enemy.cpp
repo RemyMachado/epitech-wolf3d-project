@@ -118,23 +118,16 @@ bool Enemy::is_player_in_range(const Player &player) {
 
   return !raycast_result.has_value();
 }
-// TODO:
 void Enemy::try_move(Player &player, PathFinder &path_finder) {
   if (get_is_busy()) {
 	return;
   }
 
-  // print the path length to the player
   auto shortest_path =
 	  path_finder.get_shortest_path(tile_coords,
 									player.get_tile_coords(),
 									UNWALKABLE_TILES,
-									std::max((int)attack_tile_range - 1, 1));
-/*
-  std::cout << "Enemy (" << tile_coords.x << ", " << tile_coords.y << ") path length to player: "
-			<< shortest_path.size()
-			<< std::endl;
-*/
+									std::max((int)attack_tile_range / 2, 1));
 
   if (!shortest_path.empty()) {
 	is_walking = true;

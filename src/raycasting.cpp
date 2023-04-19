@@ -1,6 +1,3 @@
-#include <algorithm>
-#include <utility>
-#include <unordered_map>
 #include <optional>
 #include <SFML/System/Vector2.hpp>
 #include "raycasting.hpp"
@@ -415,13 +412,14 @@ std::vector<ComputedDrawHit> &compute_floor_raycast_vec(std::vector<ComputedDraw
 /*
  * sort the enemies by distance to the player (DESC)
  * */
-std::vector<EnemyDistanceToPlayer> compute_sort_enemy_distance_to_player_vec(GameManager &game_manager) {
+std::vector<EnemyDistanceToPlayer> compute_sort_desc_enemy_distance_to_player_vec(sf::Vector2f player_pos,
+																				  std::vector<Enemy> &enemies) {
   std::vector<EnemyDistanceToPlayer> enemy_distance_to_player_vec;
 
   // for each enemy_ref, calculate the distance to the player
-  for (auto &enemy : game_manager.enemies) {
+  for (auto &enemy : enemies) {
 	// calculate the distance to the player
-	float distance_to_player = get_distance_between_points(game_manager.player.pos, enemy.pos);
+	float distance_to_player = get_distance_between_points(player_pos, enemy.pos);
 
 	// store the enemy_ref and the distance to the player
 	enemy_distance_to_player_vec.emplace_back(EnemyDistanceToPlayer({enemy, distance_to_player}));

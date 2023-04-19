@@ -635,7 +635,8 @@ void draw_weapon_3d(GameManager &game_manager) {
 
 void draw_enemies(GameManager &game_manager, std::vector<std::optional<Raycast>> &walls_raycast) {
   int render_height = (int)game_manager.window.getSize().y - game_manager.hud.bar_height;
-  auto sorted_enemies_info = compute_sort_enemy_distance_to_player_vec(game_manager);
+  auto sorted_enemies_info =
+	  compute_sort_desc_enemy_distance_to_player_vec(game_manager.player.pos, game_manager.enemies);
 
   // set enemy sprites position and scale
   for (auto &sorted_enemy_info : sorted_enemies_info) {

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Weapon.hpp"
 #include "Enemy.hpp"
 #include "Player.hpp"
@@ -36,14 +37,11 @@ Weapon::Weapon(const WeaponSetting &weapon_setting)
 /*
  * Returns true if the enemy is in range and there is no wall blocking the attack
  * */
-// TODO: fix wall in the way
 bool Weapon::is_enemy_in_attack_range(Player &player, const Enemy &enemy) const {
   Polar polar_vector_to_enemy = cartesian_to_polar(player.pos, enemy.pos);
 
   // range check
   if (polar_vector_to_enemy.magnitude > attack_tile_range * player.grid.tile_size) {
-	std::cout << "Enemy too far: " << polar_vector_to_enemy.magnitude << " > "
-			  << attack_tile_range * player.grid.tile_size << std::endl;
 	return false;
   }
 
@@ -56,7 +54,6 @@ bool Weapon::is_enemy_in_attack_range(Player &player, const Enemy &enemy) const 
 			  Tile::Symbol::WALL);
 
   if (raycast_result.has_value()) {
-	std::cout << "Wall in the way" << std::endl;
 	return false;
   }
 
@@ -70,6 +67,8 @@ bool Weapon::is_enemy_in_attack_range(Player &player, const Enemy &enemy) const 
   return true;
 }
 bool Weapon::try_attack(Player &player, std::vector<Enemy> &enemies) {
+  std::vector<unsigned int> enemies_index_in_range;
+
   if (!is_unlocked || !attack_timer.check_is_elapsed() || ammo <= 0) {
 	return false;
   }
@@ -79,17 +78,39 @@ bool Weapon::try_attack(Player &player, std::vector<Enemy> &enemies) {
   attack_animation.reset_animation();
   SoundManager::get_instance().play_sound(attack_sound_id);
 
-  // check if any enemies are hit
-  for (auto &enemy : enemies) {
-	if (enemy.is_dead) {
+  // check if any enemies are in range
+  for (unsigned int i = 0; i < enemies.size(); i++) {
+	if (enemies[i].is_dead) {
 	  continue;
 	}
-	if (is_enemy_in_attack_range(player, enemy)) {
-	  enemy.take_damage(attack_damage);
-	  std::cout << "Attacking Enemy at " << enemy.pos.x << ", " << enemy.pos.y << std::endl;
+	if (is_enemy_in_attack_range(player, enemies[i])) {
+	  enemies_index_in_range.emplace_back(i);
 	}
   }
 
+  // attack only the closest enemies
+  unsigned int closest_enemy_index = -1;
+  if (!enemies_index_in_range.empty()) {
+	// can't sort players with std::sort due to reference errors with enemies objects getting destroyed unexpectedly
+	// So we check distance by hand using indices
+
+	for (const unsigned int enemy_index_in_range : enemies_index_in_range) {
+	  if (closest_enemy_index == -1) {
+		closest_enemy_index = enemy_index_in_range;
+		continue;
+	  }
+	  float distance_to_cur_enemy_in_range =
+		  get_distance_between_points(player.pos, enemies[enemy_index_in_range].pos);
+	  float distance_to_closest_enemy =
+		  get_distance_between_points(player.pos, enemies[closest_enemy_index].pos);
+	  if (distance_to_cur_enemy_in_range <
+		  distance_to_closest_enemy) {
+		closest_enemy_index = enemy_index_in_range;
+	  }
+	}
+
+	enemies[closest_enemy_index].take_damage(attack_damage);
+  }
   return true;
 }
 void Weapon::update_sprite() {
