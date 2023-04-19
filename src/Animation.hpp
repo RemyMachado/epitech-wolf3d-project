@@ -12,10 +12,12 @@ struct AnimationParams {
   float duration;
 };
 
-// TODO: get_last_frame
-class Animation {
-  using OnAnimationEnd = std::function<void()>;
+struct AnimationCallbacks {
+  std::function<void()> on_animation_end = nullptr;
+  std::function<void()> on_animation_update = nullptr;
+};
 
+class Animation {
  private:
   SpriteId sprite_id;
   sf::Sprite sprite;
@@ -25,16 +27,18 @@ class Animation {
   int current_frame;
   sf::Vector2i initial_offset;
   sf::Vector2i frame_offset;
-  OnAnimationEnd on_animation_end;
+  std::function<void()> on_animation_update;
+  std::function<void()> on_animation_end;
   bool is_paused = false;
 
  public:
-  explicit Animation(const AnimationParams &animation_params, OnAnimationEnd on_animation_end = nullptr);
+  explicit Animation(const AnimationParams &animation_params, AnimationCallbacks animation_callbacks = {});
 
  public:
   void update_sprite();
   void pause_animation();
   void resume_animation();
+  int get_frame_count() const;
   sf::Sprite &getSprite();
   void reset_animation();
   void draw(sf::RenderWindow &window) const;

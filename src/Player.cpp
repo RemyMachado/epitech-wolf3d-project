@@ -195,3 +195,6 @@ void Player::die() {
   lives--;
   SoundManager::get_instance().play_sound(SoundId::PLAYER_DIES);
 }
+sf::Vector2i Player::get_tile_coords() const {
+  return this->grid.pos_to_coords(this->pos);
+}

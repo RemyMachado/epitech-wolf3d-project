@@ -1,6 +1,6 @@
 #include "Animation.hpp"
 
-Animation::Animation(const AnimationParams &animation_params, Animation::OnAnimationEnd on_animation_end)
+Animation::Animation(const AnimationParams &animation_params, AnimationCallbacks animation_callbacks)
 	: sprite(TextureManager::get_instance().get_texture(animation_params.sprite_setting.id)),
 	  frame_size(animation_params.sprite_setting.frame_size),
 	  frame_count(animation_params.sprite_setting.frame_count),
@@ -8,13 +8,17 @@ Animation::Animation(const AnimationParams &animation_params, Animation::OnAnima
 	  initial_offset(animation_params.sprite_setting.initial_offset),
 	  frame_offset(animation_params.sprite_setting.frame_offset),
 	  frame_timer(animation_params.duration / (float)animation_params.sprite_setting.frame_count),
-	  on_animation_end(std::move(on_animation_end)),
+	  on_animation_update(std::move(animation_callbacks.on_animation_update)),
+	  on_animation_end(std::move(animation_callbacks.on_animation_end)),
 	  sprite_id(animation_params.sprite_setting.id) {
   update_texture_rect();
 }
 void Animation::update_sprite() {
   if (is_paused || !frame_timer.check_is_elapsed()) {
 	return;
+  }
+  if (on_animation_update) {
+	on_animation_update();
   }
   if (current_frame >= frame_count) {
 	current_frame = 0;
@@ -59,4 +63,7 @@ void Animation::pause_animation() {
 }
 void Animation::resume_animation() {
   is_paused = false;
+}
+int Animation::get_frame_count() const {
+  return frame_count;
 }

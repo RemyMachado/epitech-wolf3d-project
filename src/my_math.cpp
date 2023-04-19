@@ -85,3 +85,9 @@ float get_distance_between_points(const sf::Vector2f &a, const sf::Vector2f &b) 
 sf::Vector2f compute_dir_vector(float angle_deg) {
   return {std::cos(degrees_to_radians(angle_deg)), std::sin(degrees_to_radians(angle_deg))};
 }
+
+float random_float(Range<float> range) {
+  float random_value = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+  
+  return range.min + random_value * (range.max - range.min);
+}

@@ -51,6 +51,12 @@ std::vector<Enemy> Grid::get_initial_enemies() const {
 
   return enemies;
 }
+sf::Vector2i Grid::pos_to_coords(sf::Vector2f pos) const {
+  return {(int)(pos.x / tile_size), (int)(pos.y / tile_size)};
+}
+sf::Vector2f Grid::get_tile_center(sf::Vector2i coords) const {
+  return {(float)coords.x * tile_size + tile_size / 2, (float)coords.y * tile_size + tile_size / 2};
+}
 
 /*
 std::ostream &operator<<(std::ostream &os, const Grid &grid) {

@@ -9,6 +9,11 @@
 #include "../Hud.hpp"
 #include "../MouseAndKeyboard.hpp"
 #include "../my_math.hpp"
+#include "../PathFinder.hpp"
+
+static std::vector<Tile::Symbol> UNWALKABLE_TILES = {
+	Tile::Symbol::WALL,
+};
 
 class GameManager {
  public:
@@ -22,6 +27,9 @@ class GameManager {
   int current_level = 1;
   int score = 72;
   unsigned int render_loop_count = 0;
+
+ private:
+  PathFinder path_finder;
 
  public:
   GameManager(char *filename, float tile_size, sf::Vector2i screen_size);

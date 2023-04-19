@@ -8,6 +8,7 @@ class Grid;
 class Camera;
 
 class Player {
+  /* MEMBERS */
  public:
   sf::Vector2f pos;
   float dir_deg;
@@ -22,12 +23,20 @@ class Player {
   float lives = 1;
   float health = 100; // max is 100
 
+ private:
+  sf::Sprite hud_face_sprite;
+
+  /* CTOR */
+ public:
   Player(sf::Vector2f pos,
 		 float direction_deg,
 		 float move_speed,
 		 Grid &grid,
 		 Camera &camera);
 
+
+  /* METHODS */
+ public:
   sf::Sprite &get_hud_face_sprite();
   bool get_is_dead() const;
   void update();
@@ -42,9 +51,7 @@ class Player {
   void rotate(float direction_deg);
   sf::Vector2f get_pos() const;
   sf::Vector2f get_dir_vector() const;
-
- private:
-  sf::Sprite hud_face_sprite;
+  sf::Vector2i get_tile_coords() const;
 
  private:
   void die();

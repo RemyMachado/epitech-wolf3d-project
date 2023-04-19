@@ -2,6 +2,7 @@
 #define EPITECH_WOLF3D_PROJECT_SRC_GRID_HPP_
 
 #include <vector>
+#include <SFML/System/Vector2.hpp>
 #include <iostream>
 #include "Tile.hpp"
 #include "file_parser.hpp"
@@ -14,14 +15,16 @@ class Grid {
   const float tile_size;
   std::vector<Tile> tiles;
 
+ public:
   // constructor for FileData type
   Grid(FileData file_data, float tile_size);
 
+ public:
   [[nodiscard]] Tile get(int x, int y) const;
-
+  sf::Vector2i pos_to_coords(sf::Vector2f pos) const;
+  sf::Vector2f get_tile_center(sf::Vector2i coords) const;
   // function to get the initial position of the player
   [[nodiscard]] sf::Vector2f get_player_initial_pos() const;
-
   [[nodiscard]] std::vector<Enemy> get_initial_enemies() const;
 
   // stringify the grid with the cout operator (not working anymore)

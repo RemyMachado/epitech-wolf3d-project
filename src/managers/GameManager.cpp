@@ -15,19 +15,26 @@ GameManager::GameManager(char *filename, float tile_size, sf::Vector2i screen_si
 		   grid.tile_size * 0.05f, grid, camera),
 	hud(),
 	mouse_and_keyboard(),
-	enemies(grid.get_initial_enemies()) {
+	enemies(grid.get_initial_enemies()),
+	path_finder(grid) {
   // set the mouse cursor to the center of the window
   window.setMouseCursorGrabbed(true);
   // hide the mouse cursor
   window.setMouseCursorVisible(false);
 
   SoundManager::get_instance().play_music_background();
+
+  // initialize the pathfinder
+  path_finder.compute_weights(player.get_tile_coords(), UNWALKABLE_TILES);
 }
 void GameManager::update() {
+  // Update the pathfinder weights
+  path_finder.compute_weights(player.get_tile_coords(), UNWALKABLE_TILES);
+
   // Update player and enemy states.
   player.update();
   for (Enemy &enemy : enemies) {
-	enemy.update(player);
+	enemy.update(player, path_finder);
   }
 }
 bool GameManager::check_is_game_over(sf::Sprite &hud_empty_sprite) {
