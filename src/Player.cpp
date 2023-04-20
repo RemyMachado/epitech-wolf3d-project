@@ -94,6 +94,8 @@ Player::Player(sf::Vector2f pos, float direction_deg, float move_speed, Grid &gr
       camera(camera),
       knife(std::make_unique<Weapon>(WEAPON_SETTINGS.at(WeaponId::KNIFE))),
       pistol(std::make_unique<Weapon>(WEAPON_SETTINGS.at(WeaponId::PISTOL))),
+      thompson(std::make_unique<Weapon>(WEAPON_SETTINGS.at(WeaponId::THOMPSON))),
+      machine_gun(std::make_unique<Weapon>(WEAPON_SETTINGS.at(WeaponId::MACHINE_GUN))),
       current_weapon(knife.get()),
       weapon_switch_timer(0.2f) {
   SpriteSetting hud_face_sprite_setting = SPRITE_SETTINGS.at(SpriteId::HUD_FACES);
@@ -106,7 +108,7 @@ Player::Player(sf::Vector2f pos, float direction_deg, float move_speed, Grid &gr
       hud_face_sprite_setting.frame_size.y));
 }
 
-void Player::switch_weapon(Weapon *new_weapon) {
+void Player::try_switch_weapon(Weapon *new_weapon) {
   if (current_weapon == new_weapon ||
       !new_weapon->is_unlocked ||
       !this->weapon_switch_timer.check_is_elapsed()) {
@@ -116,7 +118,7 @@ void Player::switch_weapon(Weapon *new_weapon) {
   current_weapon = new_weapon;
   if (new_weapon->id == WeaponId::KNIFE) {
     SoundManager::get_instance().play_sound(SoundId::KNIFE_ATTACK);
-  } else if (new_weapon->id == WeaponId::PISTOL) {
+  } else {
     SoundManager::get_instance().play_sound(SoundId::AMMO);
   }
 }
@@ -148,11 +150,16 @@ void Player::update_current_weapon_sprite() const {
 }
 
 void Player::select_knife() {
-  this->switch_weapon(this->knife.get());
+  this->try_switch_weapon(this->knife.get());
 }
-
 void Player::select_pistol() {
-  this->switch_weapon(this->pistol.get());
+  this->try_switch_weapon(this->pistol.get());
+}
+void Player::select_thompson() {
+  this->try_switch_weapon(this->thompson.get());
+}
+void Player::select_machine_gun() {
+  this->try_switch_weapon(this->machine_gun.get());
 }
 void Player::update_sprites() {
   this->update_current_weapon_sprite();

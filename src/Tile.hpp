@@ -28,7 +28,7 @@ class Tile {
   enum Symbol : char {
     FLOOR = ' ',
     WALL = 'W',
-    DOOR = 'X',
+    DOOR = '-',
     PLAYER = 'P',
     ENEMY_DOG = 'D',
     ENEMY_GUARD = 'G',

@@ -8,6 +8,8 @@
 enum class SoundId {
   KNIFE_ATTACK,
   PISTOL_ATTACK,
+  THOMPSON_ATTACK,
+  MACHINE_GUN_ATTACK,
   ENEMY_DOG_BARK,
   ENEMY_DOG_DIES,
   ENEMY_GUARD_DIES,
@@ -35,37 +37,53 @@ static std::unordered_map<SoundId, SoundSetting> SOUND_SETTINGS = {
     {SoundId::PISTOL_ATTACK, SoundSetting{
         "assets/sounds/weapons/pistol_attack.wav",
     }},
+    {SoundId::THOMPSON_ATTACK, SoundSetting{
+        "assets/sounds/weapons/thompson_attack.wav",
+    }},
+    {SoundId::MACHINE_GUN_ATTACK, SoundSetting{
+        "assets/sounds/weapons/machine_gun_attack.wav",
+    }},
     {SoundId::ENEMY_DOG_BARK, SoundSetting{
         "assets/sounds/enemies/dog_bark.wav",
     }},
-    {SoundId::PLAYER_DIES, SoundSetting{
+    {
+        SoundId::PLAYER_DIES, SoundSetting{
         "assets/sounds/player/player_dies.wav",
     }},
-    {SoundId::PLAYER_SMALL_PAIN, SoundSetting{
+    {
+        SoundId::PLAYER_SMALL_PAIN, SoundSetting{
         "assets/sounds/player/player_small_pain.wav",
     }},
-    {SoundId::PLAYER_BIG_PAIN, SoundSetting{
+    {
+        SoundId::PLAYER_BIG_PAIN, SoundSetting{
         "assets/sounds/player/player_big_pain.wav",
     }},
-    {SoundId::MUSIC_BACKGROUND, SoundSetting{
+    {
+        SoundId::MUSIC_BACKGROUND, SoundSetting{
         "assets/sounds/background/2_wondering_about_my_loved_ones.ogg",
     }},
-    {SoundId::SWITCH_WEAPON, SoundSetting{
-        "assets/sounds/weapons/switch_weapon.wav",
+    {
+        SoundId::SWITCH_WEAPON, SoundSetting{
+        "assets/sounds/weapons/try_switch_weapon.wav",
     }},
-    {SoundId::AMMO, SoundSetting{
+    {
+        SoundId::AMMO, SoundSetting{
         "assets/sounds/weapons/ammo.wav",
     }},
-    {SoundId::ENEMY_DOG_DIES, SoundSetting{
+    {
+        SoundId::ENEMY_DOG_DIES, SoundSetting{
         "assets/sounds/enemies/dog_dies.wav",
     }},
-    {SoundId::ENEMY_GUARD_DIES, SoundSetting{
+    {
+        SoundId::ENEMY_GUARD_DIES, SoundSetting{
         "assets/sounds/enemies/guard_dies.wav",
     }},
-    {SoundId::ENEMY_GUARD_HURTS, SoundSetting{
+    {
+        SoundId::ENEMY_GUARD_HURTS, SoundSetting{
         "assets/sounds/enemies/guard_hurts.wav",
     }},
-    {SoundId::DOOR_BREAK, SoundSetting{
+    {
+        SoundId::DOOR_BREAK, SoundSetting{
         "assets/sounds/door/door_break.wav",
     }},
 };

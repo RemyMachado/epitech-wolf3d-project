@@ -17,6 +17,8 @@ class Player {
   Camera &camera;
   std::unique_ptr<Weapon> knife;
   std::unique_ptr<Weapon> pistol;
+  std::unique_ptr<Weapon> thompson;
+  std::unique_ptr<Weapon> machine_gun;
   Weapon *current_weapon;
   Timer weapon_switch_timer;
   float body_radius = 0.2f;
@@ -29,10 +31,10 @@ class Player {
   /* CTOR */
  public:
   Player(sf::Vector2f pos,
-		 float direction_deg,
-		 float move_speed,
-		 Grid &grid,
-		 Camera &camera);
+         float direction_deg,
+         float move_speed,
+         Grid &grid,
+         Camera &camera);
 
 
   /* METHODS */
@@ -44,6 +46,8 @@ class Player {
   void take_damage(float damage);
   void select_knife();
   void select_pistol();
+  void select_thompson();
+  void select_machine_gun();
   void move_forward();
   void move_backward();
   void move_left();
@@ -59,7 +63,7 @@ class Player {
   void update_hud_face_sprite();
   void update_current_weapon_sprite() const;
   void update_sprites();
-  void switch_weapon(Weapon *new_weapon);
+  void try_switch_weapon(Weapon *new_weapon);
   void move(float direction_deg);
 };
 

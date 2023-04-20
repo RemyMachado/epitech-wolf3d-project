@@ -7,11 +7,12 @@
 
 Weapon::Weapon(const WeaponSetting &weapon_setting)
     : id(weapon_setting.id),
+      is_unlocked(weapon_setting.is_unlocked),
       attack_animation(weapon_setting.attack_animation_params, {[this]() { end_attack(); }}),
       attack_delay(weapon_setting.attack_delay),
       attack_timer(weapon_setting.attack_delay),
       attack_sound_id(weapon_setting.attack_sound_id),
-      ammo(weapon_setting.ammo),
+      ammo(weapon_setting.initial_ammo),
       move_speed_multiplier(weapon_setting.move_speed_multiplier),
       attack_tile_range(weapon_setting.attack_tile_range),
       attack_damage(weapon_setting.attack_damage),
