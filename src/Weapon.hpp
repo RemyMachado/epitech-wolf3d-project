@@ -63,7 +63,7 @@ static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
     }},
     {WeaponId::THOMPSON, {
         WeaponId::THOMPSON,
-        true,
+        false,
         {SPRITE_SETTINGS.at(SpriteId::THOMPSON_ATTACK), 0.3f},
         SpriteId::THOMPSON_HUD,
         SpriteId::THOMPSON_IDLE,
@@ -77,7 +77,7 @@ static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
     }},
     {WeaponId::MACHINE_GUN, {
         WeaponId::MACHINE_GUN,
-        true,
+        false,
         {SPRITE_SETTINGS.at(SpriteId::MACHINE_GUN_ATTACK), 0.1f},
         SpriteId::MACHINE_GUN_HUD,
         SpriteId::MACHINE_GUN_IDLE,

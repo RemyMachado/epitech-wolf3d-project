@@ -7,6 +7,7 @@
 #include "Tile.hpp"
 #include "file_parser.hpp"
 #include "Enemy.hpp"
+#include "Pickup.hpp"
 
 class Grid {
  public:
@@ -26,6 +27,7 @@ class Grid {
   // function to get the initial position of the player
   [[nodiscard]] sf::Vector2f get_player_initial_pos() const;
   [[nodiscard]] std::vector<Enemy> get_initial_enemies() const;
+  [[nodiscard]] std::vector<Pickup> get_initial_pickups() const;
   void set_tile_symbol(sf::Vector2i coords, Tile::Symbol new_symbol);
 
   // stringify the grid with the cout operator (not working anymore)
@@ -33,6 +35,8 @@ class Grid {
 
  private:
   [[nodiscard]] unsigned int count_enemies() const;
+  /* adds 1 for the final pickup key (appearing at the player initial_position) */
+  [[nodiscard]] unsigned int count_pickups() const;
 };
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_GRID_HPP_

@@ -22,7 +22,18 @@ sf::Vector2f Grid::get_player_initial_pos() const {
   throw std::invalid_argument(
       "The grid file is invalid: the player position was not found \'" + std::to_string(Tile::Symbol::PLAYER) + "\'");
 }
+unsigned int Grid::count_pickups() const {
+  unsigned int count = 0;
+  for (const auto &tile : tiles) {
+    if (tile.symbol == Tile::Symbol::PICKUP_AMMO || tile.symbol == Tile::Symbol::PICKUP_HEALTH
+        || tile.symbol == Tile::Symbol::PICKUP_THOMPSON || tile.symbol == Tile::Symbol::PICKUP_MACHINE_GUN) {
+      count++;
+    }
+  }
 
+  /* adds 1 for the final pickup key (appearing at the player initial_position) */
+  return count + 1;
+}
 unsigned int Grid::count_enemies() const {
   unsigned int count = 0;
   for (const auto &tile : tiles) {
@@ -32,7 +43,28 @@ unsigned int Grid::count_enemies() const {
   }
   return count;
 }
+std::vector<Pickup> Grid::get_initial_pickups() const {
+  std::vector<Pickup> pickups;
+  unsigned int pickup_count = count_pickups();
 
+  if (pickup_count == 0) {
+    return pickups;
+  }
+  // if reserve is not provided, the vector will be resized every time an enemy is added and
+  // will create issues because of the callback functions pointing to deleted objects
+  pickups.reserve(pickup_count);
+
+  // find the pickups positions in the grid
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      if (std::find(PICKUP_TILES.begin(), PICKUP_TILES.end(), get(x, y).symbol) != PICKUP_TILES.end()) {
+        pickups.emplace_back(PICKUP_SETTINGS.at(get(x, y).symbol), sf::Vector2i(x, y), tile_size);
+      }
+    }
+  }
+
+  return pickups;
+}
 std::vector<Enemy> Grid::get_initial_enemies() const {
   std::vector<Enemy> enemies;
   unsigned int enemy_count = count_enemies();
@@ -42,12 +74,12 @@ std::vector<Enemy> Grid::get_initial_enemies() const {
   }
   // if reserve is not provided, the vector will be resized every time an enemy is added and
   // will create issues because of the callback functions pointing to deleted objects
-  enemies.reserve(count_enemies());
+  enemies.reserve(enemy_count);
 
   // find the enemies positions in the grid
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
-      if (get(x, y).symbol == Tile::Symbol::ENEMY_DOG || get(x, y).symbol == Tile::Symbol::ENEMY_GUARD) {
+      if (std::find(ENEMY_TILES.begin(), ENEMY_TILES.end(), get(x, y).symbol) != ENEMY_TILES.end()) {
         enemies.emplace_back(ENEMY_SETTINGS.at(get(x, y).symbol), *this, sf::Vector2i(x, y),
                              sf::Vector2f{(float) x * tile_size + tile_size / 2,
                                           (float) y * tile_size + tile_size / 2});

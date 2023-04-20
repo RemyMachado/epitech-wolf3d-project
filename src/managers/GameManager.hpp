@@ -10,6 +10,7 @@
 #include "../MouseAndKeyboard.hpp"
 #include "../my_math.hpp"
 #include "../PathFinder.hpp"
+#include "../Pickup.hpp"
 
 class GameManager {
  public:
@@ -20,6 +21,7 @@ class GameManager {
   Hud hud;
   MouseAndKeyboard mouse_and_keyboard;
   std::vector<Enemy> enemies;
+  std::vector<Pickup> pickups;
   int current_level = 1;
   int score = 72;
   unsigned int render_loop_count = 0;

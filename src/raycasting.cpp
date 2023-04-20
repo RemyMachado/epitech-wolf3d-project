@@ -5,6 +5,7 @@
 #include "Grid.hpp"
 #include "Tile.hpp"
 #include "managers/GameManager.hpp"
+#include "Pickup.hpp"
 
 Tile::Side determine_hit_side(float tile_size, const Tile &tile, const Line &intersected_segment) {
   // Get the center of the intersected segment
@@ -409,6 +410,32 @@ std::vector<ComputedDrawHit> &compute_floor_raycast_vec(std::vector<ComputedDraw
 
   return raycast_vec;
 }*/
+
+/*
+* sort the pickups by distance to the player (DESC)
+* */
+std::vector<PickupDistanceToPlayer> compute_sort_desc_pickup_distance_to_player_vec(sf::Vector2f player_pos,
+                                                                                    std::vector<Pickup> &pickups) {
+  std::vector<PickupDistanceToPlayer> pickup_distance_to_player_vec;
+
+  // for each enemy_ref, calculate the distance to the player
+  for (auto &pickup : pickups) {
+    // calculate the distance to the player
+    float distance_to_player = get_distance_between_points(player_pos, pickup.get_pos());
+
+    // store the enemy_ref and the distance to the player
+    pickup_distance_to_player_vec.emplace_back(PickupDistanceToPlayer({pickup, distance_to_player}));
+  }
+
+  // sort the enemies by distance to the player (DESC)
+  std::sort(pickup_distance_to_player_vec.begin(),
+            pickup_distance_to_player_vec.end(),
+            [](const PickupDistanceToPlayer &a, const PickupDistanceToPlayer &b) {
+              return a.distance > b.distance;
+            });
+
+  return pickup_distance_to_player_vec;
+}
 
 /*
  * sort the enemies by distance to the player (DESC)

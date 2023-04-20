@@ -12,6 +12,8 @@ class Grid;
 class Line;
 class Enemy;
 class EnemyDistanceToPlayer;
+class Pickup;
+class PickupDistanceToPlayer;
 
 /*
  * To store a pair of two values as a key in an unordered_map, we need to define a hash function for it.
@@ -45,6 +47,8 @@ struct Raycast {
   Tile tile;
 };
 
+std::vector<PickupDistanceToPlayer> compute_sort_desc_pickup_distance_to_player_vec(sf::Vector2f player_pos,
+                                                                                    std::vector<Pickup> &pickups);
 std::vector<EnemyDistanceToPlayer> compute_sort_desc_enemy_distance_to_player_vec(sf::Vector2f player_pos,
                                                                                   std::vector<Enemy> &enemies);
 Tile::Side determine_hit_side(float tile_size, const Tile &tile, const Line &intersected_segment);
