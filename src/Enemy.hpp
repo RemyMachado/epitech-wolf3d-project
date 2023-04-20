@@ -62,7 +62,7 @@ static std::unordered_map<Tile::Symbol, EnemySetting> ENEMY_SETTINGS = {
 		{SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_DEATH), 0.5f}, // Hurt sprite isn't needed, dog always dies on one hit
 		SpriteId::ENEMY_DOG_IDLE,
 		{2.0f, 3.0f},
-		2,
+		2.0f,
 		10,
 		SoundId::ENEMY_DOG_BARK,
 		SoundId::ENEMY_DOG_DIES, // Hurt sound isn't needed, dog always dies on one hit

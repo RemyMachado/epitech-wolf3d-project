@@ -7,7 +7,7 @@
 
 std::ostream &operator<<(std::ostream &os, const Enemy &enemy) {
   os << "Enemy - " << (enemy.symbol == Tile::Symbol::ENEMY_DOG ? "DOG" : "GUARD") << "(" << enemy.tile_coords.x << ", "
-	 << enemy.tile_coords.y << ")";
+     << enemy.tile_coords.y << ")";
 
   return os;
 }
@@ -22,49 +22,49 @@ void Enemy::update(Player &player, PathFinder &path_finder) {
 
 sf::Sprite &Enemy::get_current_sprite() {
   if (is_attacking) {
-	return attack_animation.getSprite();
+    return attack_animation.getSprite();
   }
   if (is_dying || is_dead) {
-	return death_animation.getSprite();
+    return death_animation.getSprite();
   }
   if (is_hurting) {
-	return hurt_animation.getSprite();
+    return hurt_animation.getSprite();
   }
   if (is_walking) {
-	return walk_animation.getSprite();
+    return walk_animation.getSprite();
   }
   return idle_sprite;
 }
 
 Enemy::Enemy(const EnemySetting &setting, const Grid &grid, sf::Vector2i initial_coords, sf::Vector2f initial_pos)
-	: tile_coords(initial_coords),
-	  pos(initial_pos),
-	  symbol(setting.symbol),
-	  walk_animation(setting.walk_animation_params,
-					 {[this]() { this->end_walk_anim(); },
-					  [this]() { this->update_transitory_walk_position(); }}),
-	  attack_animation(setting.attack_animation_params, {[this]() { this->end_attack_anim(); }}),
-	  death_animation(setting.death_animation_params, {[this]() { this->end_death_anim(); }}),
-	  hurt_animation(setting.hurt_animation_params, {[this]() { this->end_hurt_anim(); }}),
-	  attack_delay(random_float(setting.attack_delay_range)),
-	  attack_timer(attack_delay),
-	  attack_damage(setting.attack_damage),
-	  grid(grid),
-	  attack_tile_range(setting.attack_tile_range),
-	  health(setting.health),
-	  attack_sound_id(setting.attack_sound_id),
-	  hurt_sound_id(setting.hurt_sound_id),
-	  death_sound_id(setting.death_sound_id),
-	  move_speed(random_float(setting.move_speed_range)) {
+    : tile_coords(initial_coords),
+      pos(initial_pos),
+      symbol(setting.symbol),
+      walk_animation(setting.walk_animation_params,
+                     {[this]() { this->end_walk_anim(); },
+                      [this]() { this->update_transitory_walk_position(); }}),
+      attack_animation(setting.attack_animation_params, {[this]() { this->end_attack_anim(); }}),
+      death_animation(setting.death_animation_params, {[this]() { this->end_death_anim(); }}),
+      hurt_animation(setting.hurt_animation_params, {[this]() { this->end_hurt_anim(); }}),
+      attack_delay(random_float(setting.attack_delay_range)),
+      attack_timer(attack_delay),
+      attack_damage(setting.attack_damage),
+      grid(grid),
+      attack_tile_range(setting.attack_tile_range),
+      health(setting.health),
+      attack_sound_id(setting.attack_sound_id),
+      hurt_sound_id(setting.hurt_sound_id),
+      death_sound_id(setting.death_sound_id),
+      move_speed(random_float(setting.move_speed_range)) {
   // TODO: generic loader
   SpriteSetting idle_sprite_setting = SPRITE_SETTINGS.at(setting.idle_sprite_id);
 
   idle_sprite.setTexture(TextureManager::get_instance().get_texture(setting.idle_sprite_id));
   idle_sprite.setTextureRect(sf::IntRect(
-	  idle_sprite_setting.initial_offset.x,
-	  idle_sprite_setting.initial_offset.y,
-	  idle_sprite_setting.frame_size.x,
-	  idle_sprite_setting.frame_size.y));
+      idle_sprite_setting.initial_offset.x,
+      idle_sprite_setting.initial_offset.y,
+      idle_sprite_setting.frame_size.x,
+      idle_sprite_setting.frame_size.y));
 
   std::cout << "Enemy created: (" << pos.x << ", " << pos.y << ")" << std::endl;
 }
@@ -76,22 +76,22 @@ void Enemy::update_transitory_walk_position() {
 }
 void Enemy::update_walk_animation() {
   if (is_walking) {
-	walk_animation.update_sprite();
+    walk_animation.update_sprite();
   }
 }
 void Enemy::update_hurt_animation() {
   if (is_hurting) {
-	hurt_animation.update_sprite();
+    hurt_animation.update_sprite();
   }
 }
 void Enemy::update_attack_animation() {
   if (is_attacking) {
-	attack_animation.update_sprite();
+    attack_animation.update_sprite();
   }
 }
 void Enemy::update_death_animation() {
   if (is_dying) {
-	death_animation.update_sprite();
+    death_animation.update_sprite();
   }
 }
 void Enemy::update_sprites() {
@@ -111,41 +111,41 @@ bool Enemy::is_player_in_range(const Player &player) {
   Polar polar_vector_to_player = cartesian_to_polar(pos, player.get_pos());
 
   if (polar_vector_to_player.magnitude > attack_tile_range * grid.tile_size) {
-	return false;
+    return false;
   }
   auto raycast_result =
-	  raycast(pos, polar_vector_to_player.angle_deg, polar_vector_to_player.magnitude, grid, Tile::Symbol::WALL);
+      raycast(pos, polar_vector_to_player.angle_deg, polar_vector_to_player.magnitude, grid, UNWALKABLE_TILES);
 
   return !raycast_result.has_value();
 }
 void Enemy::try_move(Player &player, PathFinder &path_finder) {
   if (get_is_busy()) {
-	return;
+    return;
   }
 
   auto shortest_path =
-	  path_finder.get_shortest_path(tile_coords,
-									player.get_tile_coords(),
-									UNWALKABLE_TILES,
-									std::max((int)attack_tile_range / 2, 1));
+      path_finder.get_shortest_path(tile_coords,
+                                    player.get_tile_coords(),
+                                    UNWALKABLE_TILES,
+                                    std::max((int) attack_tile_range / 2, 1));
 
   if (!shortest_path.empty()) {
-	is_walking = true;
-	walk_animation.reset_animation();
-	sf::Vector2f target_walk_pos = grid.get_tile_center(shortest_path.front());
-	sf::Vector2f vector_to_target = target_walk_pos - pos;
+    is_walking = true;
+    walk_animation.reset_animation();
+    sf::Vector2f target_walk_pos = grid.get_tile_center(shortest_path.front());
+    sf::Vector2f vector_to_target = target_walk_pos - pos;
 
-	// divide vector_to_target by the number of frame
-	// to get the vector to move per frame
-	walk_delta_per_frame = vector_to_target / (float)walk_animation.get_frame_count();
+    // divide vector_to_target by the number of frame
+    // to get the vector to move per frame
+    walk_delta_per_frame = vector_to_target / (float) walk_animation.get_frame_count();
   }
 }
 void Enemy::try_attack(Player &player) {
   if (get_is_busy() || !attack_timer.check_is_elapsed()) {
-	return;
+    return;
   }
   if (!is_player_in_range(player)) {
-	return;
+    return;
   }
   is_attacking = true;
   attack_animation.reset_animation();
@@ -155,7 +155,7 @@ void Enemy::try_attack(Player &player) {
 
 Enemy::~Enemy() {
   std::cout << "______________________________________________________________________"
-			   "Enemy destroyed: (" << pos.x << ", " << pos.y << ")" << std::endl;
+               "Enemy destroyed: (" << pos.x << ", " << pos.y << ")" << std::endl;
 }
 bool Enemy::get_is_busy() const {
   return is_walking || is_attacking || is_dying || is_hurting || is_dead;
@@ -163,13 +163,13 @@ bool Enemy::get_is_busy() const {
 void Enemy::take_damage(float damage) {
   health -= damage;
   if (health <= 0) {
-	die();
+    die();
   } else {
-	is_hurting = true;
-	is_attacking = false;
-	is_walking = false;
-	hurt_animation.reset_animation();
-	SoundManager::get_instance().play_sound(hurt_sound_id);
+    is_hurting = true;
+    is_attacking = false;
+    is_walking = false;
+    hurt_animation.reset_animation();
+    SoundManager::get_instance().play_sound(hurt_sound_id);
   }
 }
 void Enemy::die() {

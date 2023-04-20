@@ -24,15 +24,17 @@ void draw_chunked_raycast_hits(std::vector<std::vector<ComputedDrawHit>>
 							   sf::Sprite &ceiling_sprite);
 */
 void draw_floor_and_ceiling_3d(GameManager &game_manager,
-							   sf::Sprite &floor_sprite,
-							   sf::Sprite &ceiling_sprite);
+                               sf::Sprite &floor_sprite,
+                               sf::Sprite &ceiling_sprite);
 
 /*
  * Returns a vector of raycast hits, sorted from x=0 to x=window_width.
  * */
 std::vector<std::optional<Raycast>> draw_walls_3d(GameManager &game_manager,
-												  sf::Sprite &wall_sprite,
-												  sf::Sprite &wall_shadow_sprite);
+                                                  sf::Sprite &wall_sprite,
+                                                  sf::Sprite &wall_shadow_sprite,
+                                                  sf::Sprite &door_sprite,
+                                                  sf::Sprite &door_shadow_sprite);
 /*
 void draw_raycast_map(std::vector<ComputedDrawHit> &raycast_map,
 					  sf::RenderWindow &window,
@@ -46,11 +48,13 @@ void draw_raycast_map(std::vector<ComputedDrawHit> &raycast_map,
 */
 void draw_hud(GameManager &game_manager, sf::Sprite &hud_sprite);
 void render_game_frame(GameManager &game_manager,
-					   sf::Sprite &wall_sprite,
-					   sf::Sprite &wall_shadow_sprite,
-					   sf::Sprite &floor_sprite,
-					   sf::Sprite &ceiling_sprite,
-					   sf::Sprite &hud_empty_sprite);
+                       sf::Sprite &wall_sprite,
+                       sf::Sprite &wall_shadow_sprite,
+                       sf::Sprite &door_sprite,
+                       sf::Sprite &door_shadow_sprite,
+                       sf::Sprite &floor_sprite,
+                       sf::Sprite &ceiling_sprite,
+                       sf::Sprite &hud_empty_sprite);
 void render_game_over_screen(GameManager &game_manager, sf::Sprite &hud_empty_sprite);
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_DRAW_HPP_

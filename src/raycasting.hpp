@@ -33,7 +33,7 @@ struct ComputedDrawHit {
   sf::Vector2f texture_percentage_coords;
 
   ComputedDrawHit(Tile::Symbol tile_symbol, sf::Vector2f texture_percentage_coords)
-	  : tile_symbol(tile_symbol), texture_percentage_coords(texture_percentage_coords) {}
+      : tile_symbol(tile_symbol), texture_percentage_coords(texture_percentage_coords) {}
 };
 
 struct Raycast {
@@ -46,13 +46,13 @@ struct Raycast {
 };
 
 std::vector<EnemyDistanceToPlayer> compute_sort_desc_enemy_distance_to_player_vec(sf::Vector2f player_pos,
-																				  std::vector<Enemy> &enemies);
+                                                                                  std::vector<Enemy> &enemies);
 Tile::Side determine_hit_side(float tile_size, const Tile &tile, const Line &intersected_segment);
 std::optional<Raycast> raycast(sf::Vector2f origin,
-							   float direction_deg,
-							   float render_distance,
-							   const Grid &grid,
-							   Tile::Symbol symbol_target);
+                               float direction_deg,
+                               float render_distance,
+                               const Grid &grid,
+                               std::vector<Tile::Symbol> symbol_targets);
 /*std::vector<ComputedDrawHit> compute_partial_walls_raycast_vec(
 	GameManager &game_manager,
 	int start_x,

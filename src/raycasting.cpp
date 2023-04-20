@@ -21,62 +21,63 @@ Tile::Side determine_hit_side(float tile_size, const Tile &tile, const Line &int
 
   // Check the direction of the normalized vector to determine the hit side
   if (std::abs(normalized_tile_center_to_segment_center.x) > std::abs(normalized_tile_center_to_segment_center.y)) {
-	// The raycast hit an east or west face
-	return (normalized_tile_center_to_segment_center.x > 0) ? Tile::Side::EAST : Tile::Side::WEST;
+    // The raycast hit an east or west face
+    return (normalized_tile_center_to_segment_center.x > 0) ? Tile::Side::EAST : Tile::Side::WEST;
   } else {
-	// The raycast hit a north or south face
-	return (normalized_tile_center_to_segment_center.y > 0) ? Tile::Side::SOUTH : Tile::Side::NORTH;
+    // The raycast hit a north or south face
+    return (normalized_tile_center_to_segment_center.y > 0) ? Tile::Side::SOUTH : Tile::Side::NORTH;
   }
 }
 
 std::optional<Raycast> raycast(sf::Vector2f origin,
-							   float direction_deg,
-							   float render_distance,
-							   const Grid &grid,
-							   Tile::Symbol symbol_target) {
+                               float direction_deg,
+                               float render_distance,
+                               const Grid &grid,
+                               std::vector<Tile::Symbol> symbol_targets) {
   // get closest intersection from pos to dir_deg with symbol_target horizontal_segments
   std::optional<Raycast> closest_raycast = std::nullopt;
 
   // iterate over each tile
   for (const Tile &tile : grid.tiles) {
-	if (tile.symbol != symbol_target) {
-	  continue;
-	}
+    // if the tile symbol is not in the symbol_targets, skip it
+    if (std::find(symbol_targets.begin(), symbol_targets.end(), tile.symbol) == symbol_targets.end()) {
+      continue;
+    }
 
-	// iterate over each segment of the tile
-	for (const Line &horizontal_segment : tile.horizontal_segments) {
-	  // get the intersection between the ray and the horizontal_segment
-	  sf::Vector2f
-		  ray_max_distance_pos = polar_to_cartesian(origin, render_distance, direction_deg);
-	  Line ray = {origin, ray_max_distance_pos};
+    // iterate over each segment of the tile
+    for (const Line &horizontal_segment : tile.horizontal_segments) {
+      // get the intersection between the ray and the horizontal_segment
+      sf::Vector2f
+          ray_max_distance_pos = polar_to_cartesian(origin, render_distance, direction_deg);
+      Line ray = {origin, ray_max_distance_pos};
 
-	  std::optional<sf::Vector2f>
-		  intersection = get_segments_intersection(ray, horizontal_segment);
+      std::optional<sf::Vector2f>
+          intersection = get_segments_intersection(ray, horizontal_segment);
 
-	  // if there is an intersection
-	  if (intersection.has_value()) {
-		float distance_to_intersection = get_magnitude(intersection.value() - origin);
+      // if there is an intersection
+      if (intersection.has_value()) {
+        float distance_to_intersection = get_magnitude(intersection.value() - origin);
 
-		// if there is no closest intersection yet, or if the current intersection is closer than the closest intersection
-		if (!closest_raycast.has_value()
-			|| distance_to_intersection < closest_raycast.value().distance) {
-		  sf::Vector2f local_intersection =
-			  {intersection.value().x - (float)tile.pos.x, intersection.value().y - (float)tile.pos.y};
+        // if there is no closest intersection yet, or if the current intersection is closer than the closest intersection
+        if (!closest_raycast.has_value()
+            || distance_to_intersection < closest_raycast.value().distance) {
+          sf::Vector2f local_intersection =
+              {intersection.value().x - (float) tile.pos.x, intersection.value().y - (float) tile.pos.y};
 
-		  Tile::Side hit_side = determine_hit_side(grid.tile_size, tile, horizontal_segment);
+          Tile::Side hit_side = determine_hit_side(grid.tile_size, tile, horizontal_segment);
 
-		  // set the closest intersection to the current intersection
-		  closest_raycast = Raycast{
-			  distance_to_intersection,
-			  intersection.value(),
-			  local_intersection,
-			  hit_side,
-			  horizontal_segment,
-			  tile,
-		  };
-		}
-	  }
-	}
+          // set the closest intersection to the current intersection
+          closest_raycast = Raycast{
+              distance_to_intersection,
+              intersection.value(),
+              local_intersection,
+              hit_side,
+              horizontal_segment,
+              tile,
+          };
+        }
+      }
+    }
   }
 
   return closest_raycast;
@@ -413,24 +414,24 @@ std::vector<ComputedDrawHit> &compute_floor_raycast_vec(std::vector<ComputedDraw
  * sort the enemies by distance to the player (DESC)
  * */
 std::vector<EnemyDistanceToPlayer> compute_sort_desc_enemy_distance_to_player_vec(sf::Vector2f player_pos,
-																				  std::vector<Enemy> &enemies) {
+                                                                                  std::vector<Enemy> &enemies) {
   std::vector<EnemyDistanceToPlayer> enemy_distance_to_player_vec;
 
   // for each enemy_ref, calculate the distance to the player
   for (auto &enemy : enemies) {
-	// calculate the distance to the player
-	float distance_to_player = get_distance_between_points(player_pos, enemy.pos);
+    // calculate the distance to the player
+    float distance_to_player = get_distance_between_points(player_pos, enemy.pos);
 
-	// store the enemy_ref and the distance to the player
-	enemy_distance_to_player_vec.emplace_back(EnemyDistanceToPlayer({enemy, distance_to_player}));
+    // store the enemy_ref and the distance to the player
+    enemy_distance_to_player_vec.emplace_back(EnemyDistanceToPlayer({enemy, distance_to_player}));
   }
 
   // sort the enemies by distance to the player (DESC)
   std::sort(enemy_distance_to_player_vec.begin(),
-			enemy_distance_to_player_vec.end(),
-			[](const EnemyDistanceToPlayer &a, const EnemyDistanceToPlayer &b) {
-			  return a.distance > b.distance;
-			});
+            enemy_distance_to_player_vec.end(),
+            [](const EnemyDistanceToPlayer &a, const EnemyDistanceToPlayer &b) {
+              return a.distance > b.distance;
+            });
 
   return enemy_distance_to_player_vec;
 }

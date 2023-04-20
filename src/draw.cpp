@@ -59,7 +59,7 @@ void draw_player_direction_minimap(GameManager &game_manager) {
 			  game_manager.player.dir_deg,
 			  game_manager.camera.render_distance,
 			  game_manager.grid,
-			  Tile::Symbol::WALL);
+			  UNWALKABLE_TILES);
   if (raycast_wall.has_value()) {
 	sf::Vertex line[] = {
 		sf::Vertex(sf::Vector2f(game_manager.player.pos.x / game_manager.grid.tile_size * minimap_tile_size,
@@ -182,7 +182,9 @@ void draw_floor_and_ceiling_3d(GameManager &game_manager,
 
 std::vector<std::optional<Raycast>> draw_walls_3d(GameManager &game_manager,
 												  sf::Sprite &wall_sprite,
-												  sf::Sprite &wall_shadow_sprite) {
+												  sf::Sprite &wall_shadow_sprite,
+                                                  sf::Sprite &door_sprite,
+                                                  sf::Sprite &door_shadow_sprite) {
   std::vector<std::optional<Raycast>> raycast_hits;
 
   int render_width = (int)game_manager.window.getSize().x;
@@ -205,7 +207,7 @@ std::vector<std::optional<Raycast>> draw_walls_3d(GameManager &game_manager,
 							   ray_angle_deg,
 							   game_manager.camera.render_distance,
 							   game_manager.grid,
-							   Tile::Symbol::WALL);
+							   UNWALKABLE_TILES);
 	if (raycast_wall.has_value()) {
 	  float raycast_distance_corrected = raycast_wall.value().distance * fish_eye_correction;
 
@@ -215,13 +217,20 @@ std::vector<std::optional<Raycast>> draw_walls_3d(GameManager &game_manager,
 
 	  Tile::Side hit_side = raycast_wall.value().hit_side;
 
+      auto wall_or_door_sprite = (raycast_wall.value().tile.symbol == Tile::DOOR)
+                                        ? door_sprite
+                                        : wall_sprite;
+      auto wall_or_door_shadow_sprite = (raycast_wall.value().tile.symbol == Tile::DOOR)
+                                        ? door_shadow_sprite
+                                        : wall_shadow_sprite;
+
 	  auto texture_size = (hit_side == Tile::Side::NORTH || hit_side == Tile::Side::SOUTH)
-						  ? wall_sprite.getTexture()->getSize()
-						  : wall_shadow_sprite.getTexture()->getSize();
+						  ? wall_or_door_sprite.getTexture()->getSize()
+						  : wall_or_door_shadow_sprite.getTexture()->getSize();
 
 	  sf::Sprite &wall_sprite_to_draw = (hit_side == Tile::Side::NORTH || hit_side == Tile::Side::SOUTH)
-										? wall_sprite
-										: wall_shadow_sprite;
+										? wall_or_door_sprite
+										: wall_or_door_shadow_sprite;
 
 	  // calculate the position of the window_x pixel in the texture using hit side
 	  float texture_pixel_x = 0;
@@ -731,6 +740,8 @@ void render_game_over_screen(GameManager &game_manager, sf::Sprite &hud_empty_sp
 void render_game_frame(GameManager &game_manager,
 					   sf::Sprite &wall_sprite,
 					   sf::Sprite &wall_shadow_sprite,
+                       sf::Sprite &door_sprite,
+                       sf::Sprite &door_shadow_sprite,
 					   sf::Sprite &floor_sprite,
 					   sf::Sprite &ceiling_sprite,
 					   sf::Sprite &hud_empty_sprite) {
@@ -752,7 +763,7 @@ void render_game_frame(GameManager &game_manager,
 */
 
   // 3d walls
-  std::vector<std::optional<Raycast>> walls_raycast = draw_walls_3d(game_manager, wall_sprite, wall_shadow_sprite);
+  std::vector<std::optional<Raycast>> walls_raycast = draw_walls_3d(game_manager, wall_sprite, wall_shadow_sprite, door_sprite, door_shadow_sprite);
 
   draw_enemies(game_manager, walls_raycast);
 

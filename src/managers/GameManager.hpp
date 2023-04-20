@@ -11,10 +11,6 @@
 #include "../my_math.hpp"
 #include "../PathFinder.hpp"
 
-static std::vector<Tile::Symbol> UNWALKABLE_TILES = {
-	Tile::Symbol::WALL,
-};
-
 class GameManager {
  public:
   sf::RenderWindow window;
