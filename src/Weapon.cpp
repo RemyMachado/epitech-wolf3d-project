@@ -78,6 +78,23 @@ bool Weapon::try_attack(Player &player, std::vector<Enemy> &enemies) {
   attack_animation.reset_animation();
   SoundManager::get_instance().play_sound(attack_sound_id);
 
+  // Try to break doors
+  if (id == WeaponId::KNIFE) {
+    // raycast in the direction of the player
+    auto raycast_result =
+        raycast(player.pos,
+                player.dir_deg,
+                attack_tile_range * player.grid.tile_size,
+                player.grid,
+                UNWALKABLE_TILES);
+
+    if (raycast_result.has_value() && raycast_result.value().tile.symbol == Tile::DOOR) {
+      SoundManager::get_instance().play_sound(SoundId::DOOR_BREAK);
+      player.grid.set_tile_symbol(raycast_result.value().tile.coords, Tile::FLOOR);
+      return true;
+    }
+  }
+
   // check if any enemies are in range
   for (unsigned int i = 0; i < enemies.size(); i++) {
     if (enemies[i].is_dead) {

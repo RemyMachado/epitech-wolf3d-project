@@ -18,6 +18,7 @@ enum class SoundId {
   MUSIC_BACKGROUND,
   SWITCH_WEAPON,
   AMMO,
+  DOOR_BREAK,
 };
 
 struct SoundSetting {
@@ -25,45 +26,48 @@ struct SoundSetting {
 };
 
 static std::unordered_map<SoundId, SoundSetting> SOUND_SETTINGS = {
-	/*
-	 * Weapons
-	 * */
-	{SoundId::KNIFE_ATTACK, SoundSetting{
-		"assets/sounds/weapons/knife_attack.wav",
-	}},
-	{SoundId::PISTOL_ATTACK, SoundSetting{
-		"assets/sounds/weapons/pistol_attack.wav",
-	}},
-	{SoundId::ENEMY_DOG_BARK, SoundSetting{
-		"assets/sounds/enemies/dog_bark.wav",
-	}},
-	{SoundId::PLAYER_DIES, SoundSetting{
-		"assets/sounds/player/player_dies.wav",
-	}},
-	{SoundId::PLAYER_SMALL_PAIN, SoundSetting{
-		"assets/sounds/player/player_small_pain.wav",
-	}},
-	{SoundId::PLAYER_BIG_PAIN, SoundSetting{
-		"assets/sounds/player/player_big_pain.wav",
-	}},
-	{SoundId::MUSIC_BACKGROUND, SoundSetting{
-		"assets/sounds/background/2_wondering_about_my_loved_ones.ogg",
-	}},
-	{SoundId::SWITCH_WEAPON, SoundSetting{
-		"assets/sounds/weapons/switch_weapon.wav",
-	}},
-	{SoundId::AMMO, SoundSetting{
-		"assets/sounds/weapons/ammo.wav",
-	}},
-	{SoundId::ENEMY_DOG_DIES, SoundSetting{
-		"assets/sounds/enemies/dog_dies.wav",
-	}},
-	{SoundId::ENEMY_GUARD_DIES, SoundSetting{
-		"assets/sounds/enemies/guard_dies.wav",
-	}},
-	{SoundId::ENEMY_GUARD_HURTS, SoundSetting{
-		"assets/sounds/enemies/guard_hurts.wav",
-	}},
+    /*
+     * Weapons
+     * */
+    {SoundId::KNIFE_ATTACK, SoundSetting{
+        "assets/sounds/weapons/knife_attack.wav",
+    }},
+    {SoundId::PISTOL_ATTACK, SoundSetting{
+        "assets/sounds/weapons/pistol_attack.wav",
+    }},
+    {SoundId::ENEMY_DOG_BARK, SoundSetting{
+        "assets/sounds/enemies/dog_bark.wav",
+    }},
+    {SoundId::PLAYER_DIES, SoundSetting{
+        "assets/sounds/player/player_dies.wav",
+    }},
+    {SoundId::PLAYER_SMALL_PAIN, SoundSetting{
+        "assets/sounds/player/player_small_pain.wav",
+    }},
+    {SoundId::PLAYER_BIG_PAIN, SoundSetting{
+        "assets/sounds/player/player_big_pain.wav",
+    }},
+    {SoundId::MUSIC_BACKGROUND, SoundSetting{
+        "assets/sounds/background/2_wondering_about_my_loved_ones.ogg",
+    }},
+    {SoundId::SWITCH_WEAPON, SoundSetting{
+        "assets/sounds/weapons/switch_weapon.wav",
+    }},
+    {SoundId::AMMO, SoundSetting{
+        "assets/sounds/weapons/ammo.wav",
+    }},
+    {SoundId::ENEMY_DOG_DIES, SoundSetting{
+        "assets/sounds/enemies/dog_dies.wav",
+    }},
+    {SoundId::ENEMY_GUARD_DIES, SoundSetting{
+        "assets/sounds/enemies/guard_dies.wav",
+    }},
+    {SoundId::ENEMY_GUARD_HURTS, SoundSetting{
+        "assets/sounds/enemies/guard_hurts.wav",
+    }},
+    {SoundId::DOOR_BREAK, SoundSetting{
+        "assets/sounds/door/door_break.wav",
+    }},
 };
 
 class SoundManager {
@@ -76,32 +80,32 @@ class SoundManager {
   SoundManager &operator=(const SoundManager &) = delete;
 
   static SoundManager &get_instance() {
-	static SoundManager instance;
-	return instance;
+    static SoundManager instance;
+    return instance;
   }
 
   void play_sound(SoundId sound_id, bool loop = false) {
-	auto found = sounds.find(sound_id);
+    auto found = sounds.find(sound_id);
 
-	if (found != sounds.end()) {
-	  found->second->play();
-	  return;
-	}
+    if (found != sounds.end()) {
+      found->second->play();
+      return;
+    }
 
-	auto sound_buffer = std::make_unique<sf::SoundBuffer>();
-	auto filePath = SOUND_SETTINGS.at(sound_id).sound_path;
+    auto sound_buffer = std::make_unique<sf::SoundBuffer>();
+    auto filePath = SOUND_SETTINGS.at(sound_id).sound_path;
 
-	if (!sound_buffer->loadFromFile(filePath)) {
-	  throw std::runtime_error("Failed to load sound from file: \"" + filePath + "\"");
-	}
+    if (!sound_buffer->loadFromFile(filePath)) {
+      throw std::runtime_error("Failed to load sound from file: \"" + filePath + "\"");
+    }
 
-	auto sound = std::make_unique<sf::Sound>(*sound_buffer);
-	if (loop) {
-	  sound->setLoop(true);
-	}
-	sound->play();
-	sound_buffers.insert({sound_id, std::move(sound_buffer)});
-	sounds.insert({sound_id, std::move(sound)});
+    auto sound = std::make_unique<sf::Sound>(*sound_buffer);
+    if (loop) {
+      sound->setLoop(true);
+    }
+    sound->play();
+    sound_buffers.insert({sound_id, std::move(sound_buffer)});
+    sounds.insert({sound_id, std::move(sound)});
   }
 
   void play_music_background() {

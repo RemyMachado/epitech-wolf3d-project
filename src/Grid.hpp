@@ -26,6 +26,7 @@ class Grid {
   // function to get the initial position of the player
   [[nodiscard]] sf::Vector2f get_player_initial_pos() const;
   [[nodiscard]] std::vector<Enemy> get_initial_enemies() const;
+  void set_tile_symbol(sf::Vector2i coords, Tile::Symbol new_symbol);
 
   // stringify the grid with the cout operator (not working anymore)
 //  friend std::ostream &operator<<(std::ostream &os, const Grid &grid);
