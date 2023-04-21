@@ -1,6 +1,7 @@
 #ifndef EPITECH_WOLF3D_PROJECT_SRC_ENEMY_HPP_
 #define EPITECH_WOLF3D_PROJECT_SRC_ENEMY_HPP_
 
+#include <optional>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include "Animation.hpp"
@@ -20,13 +21,13 @@ struct EnemySetting {
   AnimationParams walk_animation_params;
   AnimationParams attack_animation_params;
   AnimationParams death_animation_params;
-  AnimationParams hurt_animation_params;
+  std::optional<AnimationParams> hurt_animation_params;
   SpriteId idle_sprite_id;
   Range<float> attack_delay_range;
   float attack_tile_range;
   float attack_damage;
   SoundId attack_sound_id;
-  SoundId hurt_sound_id;
+  std::optional<SoundId> hurt_sound_id;
   SoundId death_sound_id;
   float health;
   Range<float> move_speed_range;
@@ -37,40 +38,112 @@ struct EnemyDistanceToPlayer {
   float distance;
 };
 
-static std::unordered_map<Tile::Symbol, EnemySetting> ENEMY_SETTINGS = {
-	{Tile::Symbol::ENEMY_GUARD, {
-		Tile::Symbol::ENEMY_GUARD,
-		{SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_WALK), 0.3f},
-		{SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_ATTACK), 0.5f},
-		{SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_DEATH), 0.5f},
-		{SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_HURT), 0.5f},
-		SpriteId::ENEMY_GUARD_IDLE,
-		{1.5f, 2.5f},
-		10,
-		5,
-		SoundId::PISTOL_ATTACK,
-		SoundId::ENEMY_GUARD_HURTS,
-		SoundId::ENEMY_GUARD_DIES,
-		50,
-		{0.2f, 0.5f}
-	}},
-	{Tile::Symbol::ENEMY_DOG, {
-		Tile::Symbol::ENEMY_DOG,
-		{SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_WALK), 0.3f},
-		{SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_ATTACK), 0.6f},
-		{SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_DEATH), 0.5f},
-		{SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_DEATH), 0.5f}, // Hurt sprite isn't needed, dog always dies on one hit
-		SpriteId::ENEMY_DOG_IDLE,
-		{2.0f, 3.0f},
-		2.0f,
-		10,
-		SoundId::ENEMY_DOG_BARK,
-		SoundId::ENEMY_DOG_DIES, // Hurt sound isn't needed, dog always dies on one hit
-		SoundId::ENEMY_DOG_DIES,
-		1,
-		{0.5f, 1.0f}
-	}},
-};
+static std::unordered_map<Tile::Symbol, EnemySetting> ENEMY_SETTINGS =
+    []() -> std::unordered_map<Tile::Symbol, EnemySetting> {
+      std::unordered_map<Tile::Symbol, EnemySetting> settings;
+
+      settings.insert(std::make_pair(Tile::Symbol::ENEMY_GUARD, EnemySetting{
+          Tile::Symbol::ENEMY_GUARD,
+          {SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_WALK), 0.3f},
+          {SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_ATTACK), 0.5f},
+          {SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_DEATH), 0.5f},
+          std::optional<AnimationParams>({SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_HURT), 0.5f}),
+          SpriteId::ENEMY_GUARD_IDLE,
+          {1.5f, 2.5f},
+          10,
+          5,
+          SoundId::PISTOL_ATTACK,
+          std::optional<SoundId>(SoundId::ENEMY_GUARD_HURTS),
+          SoundId::ENEMY_GUARD_DIES,
+          50,
+          {0.2f, 0.5f}
+      }));
+
+      settings.insert(std::make_pair(Tile::Symbol::ENEMY_DOG, EnemySetting{
+          Tile::Symbol::ENEMY_DOG,
+          {SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_WALK), 0.3f},
+          {SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_ATTACK), 0.6f},
+          {SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_DEATH), 0.5f},
+          std::nullopt, // Hurt sprite isn't needed, dog always dies on one hit
+          SpriteId::ENEMY_DOG_IDLE,
+          {2.0f, 3.0f},
+          2.0f,
+          10,
+          SoundId::ENEMY_DOG_BARK,
+          std::nullopt,
+          SoundId::ENEMY_DOG_DIES,
+          1,
+          {0.5f, 1.0f}
+      }));
+
+      settings.insert(std::make_pair(Tile::Symbol::ENEMY_MECHA_H, EnemySetting{
+          Tile::Symbol::ENEMY_MECHA_H,
+          {SPRITE_SETTINGS.at(SpriteId::ENEMY_MECHA_H_WALK), 0.8f},
+          {SPRITE_SETTINGS.at(SpriteId::ENEMY_MECHA_H_ATTACK), 0.05f},
+          {SPRITE_SETTINGS.at(SpriteId::ENEMY_MECHA_H_DEATH), 2.5f},
+          std::nullopt, // Hurt sprite isn't needed, boss has an armor
+          SpriteId::ENEMY_MECHA_H_IDLE,
+          {0.05f, 0.05f},
+          10,
+          1,
+          SoundId::ENEMY_MECHA_H_ATTACK,
+          std::optional<SoundId>(SoundId::ENEMY_MECHA_H_HURTS),
+          SoundId::ENEMY_MECHA_H_DIES,
+          1000,
+          {0.8f, 0.8f}
+      }));
+      return settings;
+    }();
+/*{
+{Tile::Symbol::ENEMY_GUARD, {
+    Tile::Symbol::ENEMY_GUARD,
+    {SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_WALK), 0.3f},
+    {SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_ATTACK), 0.5f},
+    {SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_DEATH), 0.5f},
+    {SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_HURT), 0.5f},
+    SpriteId::ENEMY_GUARD_IDLE,
+    {1.5f, 2.5f},
+    10,
+    5,
+    SoundId::PISTOL_ATTACK,
+    SoundId::ENEMY_GUARD_HURTS,
+    SoundId::ENEMY_GUARD_DIES,
+    50,
+    {0.2f, 0.5f}
+}},
+{Tile::Symbol::ENEMY_DOG, {
+    Tile::Symbol::ENEMY_DOG,
+    {SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_WALK), 0.3f},
+    {SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_ATTACK), 0.6f},
+    {SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_DEATH), 0.5f},
+    {SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_DEATH), 0.5f}, // Hurt sprite isn't needed, dog always dies on one hit
+    SpriteId::ENEMY_DOG_IDLE,
+    {2.0f, 3.0f},
+    2.0f,
+    10,
+    SoundId::ENEMY_DOG_BARK,
+    SoundId::ENEMY_DOG_DIES, // Hurt sound isn't needed, dog always dies on one hit
+    SoundId::ENEMY_DOG_DIES,
+    1,
+    {0.5f, 1.0f}
+}},
+{Tile::Symbol::ENEMY_MECHA_H, {
+    Tile::Symbol::ENEMY_MECHA_H,
+    {SPRITE_SETTINGS.at(SpriteId::ENEMY_MECHA_H_WALK), 0.3f},
+    {SPRITE_SETTINGS.at(SpriteId::ENEMY_MECHA_H_ATTACK), 0.5f},
+    {SPRITE_SETTINGS.at(SpriteId::ENEMY_MECHA_H_DEATH), 0.5f},
+    {SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_DEATH), 0.5f}, // Hurt sprite isn't needed, dog always dies on one hit
+    SpriteId::ENEMY_MECHA_H_IDLE,
+    {1.5f, 2.5f},
+    10,
+    5,
+    SoundId::ENEMY_MECHA_H_ATTACK,
+    SoundId::ENEMY_MECHA_H_HURTS,
+    SoundId::ENEMY_MECHA_H_DIES,
+    50,
+    {0.2f, 0.5f}
+}}
+};*/
 
 class Enemy {
  public:
@@ -94,14 +167,14 @@ class Enemy {
   float attack_damage;
   /* Sound */
   SoundId attack_sound_id;
-  SoundId hurt_sound_id;
+  std::optional<SoundId> hurt_sound_id;
   SoundId death_sound_id;
 
   /* Animation */
   sf::Sprite idle_sprite;
   Animation walk_animation;
   Animation attack_animation;
-  Animation hurt_animation;
+  std::optional<Animation> hurt_animation;
   Animation death_animation;
 
  public:

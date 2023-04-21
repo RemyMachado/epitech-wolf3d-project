@@ -32,6 +32,7 @@ class Tile {
     PLAYER = 'P',
     ENEMY_DOG = 'D',
     ENEMY_GUARD = 'G',
+    ENEMY_MECHA_H = 'Z',
     PICKUP_AMMO = 'A',
     PICKUP_HEALTH = 'H',
     PICKUP_THOMPSON = 'T',
@@ -41,7 +42,7 @@ class Tile {
   static const std::unordered_set<char> &get_valid_symbols() {
     static const std::unordered_set<char> valid_symbols = {
         Symbol::FLOOR, Symbol::WALL, Symbol::DOOR, Symbol::PLAYER, Symbol::ENEMY_DOG, Symbol::ENEMY_GUARD,
-        Symbol::PICKUP_AMMO, Symbol::PICKUP_HEALTH, Symbol::PICKUP_THOMPSON, Symbol::PICKUP_MACHINE_GUN
+        Symbol::PICKUP_AMMO, Symbol::PICKUP_HEALTH, Symbol::PICKUP_THOMPSON, Symbol::PICKUP_MACHINE_GUN, ENEMY_MECHA_H
     };
     return valid_symbols;
   }
@@ -84,6 +85,7 @@ static std::vector<Tile::Symbol> UNWALKABLE_TILES = {
 static std::vector<Tile::Symbol> ENEMY_TILES = {
     Tile::Symbol::ENEMY_DOG,
     Tile::Symbol::ENEMY_GUARD,
+    Tile::Symbol::ENEMY_MECHA_H,
 };
 
 static std::vector<Tile::Symbol> PICKUP_TILES = {

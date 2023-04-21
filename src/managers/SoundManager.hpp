@@ -14,6 +14,10 @@ enum class SoundId {
   ENEMY_DOG_DIES,
   ENEMY_GUARD_DIES,
   ENEMY_GUARD_HURTS,
+  ENEMY_MECHA_H_ATTACK,
+  ENEMY_MECHA_H_HURTS,
+  ENEMY_MECHA_H_DIES,
+  ENEMY_MECHA_H_WALK,
   PLAYER_DIES,
   PLAYER_SMALL_PAIN,
   PLAYER_BIG_PAIN,
@@ -105,6 +109,22 @@ static std::unordered_map<SoundId, SoundSetting> SOUND_SETTINGS = {
     {
         SoundId::PICKUP_MACHINE_GUN, SoundSetting{
         "assets/sounds/player/all_right.wav",
+    }},
+    {
+        SoundId::ENEMY_MECHA_H_ATTACK, SoundSetting{
+        "assets/sounds/enemies/mecha_h_attack.wav",
+    }},
+    {
+        SoundId::ENEMY_MECHA_H_HURTS, SoundSetting{
+        "assets/sounds/enemies/mecha_h_hurts.wav",
+    }},
+    {
+        SoundId::ENEMY_MECHA_H_DIES, SoundSetting{
+        "assets/sounds/enemies/mecha_h_dies.wav",
+    }},
+    {
+        SoundId::ENEMY_MECHA_H_WALK, SoundSetting{
+        "assets/sounds/enemies/mecha_h_walk.wav",
     }},
 };
 

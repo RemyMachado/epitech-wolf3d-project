@@ -27,13 +27,22 @@ sf::Sprite &Enemy::get_current_sprite() {
   if (is_dying || is_dead) {
     return death_animation.getSprite();
   }
-  if (is_hurting) {
-    return hurt_animation.getSprite();
+  if (is_hurting && hurt_animation.has_value()) {
+    return hurt_animation.value().getSprite();
   }
   if (is_walking) {
     return walk_animation.getSprite();
   }
   return idle_sprite;
+}
+
+std::optional<Animation> createOptionalAnimation(const std::optional<AnimationParams> &params,
+                                                 const std::function<void()> &onAnimationEnd) {
+  if (params.has_value()) {
+    return Animation(params.value(), {onAnimationEnd});
+  } else {
+    return std::nullopt;
+  }
 }
 
 Enemy::Enemy(const EnemySetting &setting, const Grid &grid, sf::Vector2i initial_coords, sf::Vector2f initial_pos)
@@ -45,7 +54,10 @@ Enemy::Enemy(const EnemySetting &setting, const Grid &grid, sf::Vector2i initial
                       [this]() { this->update_transitory_walk_position(); }}),
       attack_animation(setting.attack_animation_params, {[this]() { this->end_attack_anim(); }}),
       death_animation(setting.death_animation_params, {[this]() { this->end_death_anim(); }}),
-      hurt_animation(setting.hurt_animation_params, {[this]() { this->end_hurt_anim(); }}),
+      hurt_animation(setting.hurt_animation_params.has_value()
+                     ? std::optional<Animation>(Animation(setting.hurt_animation_params.value(),
+                                                          {[this]() { this->end_hurt_anim(); }}))
+                     : std::nullopt),
       attack_delay(random_float(setting.attack_delay_range)),
       attack_timer(attack_delay),
       attack_damage(setting.attack_damage),
@@ -53,7 +65,8 @@ Enemy::Enemy(const EnemySetting &setting, const Grid &grid, sf::Vector2i initial
       attack_tile_range(setting.attack_tile_range),
       health(setting.health),
       attack_sound_id(setting.attack_sound_id),
-      hurt_sound_id(setting.hurt_sound_id),
+      hurt_sound_id(setting.hurt_sound_id.has_value() ? std::optional<SoundId>(setting.hurt_sound_id.value())
+                                                      : std::nullopt),
       death_sound_id(setting.death_sound_id),
       move_speed(random_float(setting.move_speed_range)) {
   // TODO: generic loader
@@ -80,8 +93,8 @@ void Enemy::update_walk_animation() {
   }
 }
 void Enemy::update_hurt_animation() {
-  if (is_hurting) {
-    hurt_animation.update_sprite();
+  if (is_hurting && hurt_animation.has_value()) {
+    hurt_animation.value().update_sprite();
   }
 }
 void Enemy::update_attack_animation() {
@@ -123,11 +136,12 @@ void Enemy::try_move(Player &player, PathFinder &path_finder) {
     return;
   }
 
+  int stop_at_weight = std::max((int) attack_tile_range / 2, 1);
   auto shortest_path =
       path_finder.get_shortest_path(tile_coords,
                                     player.get_tile_coords(),
                                     UNWALKABLE_TILES,
-                                    std::max((int) attack_tile_range / 2, 1));
+                                    stop_at_weight);
 
   if (!shortest_path.empty()) {
     is_walking = true;
@@ -164,16 +178,23 @@ void Enemy::take_damage(float damage) {
   health -= damage;
   if (health <= 0) {
     die();
-  } else {
+    return;
+  }
+  if (hurt_animation.has_value()) {
     is_hurting = true;
     is_attacking = false;
     is_walking = false;
-    hurt_animation.reset_animation();
-    SoundManager::get_instance().play_sound(hurt_sound_id);
+    hurt_animation.value().reset_animation();
+  }
+  if (hurt_sound_id.has_value()) {
+    SoundManager::get_instance().play_sound(hurt_sound_id.value());
   }
 }
 void Enemy::die() {
   this->health = 0;
+  if (is_dying || is_dead) {
+    return;
+  }
   this->is_dying = true;
   end_attack_anim();
   end_hurt_anim();

@@ -25,8 +25,7 @@ sf::Vector2f Grid::get_player_initial_pos() const {
 unsigned int Grid::count_pickups() const {
   unsigned int count = 0;
   for (const auto &tile : tiles) {
-    if (tile.symbol == Tile::Symbol::PICKUP_AMMO || tile.symbol == Tile::Symbol::PICKUP_HEALTH
-        || tile.symbol == Tile::Symbol::PICKUP_THOMPSON || tile.symbol == Tile::Symbol::PICKUP_MACHINE_GUN) {
+    if (std::find(PICKUP_TILES.begin(), PICKUP_TILES.end(), tile.symbol) != PICKUP_TILES.end()) {
       count++;
     }
   }
@@ -37,7 +36,7 @@ unsigned int Grid::count_pickups() const {
 unsigned int Grid::count_enemies() const {
   unsigned int count = 0;
   for (const auto &tile : tiles) {
-    if (tile.symbol == Tile::Symbol::ENEMY_DOG || tile.symbol == Tile::Symbol::ENEMY_GUARD) {
+    if (std::find(ENEMY_TILES.begin(), ENEMY_TILES.end(), tile.symbol) != ENEMY_TILES.end()) {
       count++;
     }
   }
