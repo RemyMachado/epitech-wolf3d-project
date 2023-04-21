@@ -32,6 +32,7 @@ struct EnemySetting {
   SoundId death_sound_id;
   float health;
   Range<float> move_speed_range;
+  int score_reward;
 };
 
 struct EnemyDistanceToPlayer {
@@ -57,7 +58,8 @@ static std::unordered_map<Tile::Symbol, EnemySetting> ENEMY_SETTINGS =
           std::optional<SoundId>(SoundId::ENEMY_GUARD_HURTS),
           SoundId::ENEMY_GUARD_DIES,
           50,
-          {0.2f, 0.5f}
+          {0.2f, 0.5f},
+          150,
       }));
 
       settings.insert(std::make_pair(Tile::Symbol::ENEMY_DOG, EnemySetting{
@@ -74,7 +76,8 @@ static std::unordered_map<Tile::Symbol, EnemySetting> ENEMY_SETTINGS =
           std::nullopt,
           SoundId::ENEMY_DOG_DIES,
           1,
-          {0.5f, 1.0f}
+          {0.5f, 1.0f},
+          70,
       }));
 
       settings.insert(std::make_pair(Tile::Symbol::ENEMY_MECHA_H, EnemySetting{
@@ -91,7 +94,8 @@ static std::unordered_map<Tile::Symbol, EnemySetting> ENEMY_SETTINGS =
           std::optional<SoundId>(SoundId::ENEMY_MECHA_H_HURTS),
           SoundId::ENEMY_MECHA_H_DIES,
           1000,
-          {0.8f, 0.8f}
+          {0.8f, 0.8f},
+          10000,
       }));
       return settings;
     }();
@@ -120,6 +124,7 @@ class Enemy {
   SoundId attack_sound_id;
   std::optional<SoundId> hurt_sound_id;
   SoundId death_sound_id;
+  int score_reward;
 
   /* Animation */
   sf::Sprite idle_sprite;
@@ -140,7 +145,7 @@ class Enemy {
  public:
   sf::Sprite &get_current_sprite();
   void update(Player &player, PathFinder &path_finder);
-  void take_damage(float damage);
+  void take_damage(float damage, Player &player);
 
   // print operator
   friend std::ostream &operator<<(std::ostream &os, const Enemy &enemy);

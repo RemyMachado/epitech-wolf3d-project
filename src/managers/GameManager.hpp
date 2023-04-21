@@ -23,7 +23,6 @@ class GameManager {
   std::vector<Enemy> enemies;
   std::vector<Pickup> pickups;
   int current_level = 1;
-  int score = 72;
   unsigned int render_loop_count = 0;
   bool is_game_started = false;
   bool is_game_won = false;

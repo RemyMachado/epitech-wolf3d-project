@@ -127,7 +127,7 @@ bool Weapon::try_attack(Player &player, std::vector<Enemy> &enemies) {
       }
     }
 
-    enemies[closest_enemy_index].take_damage(attack_damage);
+    enemies[closest_enemy_index].take_damage(attack_damage, player);
   }
   return true;
 }

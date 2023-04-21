@@ -24,6 +24,7 @@ class Player {
   float body_radius = 0.2f;
   float lives = 1;
   float health = 100; // max is 100
+  int score = 0;
 
  private:
   sf::Sprite hud_face_sprite;

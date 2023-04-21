@@ -73,7 +73,8 @@ Enemy::Enemy(const EnemySetting &setting,
                                                       : std::nullopt),
       death_sound_id(setting.death_sound_id),
       move_speed(random_float(setting.move_speed_range)),
-      game_manager(game_manager) {
+      game_manager(game_manager),
+      score_reward(setting.score_reward) {
   // TODO: generic loader
   SpriteSetting idle_sprite_setting = SPRITE_SETTINGS.at(setting.idle_sprite_id);
 
@@ -179,10 +180,11 @@ Enemy::~Enemy() {
 bool Enemy::get_is_busy() const {
   return is_walking || is_attacking || is_dying || is_hurting || is_dead;
 }
-void Enemy::take_damage(float damage) {
+void Enemy::take_damage(float damage, Player &player) {
   health -= damage;
   if (health <= 0) {
     die();
+    player.score += score_reward;
     return;
   }
   if (hurt_animation.has_value()) {

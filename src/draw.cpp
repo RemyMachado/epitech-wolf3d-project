@@ -557,7 +557,7 @@ void draw_hud_bar_lives(GameManager &game_manager) {
 
 void draw_hud_bar_score(GameManager &game_manager) {
   // draw the score with the numbers sprite sheet and the corresponding SpriteId
-  std::vector<SpriteSetting> score_sprites_settings = number_to_sprites(game_manager.score);
+  std::vector<SpriteSetting> score_sprites_settings = number_to_sprites(game_manager.player.score);
 
   sf::Vector2i hud_bar_start_pos = sf::Vector2i(0, game_manager.window.getSize().y - game_manager.hud.bar_height);
   sf::Vector2f score_sprite_center_ratio_pos = HUD_RELATIVE_CENTER_RATIO_SETTINGS.score;
