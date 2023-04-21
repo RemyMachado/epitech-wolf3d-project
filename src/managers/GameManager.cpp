@@ -41,6 +41,16 @@ void GameManager::update() {
     enemy.update(player, path_finder);
   }
 }
+
+bool GameManager::check_is_game_not_started() {
+  if (!is_game_started) {
+    render_game_splash_screen(*this);
+    return true;
+  }
+
+  return false;
+}
+
 bool GameManager::check_is_game_won(sf::Sprite &hud_empty_sprite) {
   if (is_game_won) {
     render_game_won_screen(*this, hud_empty_sprite);

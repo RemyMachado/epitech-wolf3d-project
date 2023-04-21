@@ -47,11 +47,17 @@ void run_game(GameManager &game_manager) {
         game_manager.window.close();
       }
 
+      if (event.type == sf::Event::Closed ||
+          (event.type == sf::Event::KeyPressed)) {
+        game_manager.is_game_started = true;
+      }
+
       game_manager.mouse_and_keyboard.handle_user_inputs_event_based(game_manager.player, game_manager.window,
                                                                      event);
     }
 
-    if (game_manager.check_is_game_won(hud_empty_sprite) || game_manager.check_is_game_over(hud_empty_sprite)) {
+    if (game_manager.check_is_game_not_started() || game_manager.check_is_game_won(hud_empty_sprite)
+        || game_manager.check_is_game_over(hud_empty_sprite)) {
       continue;
     }
 

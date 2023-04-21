@@ -800,6 +800,41 @@ void draw_enemies(GameManager &game_manager, std::vector<std::optional<Raycast>>
   }
 }
 
+void render_game_splash_screen(GameManager &game_manager) {
+  game_manager.window.clear();
+
+  SpriteSetting sprite_settings = SPRITE_SETTINGS.at(SpriteId::SPLASH_SCREEN);
+  sf::Texture splash_screen_texture = TextureManager::get_instance().get_texture(SpriteId::SPLASH_SCREEN);
+  sf::Sprite splash_screen_sprite(splash_screen_texture);
+  splash_screen_sprite.setTextureRect(sf::IntRect(sprite_settings.initial_offset.x,
+                                                  sprite_settings.initial_offset.y,
+                                                  sprite_settings.frame_size.x,
+                                                  sprite_settings.frame_size.y));
+
+  // make responsive texture to cover whole screen but keep ratio
+  float texture_ratio = (float) splash_screen_texture.getSize().x / (float) splash_screen_texture.getSize().y;
+  float window_ratio = (float) game_manager.window.getSize().x / (float) game_manager.window.getSize().y;
+  if (texture_ratio > window_ratio) {
+    float scale_factor = (float) game_manager.window.getSize().x / (float) splash_screen_texture.getSize().x;
+    splash_screen_sprite.setScale(scale_factor, scale_factor);
+  } else {
+    float scale_factor = (float) game_manager.window.getSize().y / (float) splash_screen_texture.getSize().y;
+    splash_screen_sprite.setScale(scale_factor, scale_factor);
+  }
+
+  // center texture
+    splash_screen_sprite.setPosition((game_manager.window.getSize().x - splash_screen_sprite.getGlobalBounds().width) / 2,
+                                     ((float) game_manager.window.getSize().y - splash_screen_sprite.getGlobalBounds().height) / 2);
+
+  // draw black screen
+  sf::RectangleShape black_screen(sf::Vector2f(game_manager.window.getSize().x, (float) game_manager.window.getSize().y));
+  black_screen.setFillColor(sf::Color::Black);
+  game_manager.window.draw(black_screen);
+
+  game_manager.window.draw(splash_screen_sprite);
+  game_manager.window.display();
+}
+
 void render_game_won_screen(GameManager &game_manager, sf::Sprite &hud_empty_sprite) {
   game_manager.window.clear();
 

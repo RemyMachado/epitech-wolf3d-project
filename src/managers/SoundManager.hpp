@@ -172,7 +172,7 @@ class SoundManager {
   }
 
   void play_music_background() {
-	play_sound(SoundId::MUSIC_BACKGROUND, true);
+    play_sound(SoundId::MUSIC_BACKGROUND, true);
   }
 
  private:
