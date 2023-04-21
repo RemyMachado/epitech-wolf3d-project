@@ -93,7 +93,7 @@ static std::unordered_map<Tile::Symbol, EnemySetting> ENEMY_SETTINGS =
           SoundId::ENEMY_MECHA_H_ATTACK,
           std::optional<SoundId>(SoundId::ENEMY_MECHA_H_HURTS),
           SoundId::ENEMY_MECHA_H_DIES,
-          1000,
+          2000,
           {0.8f, 0.8f},
           10000,
       }));

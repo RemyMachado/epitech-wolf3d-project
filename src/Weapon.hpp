@@ -49,7 +49,7 @@ static std::unordered_map<WeaponId, WeaponSetting> WEAPON_SETTINGS = {
     }},
     {WeaponId::PISTOL, {
         WeaponId::PISTOL,
-        true,
+        false,
         {SPRITE_SETTINGS.at(SpriteId::PISTOL_ATTACK), 0.3f},
         SpriteId::PISTOL_HUD,
         SpriteId::PISTOL_IDLE,

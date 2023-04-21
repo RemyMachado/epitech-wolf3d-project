@@ -31,6 +31,10 @@ bool Pickup::on_pickup(Player &player, GameManager &game_manager) {
       player.pistol->ammo += value;
       player.thompson->ammo += value;
       player.machine_gun->ammo += value;
+      if (!player.pistol->is_unlocked) {
+        player.pistol->is_unlocked = true;
+        player.select_pistol();
+      }
       SoundManager::get_instance().play_sound(pickup_sound_id);
       break;
     }

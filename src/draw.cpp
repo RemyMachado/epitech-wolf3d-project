@@ -858,7 +858,7 @@ void render_game_won_screen(GameManager &game_manager, sf::Sprite &hud_empty_spr
   // draw winning screen texture
   game_won_sprite.setPosition(
       game_manager.window.getSize().x / 2 - game_won_sprite.getGlobalBounds().width / 2,
-      render_height - game_won_sprite.getGlobalBounds().height / 2);
+      0);
 
   game_manager.window.draw(game_won_sprite);
   draw_hud(game_manager, hud_empty_sprite);
