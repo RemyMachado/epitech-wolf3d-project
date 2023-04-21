@@ -25,6 +25,7 @@ class Player {
   float lives = 1;
   float health = 100; // max is 100
   int score = 0;
+  bool is_ready = false; // to handle window manipulation before the game starts
 
  private:
   sf::Sprite hud_face_sprite;

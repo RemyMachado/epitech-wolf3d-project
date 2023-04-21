@@ -47,8 +47,16 @@ void run_game(GameManager &game_manager) {
         game_manager.window.close();
       }
 
-      if (event.type == sf::Event::Closed ||
-          (event.type == sf::Event::KeyPressed)) {
+      if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::M) {
+        game_manager.player.is_ready = game_manager.render_loop_count % 2 == 0;
+        // set the mouse cursor to the center of the window
+        game_manager.window.setMouseCursorGrabbed(game_manager.render_loop_count % 2 == 0);
+        // hide the mouse cursor
+        game_manager.window.setMouseCursorVisible(game_manager.render_loop_count % 2);
+      }
+
+      if (event.type == sf::Event::KeyPressed && event.key.code != sf::Keyboard::M) {
+        game_manager.player.is_ready = true;
         game_manager.is_game_started = true;
       }
 

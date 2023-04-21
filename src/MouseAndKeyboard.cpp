@@ -41,6 +41,9 @@ void MouseAndKeyboard::handle_player_movement(Player &player) {
 void MouseAndKeyboard::handle_player_rotation(Player &player,
                                               sf::RenderWindow &window,
                                               sf::Event &event) {
+  if (!player.is_ready) {
+    return;
+  }
   /*
    * Mouse rotation
    * */
