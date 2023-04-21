@@ -29,6 +29,7 @@ enum class SoundId {
   PICKUP_HEALTH,
   PICKUP_THOMPSON,
   PICKUP_MACHINE_GUN,
+  PICKUP_WINNING_KEY,
 };
 
 struct SoundSetting {
@@ -125,6 +126,10 @@ static std::unordered_map<SoundId, SoundSetting> SOUND_SETTINGS = {
     {
         SoundId::ENEMY_MECHA_H_WALK, SoundSetting{
         "assets/sounds/enemies/mecha_h_walk.wav",
+    }},
+    {
+        SoundId::PICKUP_WINNING_KEY, SoundSetting{
+        "assets/sounds/pickups/key.wav",
     }},
 };
 

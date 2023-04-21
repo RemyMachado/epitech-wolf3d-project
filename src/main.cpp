@@ -6,7 +6,7 @@
 
 // retrieve filename from command line
 int main(int argc, char **argv) {
-  GameManager game_manager = GameManager(argv[1], 200, {800, 800});
+  GameManager game_manager = GameManager(argv[1], 200, {960, 600});
 
   run_game(game_manager);
 

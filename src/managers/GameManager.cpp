@@ -15,7 +15,7 @@ GameManager::GameManager(char *filename, float tile_size, sf::Vector2i screen_si
            grid.tile_size * 0.05f, grid, camera),
     hud(),
     mouse_and_keyboard(),
-    enemies(grid.get_initial_enemies()),
+    enemies(grid.get_initial_enemies(*this)),
     pickups(grid.get_initial_pickups()),
     path_finder(grid) {
   // set the mouse cursor to the center of the window
@@ -35,11 +35,19 @@ void GameManager::update() {
   // Update player, pickups and enemy states.
   player.update();
   for (Pickup &pickup : pickups) {
-    pickup.update(player);
+    pickup.update(player, *this);
   }
   for (Enemy &enemy : enemies) {
     enemy.update(player, path_finder);
   }
+}
+bool GameManager::check_is_game_won(sf::Sprite &hud_empty_sprite) {
+  if (is_game_won) {
+    render_game_won_screen(*this, hud_empty_sprite);
+    return true;
+  }
+
+  return false;
 }
 bool GameManager::check_is_game_over(sf::Sprite &hud_empty_sprite) {
   if (player.get_is_dead()) {

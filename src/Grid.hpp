@@ -9,6 +9,8 @@
 #include "Enemy.hpp"
 #include "Pickup.hpp"
 
+class GameManager;
+
 class Grid {
  public:
   const int width;
@@ -26,7 +28,7 @@ class Grid {
   sf::Vector2f get_tile_center(sf::Vector2i coords) const;
   // function to get the initial position of the player
   [[nodiscard]] sf::Vector2f get_player_initial_pos() const;
-  [[nodiscard]] std::vector<Enemy> get_initial_enemies() const;
+  [[nodiscard]] std::vector<Enemy> get_initial_enemies(GameManager &game_manager) const;
   [[nodiscard]] std::vector<Pickup> get_initial_pickups() const;
   void set_tile_symbol(sf::Vector2i coords, Tile::Symbol new_symbol);
 

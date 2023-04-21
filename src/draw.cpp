@@ -638,7 +638,7 @@ void draw_hud_bar(GameManager &game_manager, sf::Sprite &hud_sprite) {
 }
 
 void draw_hud(GameManager &game_manager, sf::Sprite &hud_sprite) {
-  if (!game_manager.player.get_is_dead()) {
+  if (!game_manager.player.get_is_dead() && !game_manager.is_game_won) {
     draw_minimap(game_manager);
   }
   draw_hud_bar(game_manager, hud_sprite);
@@ -683,7 +683,9 @@ void draw_pickups(GameManager &game_manager, std::vector<std::optional<Raycast>>
         ((float) game_manager.window.getSize().y - game_manager.hud.bar_height) / 2
             - pickup_sprite.getGlobalBounds().height / 2;
 
-    pickup_sprite.setPosition(window_x, window_y);
+    float additional_y_offset =
+        sorted_pickup_info.pickup_ref.get().symbol == Tile::PICKUP_WINNING_KEY ? -game_manager.grid.tile_size / 2 : 0;
+    pickup_sprite.setPosition(window_x, window_y + additional_y_offset);
   }
 
   // draw visible pickups vertical lines (not hidden by wall)
@@ -727,7 +729,6 @@ void draw_pickups(GameManager &game_manager, std::vector<std::optional<Raycast>>
     }
   }
 }
-
 
 void draw_enemies(GameManager &game_manager, std::vector<std::optional<Raycast>> &walls_raycast) {
   int render_height = (int) game_manager.window.getSize().y - game_manager.hud.bar_height;
@@ -797,6 +798,36 @@ void draw_enemies(GameManager &game_manager, std::vector<std::optional<Raycast>>
       game_manager.window.draw(column_sprite);
     }
   }
+}
+
+void render_game_won_screen(GameManager &game_manager, sf::Sprite &hud_empty_sprite) {
+  game_manager.window.clear();
+
+  int render_height = (int) game_manager.window.getSize().y - game_manager.hud.bar_height;
+  SpriteSetting sprite_settings = SPRITE_SETTINGS.at(SpriteId::WINNING_SCREEN);
+  sf::Texture game_won_texture = TextureManager::get_instance().get_texture(SpriteId::WINNING_SCREEN);
+  sf::Sprite game_won_sprite(game_won_texture);
+  game_won_sprite.setTextureRect(sf::IntRect(sprite_settings.initial_offset.x,
+                                             sprite_settings.initial_offset.y,
+                                             sprite_settings.frame_size.x,
+                                             sprite_settings.frame_size.y));
+  float text_height_screen_ratio = game_won_sprite.getGlobalBounds().height / game_manager.window.getSize().y;
+  float scale_factor = 0.8f / text_height_screen_ratio;
+  game_won_sprite.setScale(scale_factor, scale_factor);
+
+  // draw black screen
+  sf::RectangleShape black_screen(sf::Vector2f(game_manager.window.getSize().x, render_height));
+  black_screen.setFillColor(sf::Color::Black);
+  game_manager.window.draw(black_screen);
+
+  // draw winning screen texture
+  game_won_sprite.setPosition(
+      game_manager.window.getSize().x / 2 - game_won_sprite.getGlobalBounds().width / 2,
+      render_height - game_won_sprite.getGlobalBounds().height / 2);
+
+  game_manager.window.draw(game_won_sprite);
+  draw_hud(game_manager, hud_empty_sprite);
+  game_manager.window.display();
 }
 
 void render_game_over_screen(GameManager &game_manager, sf::Sprite &hud_empty_sprite) {

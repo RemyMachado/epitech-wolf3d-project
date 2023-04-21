@@ -6,13 +6,7 @@
 
 class Player;
 class Pickup;
-
-enum class PickupId {
-  HEALTH,
-  AMMO,
-  THOMPSON,
-  MACHINE_GUN,
-};
+class GameManager;
 
 struct PickupSetting {
   Tile::Symbol symbol;
@@ -46,6 +40,12 @@ static std::unordered_map<Tile::Symbol, PickupSetting> PICKUP_SETTINGS = {
         SoundId::PICKUP_MACHINE_GUN,
         -1,
     }},
+    {Tile::Symbol::PICKUP_WINNING_KEY, {
+        Tile::Symbol::PICKUP_WINNING_KEY,
+        SpriteId::PICKUP_WINNING_KEY,
+        SoundId::PICKUP_WINNING_KEY,
+        -1,
+    }}
 };
 
 struct PickupDistanceToPlayer {
@@ -56,9 +56,9 @@ struct PickupDistanceToPlayer {
 class Pickup {
  public:
   bool is_disabled = false;
+  Tile::Symbol symbol;
 
  private:
-  Tile::Symbol symbol;
   sf::Vector2i tile_coords;
   sf::Sprite sprite;
   SoundId pickup_sound_id;
@@ -70,12 +70,12 @@ class Pickup {
 
  public:
   sf::Sprite &get_sprite();
-  void update(Player &player);
+  void update(Player &player, GameManager &game_manager);
   sf::Vector2f get_pos() const;
 
  private:
   bool get_is_player_in_range(Player &player);
-  bool on_pickup(Player &player);
+  bool on_pickup(Player &player, GameManager &game_manager);
 };
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_PICKUP_HPP_

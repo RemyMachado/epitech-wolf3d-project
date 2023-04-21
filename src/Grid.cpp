@@ -30,7 +30,7 @@ unsigned int Grid::count_pickups() const {
     }
   }
 
-  /* adds 1 for the final pickup key (appearing at the player initial_position) */
+  /* adds 1 for the final pickup key (appearing over the boss' dead body) */
   return count + 1;
 }
 unsigned int Grid::count_enemies() const {
@@ -64,7 +64,7 @@ std::vector<Pickup> Grid::get_initial_pickups() const {
 
   return pickups;
 }
-std::vector<Enemy> Grid::get_initial_enemies() const {
+std::vector<Enemy> Grid::get_initial_enemies(GameManager &game_manager) const {
   std::vector<Enemy> enemies;
   unsigned int enemy_count = count_enemies();
 
@@ -81,7 +81,7 @@ std::vector<Enemy> Grid::get_initial_enemies() const {
       if (std::find(ENEMY_TILES.begin(), ENEMY_TILES.end(), get(x, y).symbol) != ENEMY_TILES.end()) {
         enemies.emplace_back(ENEMY_SETTINGS.at(get(x, y).symbol), *this, sf::Vector2i(x, y),
                              sf::Vector2f{(float) x * tile_size + tile_size / 2,
-                                          (float) y * tile_size + tile_size / 2});
+                                          (float) y * tile_size + tile_size / 2}, game_manager);
       }
     }
   }

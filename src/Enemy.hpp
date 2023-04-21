@@ -15,6 +15,7 @@ class Enemy;
 class Player;
 class Grid;
 class PathFinder;
+class GameManager;
 
 struct EnemySetting {
   Tile::Symbol symbol;
@@ -94,56 +95,6 @@ static std::unordered_map<Tile::Symbol, EnemySetting> ENEMY_SETTINGS =
       }));
       return settings;
     }();
-/*{
-{Tile::Symbol::ENEMY_GUARD, {
-    Tile::Symbol::ENEMY_GUARD,
-    {SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_WALK), 0.3f},
-    {SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_ATTACK), 0.5f},
-    {SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_DEATH), 0.5f},
-    {SPRITE_SETTINGS.at(SpriteId::ENEMY_GUARD_HURT), 0.5f},
-    SpriteId::ENEMY_GUARD_IDLE,
-    {1.5f, 2.5f},
-    10,
-    5,
-    SoundId::PISTOL_ATTACK,
-    SoundId::ENEMY_GUARD_HURTS,
-    SoundId::ENEMY_GUARD_DIES,
-    50,
-    {0.2f, 0.5f}
-}},
-{Tile::Symbol::ENEMY_DOG, {
-    Tile::Symbol::ENEMY_DOG,
-    {SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_WALK), 0.3f},
-    {SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_ATTACK), 0.6f},
-    {SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_DEATH), 0.5f},
-    {SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_DEATH), 0.5f}, // Hurt sprite isn't needed, dog always dies on one hit
-    SpriteId::ENEMY_DOG_IDLE,
-    {2.0f, 3.0f},
-    2.0f,
-    10,
-    SoundId::ENEMY_DOG_BARK,
-    SoundId::ENEMY_DOG_DIES, // Hurt sound isn't needed, dog always dies on one hit
-    SoundId::ENEMY_DOG_DIES,
-    1,
-    {0.5f, 1.0f}
-}},
-{Tile::Symbol::ENEMY_MECHA_H, {
-    Tile::Symbol::ENEMY_MECHA_H,
-    {SPRITE_SETTINGS.at(SpriteId::ENEMY_MECHA_H_WALK), 0.3f},
-    {SPRITE_SETTINGS.at(SpriteId::ENEMY_MECHA_H_ATTACK), 0.5f},
-    {SPRITE_SETTINGS.at(SpriteId::ENEMY_MECHA_H_DEATH), 0.5f},
-    {SPRITE_SETTINGS.at(SpriteId::ENEMY_DOG_DEATH), 0.5f}, // Hurt sprite isn't needed, dog always dies on one hit
-    SpriteId::ENEMY_MECHA_H_IDLE,
-    {1.5f, 2.5f},
-    10,
-    5,
-    SoundId::ENEMY_MECHA_H_ATTACK,
-    SoundId::ENEMY_MECHA_H_HURTS,
-    SoundId::ENEMY_MECHA_H_DIES,
-    50,
-    {0.2f, 0.5f}
-}}
-};*/
 
 class Enemy {
  public:
@@ -176,9 +127,14 @@ class Enemy {
   Animation attack_animation;
   std::optional<Animation> hurt_animation;
   Animation death_animation;
+  GameManager &game_manager;
 
  public:
-  explicit Enemy(const EnemySetting &setting, const Grid &grid, sf::Vector2i initial_coords, sf::Vector2f initial_pos);
+  explicit Enemy(const EnemySetting &setting,
+                 const Grid &grid,
+                 sf::Vector2i initial_coords,
+                 sf::Vector2f initial_pos,
+                 GameManager &game_manager);
   ~Enemy();
 
  public:

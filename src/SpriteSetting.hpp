@@ -29,6 +29,8 @@ enum class SpriteId {
   // Hud
   HUD_EMPTY,
   HUD_FACES,
+  WINNING_SCREEN,
+  SPLASH_SCREEN,
 
   // Weapons
   KNIFE_IDLE,
@@ -67,6 +69,7 @@ enum class SpriteId {
   PICKUP_AMMO,
   PICKUP_THOMPSON,
   PICKUP_MACHINE_GUN,
+  PICKUP_WINNING_KEY,
 };
 
 struct SpriteSetting {
@@ -149,6 +152,22 @@ static std::unordered_map<SpriteId, SpriteSetting> SPRITE_SETTINGS = {
         8,
         sf::Vector2i(0, 1),
         sf::Vector2i(0, 31 + 2)
+    }},
+    {SpriteId::WINNING_SCREEN, SpriteSetting{
+        SpriteId::WINNING_SCREEN,
+        "assets/textures/hud/winning-screen.png",
+        sf::Vector2i(118, 78),
+        1,
+        sf::Vector2i(0, 0),
+        sf::Vector2i(0, 0)
+    }},
+    {SpriteId::SPLASH_SCREEN, SpriteSetting{
+        SpriteId::SPLASH_SCREEN,
+        "assets/textures/hud/splash-screen.png",
+        sf::Vector2i(319, 200),
+        1,
+        sf::Vector2i(0, 0),
+        sf::Vector2i(0, 0)
     }},
 
     /*
@@ -496,6 +515,14 @@ static std::unordered_map<SpriteId, SpriteSetting> SPRITE_SETTINGS = {
         sf::Vector2i(64, 64),
         1,
         sf::Vector2i(0, (64 + 1) * 6),
+        sf::Vector2i(0, 0)
+    }},
+    {SpriteId::PICKUP_WINNING_KEY, SpriteSetting{
+        SpriteId::PICKUP_WINNING_KEY,
+        "assets/textures/props/props.png",
+        sf::Vector2i(64, 64),
+        1,
+        sf::Vector2i((64 + 1) * 2, (64 + 1) * 4),
         sf::Vector2i(0, 0)
     }},
 };

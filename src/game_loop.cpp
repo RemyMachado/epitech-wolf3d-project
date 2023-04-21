@@ -51,15 +51,15 @@ void run_game(GameManager &game_manager) {
                                                                      event);
     }
 
-    if (game_manager.check_is_game_over(hud_empty_sprite)) {
+    if (game_manager.check_is_game_won(hud_empty_sprite) || game_manager.check_is_game_over(hud_empty_sprite)) {
       continue;
     }
 
     /*
     * Handle user inputs
     * */
-    game_manager.mouse_and_keyboard.handle_user_inputs(game_manager.window, game_manager.player,
-                                                       game_manager.enemies);
+    MouseAndKeyboard::handle_user_inputs(game_manager.window, game_manager.player,
+                                         game_manager.enemies);
 
     game_manager.update();
     render_game_frame(game_manager,

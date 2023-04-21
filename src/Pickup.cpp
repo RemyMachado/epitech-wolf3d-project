@@ -1,5 +1,6 @@
 #include "Player.hpp"
 #include "Pickup.hpp"
+#include "managers/GameManager.hpp"
 
 Pickup::Pickup(const PickupSetting &setting, const sf::Vector2i &tile_coords, float tile_size)
     : symbol(setting.symbol),
@@ -16,7 +17,7 @@ Pickup::Pickup(const PickupSetting &setting, const sf::Vector2i &tile_coords, fl
       sprite_setting.frame_size.y));
 }
 
-bool Pickup::on_pickup(Player &player) {
+bool Pickup::on_pickup(Player &player, GameManager &game_manager) {
   switch (symbol) {
     case Tile::Symbol::PICKUP_HEALTH: {
       if (player.health == 100.0f) {
@@ -45,13 +46,18 @@ bool Pickup::on_pickup(Player &player) {
       SoundManager::get_instance().play_sound(pickup_sound_id);
       break;
     }
+    case Tile::Symbol::PICKUP_WINNING_KEY: {
+      game_manager.is_game_won = true;
+      SoundManager::get_instance().play_sound(pickup_sound_id);
+      break;
+    }
   }
 
   return true;
 }
-void Pickup::update(Player &player) {
+void Pickup::update(Player &player, GameManager &game_manager) {
   if (!is_disabled && get_is_player_in_range(player)) {
-    bool did_pickup = on_pickup(player);
+    bool did_pickup = on_pickup(player, game_manager);
     is_disabled = did_pickup;
   }
 }

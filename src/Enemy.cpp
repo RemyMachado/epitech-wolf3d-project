@@ -45,7 +45,11 @@ std::optional<Animation> createOptionalAnimation(const std::optional<AnimationPa
   }
 }
 
-Enemy::Enemy(const EnemySetting &setting, const Grid &grid, sf::Vector2i initial_coords, sf::Vector2f initial_pos)
+Enemy::Enemy(const EnemySetting &setting,
+             const Grid &grid,
+             sf::Vector2i initial_coords,
+             sf::Vector2f initial_pos,
+             GameManager &game_manager)
     : tile_coords(initial_coords),
       pos(initial_pos),
       symbol(setting.symbol),
@@ -68,7 +72,8 @@ Enemy::Enemy(const EnemySetting &setting, const Grid &grid, sf::Vector2i initial
       hurt_sound_id(setting.hurt_sound_id.has_value() ? std::optional<SoundId>(setting.hurt_sound_id.value())
                                                       : std::nullopt),
       death_sound_id(setting.death_sound_id),
-      move_speed(random_float(setting.move_speed_range)) {
+      move_speed(random_float(setting.move_speed_range)),
+      game_manager(game_manager) {
   // TODO: generic loader
   SpriteSetting idle_sprite_setting = SPRITE_SETTINGS.at(setting.idle_sprite_id);
 
@@ -199,6 +204,11 @@ void Enemy::die() {
   end_attack_anim();
   end_hurt_anim();
   SoundManager::get_instance().play_sound(death_sound_id);
+  if (symbol == Tile::Symbol::ENEMY_MECHA_H) {
+    game_manager.pickups.emplace_back(PICKUP_SETTINGS.at(Tile::Symbol::PICKUP_WINNING_KEY),
+                                      tile_coords,
+                                      grid.tile_size);
+  }
 }
 void Enemy::end_attack_anim() {
   is_attacking = false;

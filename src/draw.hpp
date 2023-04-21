@@ -55,6 +55,7 @@ void render_game_frame(GameManager &game_manager,
                        sf::Sprite &floor_sprite,
                        sf::Sprite &ceiling_sprite,
                        sf::Sprite &hud_empty_sprite);
+void render_game_won_screen(GameManager &game_manager, sf::Sprite &hud_empty_sprite);
 void render_game_over_screen(GameManager &game_manager, sf::Sprite &hud_empty_sprite);
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_DRAW_HPP_

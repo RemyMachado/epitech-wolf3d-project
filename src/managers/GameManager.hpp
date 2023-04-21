@@ -25,6 +25,7 @@ class GameManager {
   int current_level = 1;
   int score = 72;
   unsigned int render_loop_count = 0;
+  bool is_game_won = false;
 
  private:
   PathFinder path_finder;
@@ -32,6 +33,7 @@ class GameManager {
  public:
   GameManager(char *filename, float tile_size, sf::Vector2i screen_size);
 
+  bool check_is_game_won(sf::Sprite &hud_empty_sprite);
   bool check_is_game_over(sf::Sprite &hud_empty_sprite);
   void update();
 };

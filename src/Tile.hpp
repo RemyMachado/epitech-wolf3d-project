@@ -37,12 +37,14 @@ class Tile {
     PICKUP_HEALTH = 'H',
     PICKUP_THOMPSON = 'T',
     PICKUP_MACHINE_GUN = 'M',
+    PICKUP_WINNING_KEY = 'K',
   };
 
   static const std::unordered_set<char> &get_valid_symbols() {
     static const std::unordered_set<char> valid_symbols = {
         Symbol::FLOOR, Symbol::WALL, Symbol::DOOR, Symbol::PLAYER, Symbol::ENEMY_DOG, Symbol::ENEMY_GUARD,
-        Symbol::PICKUP_AMMO, Symbol::PICKUP_HEALTH, Symbol::PICKUP_THOMPSON, Symbol::PICKUP_MACHINE_GUN, ENEMY_MECHA_H
+        Symbol::PICKUP_AMMO, Symbol::PICKUP_HEALTH, Symbol::PICKUP_THOMPSON, Symbol::PICKUP_MACHINE_GUN,
+        Symbol::ENEMY_MECHA_H, PICKUP_WINNING_KEY
     };
     return valid_symbols;
   }
@@ -93,6 +95,7 @@ static std::vector<Tile::Symbol> PICKUP_TILES = {
     Tile::Symbol::PICKUP_HEALTH,
     Tile::Symbol::PICKUP_THOMPSON,
     Tile::Symbol::PICKUP_MACHINE_GUN,
+    Tile::Symbol::PICKUP_WINNING_KEY,
 };
 
 #endif //EPITECH_WOLF3D_PROJECT_SRC_TILE_HPP_
